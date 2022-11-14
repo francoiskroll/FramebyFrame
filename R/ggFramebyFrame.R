@@ -318,6 +318,8 @@ param2Yunit <- function(param) {
 #' @export
 #'
 #' @examples
+#'
+#' @import data.table
 ggFramerate <- function(ffpath,
                         zebpath,
                         subsample=TRUE,
