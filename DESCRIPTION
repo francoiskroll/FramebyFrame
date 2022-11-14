@@ -9,7 +9,8 @@ License: `use_gpl3_license()`
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
-Imports:
+Depends:
+    R (>= 2.10),
     data.table,
     dplyr,
     emmeans,
@@ -29,6 +30,4 @@ Imports:
     survival,
     tibble,
     tidyr
-Depends: 
-    R (>= 2.10)
 LazyData: true
