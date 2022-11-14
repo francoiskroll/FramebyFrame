@@ -135,7 +135,9 @@ importAddTimetoRAWs <- function(ffpath,
     cat('\t \t \t \t >>> Frame-by-frame data not imported yet, proceeding to full import... \n')
     # then proceed with importing RAWs.csv properly
     # import frame-by-frame data ----------------------------------------------
+    cat('troubleshoot')
     ff <- data.table::fread(ffpath)
+    cat('hey')
 
     # column named `time` is a bad idea, creates conflicts later with a function called time
     colnames(ff)[1] <- 'exsecs' # number of seconds after experiment started
