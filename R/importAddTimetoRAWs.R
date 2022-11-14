@@ -129,7 +129,9 @@ importAddTimetoRAWs <- function(ffpath,
 
 
   } else { # if it is not there
+    cat('troubleshoot0')
     cat('\t \t \t \t >>> Frame-by-frame data not imported yet, proceeding to full import... \n')
+    cat('troubleshoot1')
     # then proceed with importing RAWs.csv properly
     # import frame-by-frame data ----------------------------------------------
     cat('troubleshoot')
