@@ -1,12 +1,31 @@
 Package: FramebyFrame
-Title: What the Package Does (One Line, Title Case)
+Title: Behaviour Analysis of Zebrafish Larvae
 Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Authors@R:
+    person("Francois", "Kroll", , "francois@kroll.be", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9908-2648"))
+Description: Analysis of experiments studying behaviour of zebrafish larvae under day:night cycles.
+License: `use_gpl3_license()`
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
+Imports:
+    data.table,
+    dplyr,
+    emmeans,
+    fractaldim,
+    ggbeeswarm,
+    ggplot2,
+    ggpubr,
+    gtools,
+    here,
+    lme4,
+    lsa,
+    lubridate,
+    R.matlab,
+    readr,
+    scales,
+    snow,
+    survival,
+    tibble,
+    tidyr
