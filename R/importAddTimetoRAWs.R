@@ -8,7 +8,6 @@
 # francois@kroll.be
 ###################################################
 
-
 # function importAddTimetoRAWs(...) to import frame-by-frame data in RAWs.csv
 # and add time columns & find light transitions (writing YYMMDD_BX_lights.csv) while doing so
 
@@ -105,6 +104,10 @@ findLightTransitionFrame <- function(Zeitgeberdurations, transitionHour) {
 #' @export
 #'
 #' @examples
+#' @import data.table
+#' @import readr
+#' @import lubridate
+
 importAddTimetoRAWs <- function(ffpath,
                                 zebpath,
                                 dayduration=14) {
@@ -132,14 +135,14 @@ importAddTimetoRAWs <- function(ffpath,
     cat('\t \t \t \t >>> Frame-by-frame data not imported yet, proceeding to full import... \n')
     # then proceed with importing RAWs.csv properly
     # import frame-by-frame data ----------------------------------------------
-    ff <- fread(ffpath)
+    ff <- data.table::fread(ffpath)
 
     # column named `time` is a bad idea, creates conflicts later with a function called time
     colnames(ff)[1] <- 'exsecs' # number of seconds after experiment started
 
     # detect number of wells on the plate
     # look at name of last column in ff
-    nwells <- parse_number(colnames(ff)[ncol(ff)])
+    nwells <- readr::parse_number(colnames(ff)[ncol(ff)])
 
     # if that number is above 97, we are looking at box2 data
     # so subtract 96 from the number
@@ -195,7 +198,7 @@ importAddTimetoRAWs <- function(ffpath,
     startts <- paste(zebfi$stdate, zebfi$sttime) # start timestamp, e.g. 28/01/2021 10:27:35
     # ! assumes first timestamp is correct. ViewPoint have made serious errors about this; carefully check
     # especially if Replay; first timestamp is stupidly taken from the computer clock when you start the Replay, not from the raw file
-    startts <- dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+    startts <- lubridate::dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
 
 
     # add full timestamps to frame-by-frame data ------------------------------
