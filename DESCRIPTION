@@ -10,7 +10,6 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Depends:
-    R (>= 2.10),
     data.table,
     dplyr,
     emmeans,
@@ -30,4 +29,6 @@ Depends:
     survival,
     tibble,
     tidyr
+Depends:
+    R (>= 2.10)
 LazyData: true
