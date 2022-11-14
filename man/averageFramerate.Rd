@@ -7,7 +7,7 @@
 averageFramerate(tsecs)
 }
 \arguments{
-\item{tsecs}{Series of timestamps in seconds}
+\item{tsecs}{Timestamps in seconds}
 }
 \value{
 Average framerate

@@ -1,3 +1,14 @@
+###################################################
+# ~~~ FramebyFrame package ~~~
+
+# function importAddTimetoRAWs
+# and smaller helper functions
+
+# Francois Kroll 2022
+# francois@kroll.be
+###################################################
+
+
 # function importAddTimetoRAWs(...) to import frame-by-frame data in RAWs.csv
 # and add time columns & find light transitions (writing YYMMDD_BX_lights.csv) while doing so
 
@@ -6,11 +17,6 @@
 
 # function averageFramerate(...) ------------------------------------------
 
-# given a series of timestamps in seconds
-# typically column exsecs for number of seconds after experiment started
-# calculate average framerate
-
-# tsecs for timestamps in seconds
 #' Calculates average framerate
 #' @description Calculates average framerate from a series of timestamps in seconds.
 #'
@@ -21,6 +27,7 @@
 #'
 #' @examples averageFramerate(c(0, 0.04, 0.08))
 #' ## returns 25 frames-per-second
+
 averageFramerate <- function(tsecs) {
 
   fps <- 1/mean(diff(tsecs))
@@ -46,6 +53,17 @@ averageFramerate <- function(tsecs) {
 # in that case it returns that frame
 # or may find frame zth = 14.00001 or frame with exactly zth = 14 (Case2)
 # in that case, assumes this frame is the frame just after the transition and it returns the frame just before
+
+#' Finds light transition frame
+#' @description Finds frame index at which a given light transition occurred.
+#'
+#' @param Zeitgeberdurations Series of timestamps in 'Zeitgeber durations', i.e. number of hours since (typically) 9 AM on day 0.
+#' @param transitionHour Time in Zeitgeber duration of the light transition to search for.
+#'
+#' @return Frame index.
+#' @export
+#'
+#' @examples
 
 findLightTransitionFrame <- function(Zeitgeberdurations, transitionHour) {
 
@@ -77,6 +95,16 @@ findLightTransitionFrame <- function(Zeitgeberdurations, transitionHour) {
 # function will import RAWs.csv file and add time columns to it
 # then will calculate light transitions and save them to YYMMDD_BX_lights.csv (in same folder as RAWs.csv)
 
+#' Imports RAWs.csv
+#'
+#' @param ffpath Path to frame-by-frame data, typically ..._RAWs.csv.
+#' @param zebpath Path to Zebralab file, typically YYMMDD_BX.xls.
+#' @param dayduration Duration of day in hours. Default: 14.
+#'
+#' @return Dataframe containing frame-by-frame data with added timestamp columns.
+#' @export
+#'
+#' @examples
 importAddTimetoRAWs <- function(ffpath,
                                 zebpath,
                                 dayduration=14) {
