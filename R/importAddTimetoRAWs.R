@@ -104,9 +104,6 @@ findLightTransitionFrame <- function(Zeitgeberdurations, transitionHour) {
 #' @export
 #'
 #' @examples
-#' @import data.table
-#' @import readr
-#' @import lubridate
 
 importAddTimetoRAWs <- function(ffpath,
                                 zebpath,
