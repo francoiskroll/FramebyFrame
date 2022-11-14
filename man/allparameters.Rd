@@ -5,7 +5,7 @@
 \alias{allparameters}
 \title{All Parameters}
 \format{
-\subsection{\verb{[1] "activityPercentageTimeActive" "activityTotalPx"              "activitySunsetStartle"        "activitySlope"}}{
+\subsection{\verb{activityPercentageTimeActivy, activityTotalPx, ...}}{
 
 A vector of strings:
 \describe{

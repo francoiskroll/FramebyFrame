@@ -5,7 +5,7 @@
 \alias{alluparams}
 \title{All Unique Parameters}
 \format{
-\subsection{\code{alluparams}}{
+\subsection{\verb{day_activityPercentageTimeActive, day_activityTotalPx, ...}}{
 
 A vector of strings:
 \describe{
