@@ -15,6 +15,8 @@
 #' @export
 #'
 #' @examples
+#' @importFrom data.table :=
+
 summaryActivityCourse <- function(ffpath,
                                   genopath,
                                   zebpath,
@@ -135,11 +137,11 @@ summaryActivityCourse <- function(ffpath,
 
       cat('\t \t \t \t \t >>> smoothing well', colnames(ff)[w], '\n')
 
-      unlist(data.table::frollmean(ff[,..w], n=npoints, hasNA=TRUE, na.rm=TRUE))}))
+      unlist(data.table::frollmean(ff[, ..w], n=npoints, hasNA=TRUE, na.rm=TRUE))}))
 
     # copy fr to frs = fr smoothed
     # replace data with the smoothed from above
-    ffs <- copy(ff) # note here copy(), a data.table quirk
+    ffs <- data.table::copy(ff) # note here copy(), a data.table quirk
     # if we simply copy like ffs <- ff,
     # data.table saves memory by not actually copying the object but simply pointing to the original
     # so if we now modify ffs, ff is also modified (ffs is only a pointer)
@@ -261,7 +263,7 @@ summaryActivityCourse <- function(ffpath,
   cat('\t \t \t \t >>> Writing smoothed/binned activity timecourse as', afterLastSlash(tcpath),'\n')
   cat('\t \t \t \t \t in folder', beforeLastSlash(tcpath) ,'\n')
   cat('\t \t \t \t \t filename is acttc _ YYMMDD _ BX _ smo `seconds smoothing` _ bin `seconds binning` . csv \n')
-  fwrite(fsbinexp, tcpath)
+  data.table::fwrite(fsbinexp, tcpath)
 
 
   # save fsbin to Environment -----------------------------------------------

@@ -254,7 +254,7 @@ activityFractalDim_onefish <- function(ffc,
   fb <- colSums(matrix(fcrop, nrow=fps)) # *** binning set to 1 second here ***
 
   ### step2: smooth in 1-min bins ###
-  fs <- unlist(frollmean(fb, n=120, hasNA=TRUE, na.rm=TRUE)) # *** smoothing set to 1 minute here ***
+  fs <- unlist(data.table::frollmean(fb, n=120, hasNA=TRUE, na.rm=TRUE)) # *** smoothing set to 1 minute here ***
   fs <- fs[-(1:120)]
 
   ### step3: measure fractal dimension ###

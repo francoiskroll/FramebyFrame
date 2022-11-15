@@ -389,6 +389,7 @@ detectNaps <- function(ffsource,
 #' @export
 #'
 #' @examples
+#' @importFrom data.table :=
 summarySleepCourse <- function(ffpath,
                                genopath,
                                zebpath,
@@ -603,7 +604,7 @@ summarySleepCourse <- function(ffpath,
 
     # copy zzz to zs = zzz smoothed
     # zzz left unedited
-    zs <- copy(ffzb) # note here copy(), a data.table quirk
+    zs <- data.table::copy(ffzb) # note here copy(), a data.table quirk
     # if we simply copy like zs <- ffzb,
     # data.table saves memory by not actually copying the object but simply pointing to the original
     # so if we now modify zs, zzz is also modified (zs is only a pointer)
@@ -614,7 +615,7 @@ summarySleepCourse <- function(ffpath,
 
       cat('\t \t \t \t \t \t >>> smoothed well', colnames(zs)[w], ' \n')
 
-      unlist(data.table::frollmean(zs[,..w], n=smooth_npoints, hasNA=TRUE, na.rm=TRUE))}))
+      unlist(data.table::frollmean(zs[, ..w], n=smooth_npoints, hasNA=TRUE, na.rm=TRUE))}))
 
 
     # replace data in zs with the smoothed from above
