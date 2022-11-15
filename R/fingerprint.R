@@ -24,6 +24,7 @@
 #' @importFrom dplyr %>%
 #' @importFrom tibble add_column
 #' @importFrom dplyr summarise_at
+#' @importFrom dplyr group_by
 
 calculateFingerprint <- function(paDir,
                                  controlGrp,
@@ -308,6 +309,7 @@ calculateFingerprint <- function(paDir,
 #' @importFrom tidyr pivot_wider
 #' @importFrom dplyr %>%
 #' @importFrom tibble add_column
+#' @importFrom dplyr group_by
 
 fingerprintSimilarity <- function(fgp,
                                   metric='mean',

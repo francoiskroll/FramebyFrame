@@ -525,6 +525,7 @@ ggSleepTraceByGroup <- function(ffpath,
 #' @importFrom dplyr %>%
 #' @importFrom dplyr filter
 #' @importFrom dplyr summarise_at
+#' @importFrom dplyr group_by
 
 ggTrace <- function(tc,
                     genopath,

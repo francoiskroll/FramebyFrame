@@ -407,6 +407,7 @@ paramReadPivot <- function(pa,
 #'
 #' @examples
 #' @importFrom dplyr summarise_at
+#' @importFrom dplyr group_by
 paramSummary <- function(pa,
                          skipNight0=FALSE,
                          poolExp1=NA,

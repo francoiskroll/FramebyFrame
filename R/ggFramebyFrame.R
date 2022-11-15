@@ -18,7 +18,6 @@
 #' @param param
 #'
 #' @return
-#' @export
 #'
 #' @examples
 param2Title <- function(param) {
