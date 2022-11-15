@@ -965,7 +965,7 @@ ggFingerprint <- function(fgp,
 
   ### if user did not provide any colours, we use automatic ggplot colours
   if(is.na(colours[1])) {
-    colours <- hue_pal()(length(unique(fgp$date_box_grp)))
+    colours <- scales::hue_pal()(length(unique(fgp$date_box_grp)))
   }
 
 

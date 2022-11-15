@@ -129,7 +129,7 @@ ggActivityTraceGrid <- function (ffpath,
 
   # if user did not provide any colours, we pick some automatic ggplot colours
   if(is.na(tracecols[1])) {
-    tracecols <- hue_pal()(ngrps)
+    tracecols <- scales::hue_pal()(ngrps)
     # if user provided colours, check we have enough of them
   } else {
     if(length(tracecols) != ngrps) stop('\t \t \t \t >>> Error ggActivityTraceGrid: please provide one tracecol for each group in genotype file. \n')
