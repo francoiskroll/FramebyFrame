@@ -63,6 +63,11 @@ getFromMat <- function(mat,
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom dplyr mutate
+#' @importFrom tibble add_column
+#' @importFrom tibble add_row
+
 legacyFingerprint <- function(matPath,
                               conGrp,
                               treGrp,
@@ -71,7 +76,7 @@ legacyFingerprint <- function(matPath,
 
 
   ### read .mat file ###
-  mat <- readMat(matPath)$geno
+  mat <- R.matlab::readMat(matPath)$geno
 
   # means and standard deviations are already calculated by SCRAP.m
   # first, build a dataframe control group mean / control group std / treatment group mean / treatment group std

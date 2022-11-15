@@ -16,6 +16,8 @@
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tibble add_column
 activityParameter <- function(dn,
                               parameter,
                               dayduration) {

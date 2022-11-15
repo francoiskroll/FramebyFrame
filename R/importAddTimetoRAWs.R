@@ -104,6 +104,8 @@ findLightTransitionFrame <- function(Zeitgeberdurations, transitionHour) {
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tibble add_column
 
 importAddTimetoRAWs <- function(ffpath,
                                 zebpath,
@@ -129,21 +131,18 @@ importAddTimetoRAWs <- function(ffpath,
 
 
   } else { # if it is not there
-    cat('troubleshoot0')
+
     cat('\t \t \t \t >>> Frame-by-frame data not imported yet, proceeding to full import... \n')
-    cat('troubleshoot1')
     # then proceed with importing RAWs.csv properly
     # import frame-by-frame data ----------------------------------------------
-    cat('troubleshoot')
     ff <- data.table::fread(ffpath)
-    cat('hey')
 
     # column named `time` is a bad idea, creates conflicts later with a function called time
     colnames(ff)[1] <- 'exsecs' # number of seconds after experiment started
 
     # detect number of wells on the plate
     # look at name of last column in ff
-    nwells <- parse_number(colnames(ff)[ncol(ff)])
+    nwells <- readr::parse_number(colnames(ff)[ncol(ff)])
 
     # if that number is above 97, we are looking at box2 data
     # so subtract 96 from the number
@@ -181,13 +180,13 @@ importAddTimetoRAWs <- function(ffpath,
 
     usefRead <- TRUE # by default use fread
     # except if fread does not work
-    tryCatch( { result <- fread(zebpath) },
+    tryCatch( { result <- data.table::fread(zebpath) },
               error = function(e) {usefRead <<- FALSE},
               silent=TRUE)
 
     # read first row of Zebralab's XLS file
     if (usefRead) {
-      zebfi <- fread(zebpath)[1,]
+      zebfi <- data.table::fread(zebpath)[1,]
     } else {
       zebfi <- read.delim(zebpath, fileEncoding='UCS-2LE', header=TRUE, nrow=1)
     }
@@ -199,7 +198,7 @@ importAddTimetoRAWs <- function(ffpath,
     startts <- paste(zebfi$stdate, zebfi$sttime) # start timestamp, e.g. 28/01/2021 10:27:35
     # ! assumes first timestamp is correct. ViewPoint have made serious errors about this; carefully check
     # especially if Replay; first timestamp is stupidly taken from the computer clock when you start the Replay, not from the raw file
-    startts <- dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+    startts <- lubridate::dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
 
 
     # add full timestamps to frame-by-frame data ------------------------------
@@ -207,7 +206,7 @@ importAddTimetoRAWs <- function(ffpath,
     # will now assume first frame timestamp in RAW csv is = first timestamp in ZebraLab XLS file
     # and write all the frame timestamps as full date/time eg. 2021-01-28 10:27:35 UTC
     ff <- ff %>%
-      add_column(fullts = startts+dseconds(ff$exsecs), .before='exsecs') # add full timestamp column
+      add_column(fullts = startts + lubridate::dseconds(ff$exsecs) , .before='exsecs') # add full timestamp column
     # takes first timestamp then add to it any number of seconds written in the frame-by-frame data
     # e.g. at 3000th frame, 2021-03-16 19:54:49 + 120 seconds = 2021-03-16 19:56:49
 
@@ -215,10 +214,11 @@ importAddTimetoRAWs <- function(ffpath,
     # add Zeitgeber durations -------------------------------------------------
 
     # i.e. number of hours since first day0 9AM
-    startdate <- date(ff$fullts[1]) # get startdate of the experiment = date of the first timepoint
+    startdate <- lubridate::date(ff$fullts[1]) # get startdate of the experiment = date of the first timepoint
 
     ff <- ff %>%
-      add_column(zhrs = as.numeric(difftime(ff$fullts, ymd_hms(paste(startdate, '09:00:00')), units='hours')), .before='exsecs')
+      add_column(zhrs = as.numeric(difftime(ff$fullts, lubridate::ymd_hms(paste(startdate, '09:00:00')), units='hours')),
+                 .before='exsecs')
     # zeitgeber is time difference in hours since first 9AM
 
     # tell user about timestamps so can check they look correct
@@ -249,7 +249,7 @@ importAddTimetoRAWs <- function(ffpath,
       ltcolnms <- c('transition_num', 'sunset_or_sunrise', 'frame', 'full_timestamp', 'zhrs', 'exsecs') # light transitions column names
       lt <- as.data.frame(matrix(nrow=length(suns), ncol=length(ltcolnms))) # lt for light transitions
       colnames(lt) <- ltcolnms
-      lt$full_timestamp <- ymd_hms(NA)
+      lt$full_timestamp <- lubridate::ymd_hms(NA)
 
       for (s in 1:length(suns)) {
 
@@ -291,7 +291,7 @@ importAddTimetoRAWs <- function(ffpath,
 
       # write light transitions
       outpath <- paste0(beforeLastSlash(ffpath), beforeLastUnderscore(afterLastSlash(ffpath)), '_lights.csv')
-      fwrite(lt, file=outpath)
+      data.table::fwrite(lt, file=outpath)
     } # closes if suns is not length 0
 
 

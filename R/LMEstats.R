@@ -36,6 +36,11 @@
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tibble add_column
+#' @importFrom dplyr mutate
+#' @importFrom dplyr filter
+
 LMEdaynight <- function(pa,
                         grporder=NA,
                         skipNight0=FALSE,
@@ -81,7 +86,7 @@ LMEdaynight <- function(pa,
 
   # if informative, we could ask user to tell dpf at day0 to be more intuitive
   pal <- pal %>%
-    add_column(dpf=parse_number(as.character(pal$win)), .after='win')
+    add_column(dpf=readr::parse_number(as.character(pal$win)), .after='win')
 
 
   # add clutch information --------------------------------------------------
@@ -469,7 +474,7 @@ LMEsummary <- function(lmemodel,
 #'
 #' @examples
 LMEposthoc <- function(lmemodel) {
-  lmepo <- summary(emmeans(lmemodel, list(pairwise ~ grp), adjust='none'))
+  lmepo <- summary(emmeans::emmeans(lmemodel, list(pairwise ~ grp), adjust='none'))
 
   return( data.frame(referenceGroup=strNthSplit(lmepo[[2]][,1], split=' - ', n=1),
                      beingGroup=strNthSplit(lmepo[[2]][,1], split=' - ', n=2),
@@ -503,18 +508,18 @@ LMEmodel <- function(pdn,
     ### IF ONLY ONE EXP:
     if(length(unique(pdn$date_box))==1) {
       # full model
-      lmfull <- lmer(param ~ grp + (1|fish) + (1|dpf), data=pdn, REML=FALSE)
+      lmfull <- lme4::lmer(param ~ grp + (1|fish) + (1|dpf), data=pdn, REML=FALSE)
       # null model
-      lmnull <- lmer(param ~ 1 + (1|fish) + (1|dpf), data=pdn, REML=FALSE)
+      lmnull <- lme4::lmer(param ~ 1 + (1|fish) + (1|dpf), data=pdn, REML=FALSE)
 
       return(list(full=lmfull, null=lmnull))
 
       ### IF MORE THAN ONE EXP:
     } else {
       # full model
-      lmfull <- lmer(param ~ grp + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+      lmfull <- lme4::lmer(param ~ grp + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
       # null model
-      lmnull <- lmer(param ~ 1 + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+      lmnull <- lme4::lmer(param ~ 1 + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
 
       return(list(full=lmfull, null=lmnull))
     }
@@ -528,9 +533,9 @@ LMEmodel <- function(pdn,
     # note this is the same as "if more than one exp" above, but maybe better to be explicit
     if (length(unique(pdn$clutch))==1) {
       # full model
-      lmfull <- lmer(param ~ grp + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+      lmfull <- lme4::lmer(param ~ grp + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
       # null model
-      lmnull <- lmer(param ~ 1 + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+      lmnull <- lme4::lmer(param ~ 1 + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
 
       return(list(full=lmfull, null=lmnull))
     }
@@ -542,9 +547,9 @@ LMEmodel <- function(pdn,
       # indeed, fish (leaf) is a subset of date_box (plant) which is a subset of clutch (bed)
 
       # full model
-      lmfull <- lmer(param ~ grp + (1|clutch/date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+      lmfull <- lme4::lmer(param ~ grp + (1|clutch/date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
       # null model
-      lmnull <- lmer(param ~ 1 + (1|clutch/date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+      lmnull <- lme4::lmer(param ~ 1 + (1|clutch/date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
 
       return(list(full=lmfull, null=lmnull))
     }

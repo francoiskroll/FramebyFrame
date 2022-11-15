@@ -64,7 +64,7 @@ appendRAWs <- function(ffpaths,
       round((min(ffs[[2]]$exsecs) - max(ffs[[1]]$exsecs))/60, 1), 'minutes of data \n')
 
   # now can append
-  ff <- rbindlist(ffs)
+  ff <- data.table::rbindlist(ffs)
 
   # now, remember _RAWs.csv out of Vp_Sorter.R only has one time column, called 'time'
   # and it is exsecs here, so:
@@ -76,7 +76,7 @@ appendRAWs <- function(ffpaths,
   colnames(ff)[which(colnames(ff)=='exsecs')] <- 'time'
 
   # now ready to write, as if it was out of Vp_Sorter
-  fwrite(ff, exportPath, row.names=FALSE)
+  data.table::fwrite(ff, exportPath, row.names=FALSE)
 
 }
 
@@ -136,7 +136,7 @@ expMerger <- function(ffpaths,
   # part1 and part2 may not use the same 9AM as reference
   # they would only use the same 9AM as reference if the experiment was interrupted on day0
   # how many days difference between their 9AM references?
-  ndays <- day(ffs[[2]]$fullts[1]) - day(ffs[[1]]$fullts[1])
+  ndays <- lubridate::day(ffs[[2]]$fullts[1]) - lubridate::day(ffs[[1]]$fullts[1])
 
   # we simply need to add 24 * ndays to the zhrs of part2
   ffs[[2]]$zhrs <- ffs[[2]]$zhrs + 24
@@ -156,7 +156,7 @@ expMerger <- function(ffpaths,
       round((min(ffs[[2]]$exsecs) - max(ffs[[1]]$exsecs))/60, 1), 'minutes of data \n')
 
   # now can append
-  ff <- rbindlist(ffs)
+  ff <- data.table::rbindlist(ffs)
 
   # now, remember _RAWs.csv out of Vp_Sorter.R only has one time column, called 'time'
   # and it is exsecs here, so:
@@ -168,5 +168,5 @@ expMerger <- function(ffpaths,
   colnames(ff)[which(colnames(ff)=='exsecs')] <- 'time'
 
   # now ready to write, as if it was out of Vp_Sorter
-  fwrite(ff, exportPath, row.names=FALSE)
+  data.table::fwrite(ff, exportPath, row.names=FALSE)
 }

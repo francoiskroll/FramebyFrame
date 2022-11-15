@@ -25,6 +25,9 @@
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tibble add_column
+
 sleepParameter <- function(dn,
                            parameter,
                            zebpath,

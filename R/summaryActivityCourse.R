@@ -77,7 +77,7 @@ summaryActivityCourse <- function(ffpath,
     cat('\t \t \t \t >>> Summary timecourse with same settings found in folder, will use it as shortcut... \n \n')
 
     # import it
-    fsbin <- fread( list.files(beforeLastSlash(zebpath), full.names=TRUE)[which(allfiles==tccsv)] )
+    fsbin <- data.table::fread( list.files(beforeLastSlash(zebpath), full.names=TRUE)[which(allfiles==tccsv)] )
     # as fsbin, i.e. final result of function
 
     # remove genotype row we added
@@ -131,11 +131,11 @@ summaryActivityCourse <- function(ffpath,
     # eg. https://machinelearningmastery.com/moving-average-smoothing-for-time-series-forecasting-python/
 
     # smooth each well's data and keep it aside
-    smo <- data.table(sapply(4:ncol(ff), function(w){ # 4:ncol() because first 3 columns are timestamps
+    smo <- data.table::data.table(sapply(4:ncol(ff), function(w){ # 4:ncol() because first 3 columns are timestamps
 
       cat('\t \t \t \t \t >>> smoothing well', colnames(ff)[w], '\n')
 
-      unlist(frollmean(ff[,..w], n=npoints, hasNA=TRUE, na.rm=TRUE))}))
+      unlist(data.table::frollmean(ff[,..w], n=npoints, hasNA=TRUE, na.rm=TRUE))}))
 
     # copy fr to frs = fr smoothed
     # replace data with the smoothed from above
@@ -187,7 +187,7 @@ summaryActivityCourse <- function(ffpath,
     cat('\t \t \t \t >>> Downsampling in bins of ***', round(bin_nsecs/60,1), '*** minutes each \n')
 
     # binning
-    fsbin <- data.table(apply(fscrop[,-(1:timecols)], # only bin actual data, ignore first column will are fullts, zhrs, exsecs)
+    fsbin <- data.table::data.table(apply(fscrop[,-(1:timecols)], # only bin actual data, ignore first column will are fullts, zhrs, exsecs)
                               2,
                               function(x) colSums(matrix(x, nrow=bin), na.rm=TRUE))) # ? frollsum from data.table could do the job faster?
 

@@ -101,6 +101,11 @@ fillGenotype <- function(geno,
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tidyr pivot_longer
+#' @importFrom tibble add_column
+#' @importFrom dplyr mutate
+
 pivotLongAssignGenotype <- function(txf,
                                     genopath) {
 

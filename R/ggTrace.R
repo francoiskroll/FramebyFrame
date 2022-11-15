@@ -49,6 +49,7 @@
 #' @export
 #'
 #' @examples
+
 ggActivityTraceGrid <- function (ffpath,
                                  genopath,
                                  zebpath,
@@ -199,9 +200,9 @@ ggActivityTraceGrid <- function (ffpath,
 
   # arrange in a grid and export --------------------------------------------
 
-  gggrid <- ggarrange(plotlist=ggL, ncol=ncol, nrow=nrow)
+  gggrid <- ggpubr::ggarrange(plotlist=ggL, ncol=ncol, nrow=nrow)
 
-  ggsave(exportPath, gggrid, width=width, height=height, units='mm')
+  ggplot2::ggsave(exportPath, gggrid, width=width, height=height, units='mm')
 
   # return plot so it displays in RStudio
   return(gggrid)
@@ -255,6 +256,7 @@ ggActivityTraceGrid <- function (ffpath,
 #' @export
 #'
 #' @examples
+
 ggActivityTraceByGroup <- function(ffpath,
                                    genopath,
                                    zebpath,
@@ -519,6 +521,11 @@ ggSleepTraceByGroup <- function(ffpath,
 #' @export
 #'
 #' @examples
+#' @import ggplot2
+#' @importFrom dplyr %>%
+#' @importFrom dplyr filter
+#' @importFrom dplyr summarise_at
+
 ggTrace <- function(tc,
                     genopath,
                     dayduration,
@@ -643,7 +650,7 @@ ggTrace <- function(tc,
     # so for each markTimes, convert to lubridate format and calculate number of hours since 9 AM day 0
     # and that will give where to place the mark on X axis
     markZth <- as.numeric(unlist(sapply(markTimes, function(ti) {
-      difftime(ymd_hms(ti), ymd_hms(paste(date(sbg$fullts[1]), '09:00:00')), units='hours')
+      difftime(lubridate::ymd_hms(ti), lubridate::ymd_hms(paste(lubridate::date(sbg$fullts[1]), '09:00:00')), units='hours')
     })))
   }
 
@@ -845,6 +852,7 @@ ggTrace <- function(tc,
 #' @export
 #'
 #' @examples
+#' @import ggplot2
 ggSleepGrid <- function(zzz,
                         genopath,
                         boxnum=1,
@@ -924,7 +932,7 @@ ggSleepGrid <- function(zzz,
 
     # smooth if needed
     if (smoothOrNo) { # if want to smooth
-      zf$data <- frollmean(zf$data, n=smooth_npoints, hasNA=FALSE)
+      zf$data <- data.table::frollmean(zf$data, n=smooth_npoints, hasNA=FALSE)
     }
     # first smooth_npoints datapoints will be NA, leaving like this
 
@@ -964,7 +972,7 @@ ggSleepGrid <- function(zzz,
 
   # turn the list of plots into a grid of plots -----------------------------
 
-  zgri <- ggarrange(plotlist=zts, nrow=grid_nrow, ncol=grid_ncol) # grid of zzz traces
+  zgri <- ggpubr::ggarrange(plotlist=zts, nrow=grid_nrow, ncol=grid_ncol) # grid of zzz traces
 
 
   # save grid pdf -----------------------------------------------------------

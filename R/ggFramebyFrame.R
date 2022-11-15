@@ -318,8 +318,8 @@ param2Yunit <- function(param) {
 #' @export
 #'
 #' @examples
-#'
-#' @import data.table
+#' @import ggplot2
+
 ggFramerate <- function(ffpath,
                         zebpath,
                         subsample=TRUE,
@@ -461,6 +461,9 @@ ggFramerate <- function(ffpath,
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @import ggplot2
+
 ggSleepLatencySurvival <- function(pa,
                                    grporder=NA,
                                    skipNight0=FALSE,
@@ -789,7 +792,7 @@ ggSleepLatencyGrid <- function(pa,
       })
 
       # we put the day plots in a grid
-      expdayg <- ggarrange(plotlist=expdayL, ncol=length(wnps), nrow=1)
+      expdayg <- ggpubr::ggarrange(plotlist=expdayL, ncol=length(wnps), nrow=1)
 
       # and we are done with this experiment
       return(expdayg)
@@ -799,7 +802,7 @@ ggSleepLatencyGrid <- function(pa,
     })
 
     # we stack each experiment's horizontal grids in a bigger grid
-    dayg <- ggarrange(plotlist=dayL, ncol=1, nrow=length(pa))
+    dayg <- ggpubr::ggarrange(plotlist=dayL, ncol=1, nrow=length(pa))
     # ncol=1 because we are stacking the grids now, not each plot
 
     # we are done for the DAY grid
@@ -846,6 +849,8 @@ ggSleepLatencyGrid <- function(pa,
 #' @export
 #'
 #' @examples
+#' @import ggplot2
+
 ggFingerprint <- function(fgp,
                           onlyFish=NA,
                           metric='mean',
@@ -1221,6 +1226,10 @@ ggFingerprintGrid <- function(fgp,
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tidyr pivot_longer
+#' @import ggplot2
+
 ggPairwiseHeat <- function(pwm,
                            simScore,
                            grporder=NA,

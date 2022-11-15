@@ -19,6 +19,11 @@
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tidyr pivot_wider
+#' @importFrom dplyr select
+#' @importFrom dplyr mutate
+
 importBhvParams <- function(paDir,
                             poolExp1=NA,
                             poolExp2=NA,

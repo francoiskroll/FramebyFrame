@@ -90,7 +90,7 @@ splitFramesbyWoi <- function(tc,
 
   # convert woi timestamps to zth, i.e. number of hours since 9AM on day0
   woiz <- as.numeric(unlist(sapply(woi, function(ti) {
-    difftime(ymd_hms(ti), ymd_hms(paste(date(tc$fullts[1]), '09:00:00')), units='hours')
+    lubridate::difftime( lubridate::ymd_hms(ti), lubridate::ymd_hms(paste(lubridate::date(tc$fullts[1]), '09:00:00')), units='hours')
   })))
 
   # check that woi timestamps are actually within the experiment
@@ -148,6 +148,10 @@ splitFramesbyWoi <- function(tc,
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tibble add_column
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr filter
 paramReadPivot <- function(pa,
                            grporder=NA,
                            skipNight0,
@@ -172,7 +176,7 @@ paramReadPivot <- function(pa,
     for (i in 1:length(pa)) {
       # if pa is a string finishing by .csv, assume we need to import from path
       if (substrEnding(pa[i], 4)=='.csv') {
-        paL[[i]] <- fread(pa[i])
+        paL[[i]] <- data.table::fread(pa[i])
 
         # else, if pa is a string, assume we were given the object's name in Environment
       } else if (is.character(pa[i])) {
@@ -185,7 +189,7 @@ paramReadPivot <- function(pa,
 
   # rbind the list
   # source is recorded through date and box columns
-  par <- rbindlist(paL) # par for parameter rbind-ed
+  par <- data.table::rbindlist(paL) # par for parameter rbind-ed
 
   # pivot to long format
   pal <- par %>%
@@ -402,6 +406,7 @@ paramReadPivot <- function(pa,
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr summarise_at
 paramSummary <- function(pa,
                          skipNight0=FALSE,
                          poolExp1=NA,
@@ -470,6 +475,9 @@ paramSummary <- function(pa,
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tibble add_column
+
 behaviourParameter <- function(parameter,
                                ffpath,
                                genopath,
@@ -760,7 +768,7 @@ behaviourParameter <- function(parameter,
     cat('\t \t \t \t >>> Recorded', panm, 'in Environment \n')
 
     # save parameter dataframe in folder bhvparams
-    fwrite(paL[[i]], file=paste0(beforeLastSlash(zebpath[1]), 'bhvparams/', panm, '.csv'))
+    data.table::fwrite(paL[[i]], file=paste0(beforeLastSlash(zebpath[1]), 'bhvparams/', panm, '.csv'))
     cat('\t \t \t \t >>> Saved', paste0(panm, '.csv'), 'in folder bhvparams \n')
 
   }
@@ -883,8 +891,5 @@ multiBehaviourParameter <- function(parameters,
   }
 
 }
-
-
-
 
 

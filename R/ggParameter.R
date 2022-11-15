@@ -53,6 +53,8 @@
 #' @export
 #'
 #' @examples
+#' @import ggplot2
+#' @importFrom dplyr %>%
 ggParameter <- function(pa,
                         grporder=NA,
                         skipNight0=FALSE,
@@ -222,7 +224,7 @@ ggParameter <- function(pa,
 
     ggParam +
 
-    geom_quasirandom(groupOnX=TRUE, width=0.09, size=0.5, dodge.width=dodgeby) +
+    ggbeeswarm::geom_quasirandom(groupOnX=TRUE, width=0.09, size=0.5, dodge.width=dodgeby) +
     stat_summary(aes(group=grp), fun=mean, geom='point', colour='#595E60', shape=3, size=1.2, stroke=0.8, position=position_dodge(dodgeby)) +
     facet_grid(~date_box_win, scales='free_x', space='free_x') +
     {if(!is.na(colours[1])) scale_colour_manual(values=colours) } + # if user gave colours, follow them; if not ggplot will do default colours
@@ -441,9 +443,9 @@ ggParameterGrid <- function(paDir,
     # for this parameter, return a small grid: day plot next to night plot
     # ! except if activitySunsetStartle, then we only have the night plot
     if(unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
-      return(ggarrange(plotlist=list(ggnight), ncol=1, nrow=1))
+      return(ggpubr::ggarrange(plotlist=list(ggnight), ncol=1, nrow=1))
     } else {
-      return(ggarrange(plotlist=list(ggday, ggnight), ncol=2, nrow=1))
+      return(ggpubr::ggarrange(plotlist=list(ggday, ggnight), ncol=2, nrow=1))
     }
 
   })
@@ -457,9 +459,9 @@ ggParameterGrid <- function(paDir,
                                        ncol, '*', nrow, ' = ', ncol*nrow, ' cells.
                                        Please increase ncol and/or nrow setting so there is enough cells in the grid. \n')
 
-  gpgrid <- ggarrange(plotlist=gpL, ncol=ncol, nrow=nrow,
+  gpgrid <- ggpubr::ggarrange(plotlist=gpL, ncol=ncol, nrow=nrow,
                       labels=toupper(letters[1:length(gpL)]))
 
-  ggsave(filename=exportPath, plot=gpgrid, width=width, height=height, units='mm', device=cairo_pdf)
+  ggplot2::ggsave(filename=exportPath, plot=gpgrid, width=width, height=height, units='mm', device=cairo_pdf)
 
 }

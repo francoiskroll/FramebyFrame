@@ -23,6 +23,12 @@
 #' @export
 #'
 #' @examples
+#' @import ggplot2
+#' @importFrom dplyr %>%
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr filter
+#' @importFrom dplyr mutate
+
 gglegacyFingerprint <- function(lFgp,
                                 onlyGrp=NA,
                                 colours=NA,

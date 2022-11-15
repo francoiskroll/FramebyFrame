@@ -21,6 +21,10 @@
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFrom tibble add_column
+#' @importFrom dplyr summarise_at
+
 calculateFingerprint <- function(paDir,
                                  controlGrp,
                                  mergeExp1=NA,
@@ -300,6 +304,11 @@ calculateFingerprint <- function(paDir,
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr filter
+#' @importFrom tidyr pivot_wider
+#' @importFrom dplyr %>%
+#' @importFrom tibble add_column
+
 fingerprintSimilarity <- function(fgp,
                                   metric='mean',
                                   simScore,
@@ -400,7 +409,7 @@ fingerprintSimilarity <- function(fgp,
   # convert to tibble
   # ! conversion delete row.names which we need to add as first column, so keep them aside
   rownms <- row.names(fsim)
-  fsim <- as_tibble(fsim)
+  fsim <- tibble::as_tibble(fsim)
 
   # avoid using rownames
   if('fish' %in% colnames(fgp)) {

@@ -79,7 +79,7 @@ framesToActiveInactiveTransitions <- function(dn) {
     aiw <- cbind(dn[[win]][,1:timecols], aiw)
 
     # convert back to data.table
-    aiw <- data.table(aiw)
+    aiw <- data.table::data.table(aiw)
 
     # replace its slot in list dnai
     dnai[[win]] <<- aiw
@@ -112,6 +112,8 @@ framesToActiveInactiveTransitions <- function(dn) {
 #' @export
 #'
 #' @examples
+#' @importFrom dplyr %>%
+#' @importFromm tibble add_column
 activeboutParameter <- function(dn,
                                 parameter) {
 
@@ -141,8 +143,8 @@ activeboutParameter <- function(dn,
   # will set it this way below
 
   # prepare parallelisation
-  cluster <- makeCluster(length(dnai)) # decide number of clusters here
-  clusterExport(cluster, c(activeboutFunction, 'transitionsToActiveBoutStartStop', 'averageFramerate'))
+  cluster <- snow::makeCluster(length(dnai)) # decide number of clusters here
+  snow::clusterExport(cluster, c(activeboutFunction, 'transitionsToActiveBoutStartStop', 'averageFramerate'))
   # activeboutFunction from above, e.g. activeboutMean_onefish
   # clusterExport gives to each cluster the functions it will need
 
@@ -155,35 +157,35 @@ activeboutParameter <- function(dn,
 
   # ** FIRST sapply to loop through time window, typically night0, day1, ...
   # this is parallel sapply, it's like a normal sapply if you ignore first argument 'cluster'
-  pal <- parSapply(cluster,
-                   1:length(dnai), function(win) {
+  pal <- snow::parSapply(cluster,
+                         1:length(dnai), function(win) {
 
-                     # seems to create a conflict I cannot resolve with data.table annotation
-                     # will convert that time window's data into dataframe temporarily
-                     dnw <- as.data.frame(dn[[win]])
-                     dnaiw <- as.data.frame(dnai[[win]])
+                           # seems to create a conflict I cannot resolve with data.table annotation
+                           # will convert that time window's data into dataframe temporarily
+                           dnw <- as.data.frame(dn[[win]])
+                           dnaiw <- as.data.frame(dnai[[win]])
 
-                     # we will need to tell 'one fish' activeboutFunction the framerate
-                     # so calculate it here
-                     fps <- averageFramerate(dnw$exsecs) # will print fps to Console too
-                     # in practice, fps is only used for conversion from frames to seconds in activeboutLength
+                           # we will need to tell 'one fish' activeboutFunction the framerate
+                           # so calculate it here
+                           fps <- averageFramerate(dnw$exsecs) # will print fps to Console too
+                           # in practice, fps is only used for conversion from frames to seconds in activeboutLength
 
-                     # ** SECOND sapply to loop through fish...
-                     sapply((timecols+1):ncol(dnaiw),
-                            function(fic) {
-                              # fic for fish column, will loop e.g. column #4, #5, ... (assuming first three columns are timestamps)
+                           # ** SECOND sapply to loop through fish...
+                           sapply((timecols+1):ncol(dnaiw),
+                                  function(fic) {
+                                    # fic for fish column, will loop e.g. column #4, #5, ... (assuming first three columns are timestamps)
 
-                              # calculate the mean activebout parameter for this fish
-                              # using function activeboutParameter_onefish()
-                              # we give it
-                              # ffc = frame-by-frame data for that time window/fish, ffc for frame-by-frame column
-                              # aic = the active/inactive transitions for that time window/fish, aic for active/inactive column
-                              return(activeboutFunction(ffc=dnw[,fic],
-                                                        aic=dnaiw[fic],
-                                                        fps=fps))
-                            })
+                                    # calculate the mean activebout parameter for this fish
+                                    # using function activeboutParameter_onefish()
+                                    # we give it
+                                    # ffc = frame-by-frame data for that time window/fish, ffc for frame-by-frame column
+                                    # aic = the active/inactive transitions for that time window/fish, aic for active/inactive column
+                                    return(activeboutFunction(ffc=dnw[,fic],
+                                                              aic=dnaiw[fic],
+                                                              fps=fps))
+                                  })
 
-                   })
+                         })
 
 
   # overarching (** first) sapply gives 'pal' directly as a table columns = day/night rows = fish

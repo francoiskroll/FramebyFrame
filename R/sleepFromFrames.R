@@ -216,7 +216,7 @@ detectNaps <- function(ffsource,
 
     ### smaller sapply to loop through fish ###
     # and do rolling sum etc. for each
-    zzz <- data.table(sapply( (timecols+1):ncol(ffordn[[win]]) , function(w) {
+    zzz <- data.table::data.table(sapply( (timecols+1):ncol(ffordn[[win]]) , function(w) {
 
       cat('\t \t \t \t \t \t >>> detecting naps for well', colnames(ffordn[[win]])[w], '\n')
 
@@ -233,7 +233,7 @@ detectNaps <- function(ffsource,
       }
 
       # `roll` stores rolling sum results for one window, one fish
-      roll <- unlist(frollsum(fwf, n=zthr, fill=NA, algo='fast', align='right', na.rm=FALSE))
+      roll <- unlist(data.table::frollsum(fwf, n=zthr, fill=NA, algo='fast', align='right', na.rm=FALSE))
       # frollsum from data.table
       # align='right' means preceding rows are taken in the sum
       # e.g. if window is at frame 15 and zthr is 10, it covers rows 5 to 15
@@ -487,7 +487,7 @@ summarySleepCourse <- function(ffpath,
   # binning
 
   # bin asleep/awake frames data
-  ffzb <- data.table(apply(ffzcrop[, (timecols+1) : ncol(ffzcrop) ], # skip time columns
+  ffzb <- data.table::data.table(apply(ffzcrop[, (timecols+1) : ncol(ffzcrop) ], # skip time columns
                            2,
                            function(x) colSums(matrix(x, nrow=epo), na.rm=TRUE)))
   # colSums is the core of the function: it sums asleep/awake frames within epo, typically 10 min * 60 sec * 25 fps
@@ -576,7 +576,7 @@ summarySleepCourse <- function(ffpath,
   cat('\t \t \t \t \t filename is zzztc _ YYMMDD _BX _ epo `epoch in minutes` .csv', '\n')
 
   # export
-  fwrite(ffzbexp, file=zzztcpath)
+  data.table::fwrite(ffzbexp, file=zzztcpath)
 
 
   # how many time columns? --------------------------------------------------
@@ -610,11 +610,11 @@ summarySleepCourse <- function(ffpath,
     # by saying copy(), we explicitly tell data.table to *really* copy it
 
     # smooth each well's data and keep it aside
-    smo <- data.table(sapply( (timecols+1) : ncol(zs), function(w){ # skip time columns
+    smo <- data.table::data.table(sapply( (timecols+1) : ncol(zs), function(w){ # skip time columns
 
       cat('\t \t \t \t \t \t >>> smoothed well', colnames(zs)[w], ' \n')
 
-      unlist(frollmean(zs[,..w], n=smooth_npoints, hasNA=TRUE, na.rm=TRUE))}))
+      unlist(data.table::frollmean(zs[,..w], n=smooth_npoints, hasNA=TRUE, na.rm=TRUE))}))
 
 
     # replace data in zs with the smoothed from above

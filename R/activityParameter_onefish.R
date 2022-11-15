@@ -258,7 +258,7 @@ activityFractalDim_onefish <- function(ffc,
   fs <- fs[-(1:120)]
 
   ### step3: measure fractal dimension ###
-  return(as.numeric(fd.estimate(fs, methods='boxcount')$fd)) # *** method boxcount to measure fractal dimension ***
+  return(as.numeric(fractaldim::fd.estimate(fs, methods='boxcount')$fd)) # *** method boxcount to measure fractal dimension ***
   # https://www.mssanz.org.au/MODSIM97/Vol%201/Breslin.pdf (really nice paper to read)
   # recommended 'variation' but made no sense when testing it; it was not reacting to binning or smoothing
   # boxcount was behaving as expecting, e.g. decreasing with increasing smoothing
