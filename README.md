@@ -189,7 +189,7 @@ To plot instantaneous frame rates during our experiment:
                 height=55,
                 exportPath='~/.../framerate.pdf')
 
-![](tutorialPics/framerate.pdf?raw=true)
+![](tutorialPics/framerate.png?raw=true)
 
 Every command that generates a plot starts with `gg` (it stands for "grammar of graphics", if you were curious).  
 
