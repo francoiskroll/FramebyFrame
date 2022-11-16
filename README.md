@@ -28,10 +28,10 @@ Then:
     # load the package devtools:
     library(devtools)
 
-    # install FramebyFrame from the present repo:
+    # install the package FramebyFrame from the present repo:
     install_github("francoiskroll/FramebyFrame")
 
-    # load the package FramebyFrame
+    # load FramebyFrame
     library(FramebyFrame)
 
 

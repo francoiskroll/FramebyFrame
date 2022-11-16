@@ -4,13 +4,7 @@
 \alias{appendRAWs}
 \title{Title}
 \usage{
-appendRAWs(
-  ffpaths,
-  zebpaths,
-  zebDeprecatedFormat = FALSE,
-  dayduration = 14,
-  exportPath
-)
+appendRAWs(ffpaths, zebpaths, dayduration = 14, exportPath)
 }
 \arguments{
 \item{exportPath}{}

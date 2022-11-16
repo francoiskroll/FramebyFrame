@@ -11,7 +11,6 @@
 #'
 #' @param ffpaths
 #' @param zebpaths
-#' @param zebDeprecatedFormat
 #' @param dayduration
 #' @param exportPath
 #'
@@ -21,7 +20,6 @@
 #' @examples
 appendRAWs <- function(ffpaths,
                        zebpaths,
-                       zebDeprecatedFormat=FALSE,
                        dayduration=14,
                        exportPath) {
 
@@ -99,7 +97,6 @@ appendRAWs <- function(ffpaths,
 #' @param ffpaths
 #' @param genopaths
 #' @param zebpath
-#' @param zebDeprecatedFormat
 #' @param dayduration
 #' @param exportPath
 #'
@@ -110,7 +107,6 @@ appendRAWs <- function(ffpaths,
 expMerger <- function(ffpaths,
                       genopaths,
                       zebpath,
-                      zebDeprecatedFormat=FALSE,
                       dayduration=14,
                       exportPath) {
 
@@ -119,7 +115,6 @@ expMerger <- function(ffpaths,
 
     importAddTimetoRAWs(ffpath=ffpaths[r],
                         zebpath=zebpath,
-                        zebDeprecatedFormat=zebDeprecatedFormat,
                         dayduration=dayduration)
 
   })

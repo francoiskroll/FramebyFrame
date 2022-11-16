@@ -1,6 +1,30 @@
 # small functions to handle path strings
 
 
+#' Title
+#'
+#' @param path
+#'
+#' @return
+#' @export
+#'
+#' @examples
+whatSlash <- function(path) {
+  # Am I running on a Windows or a Mac?
+  # on Windows, slash in path will be \\
+  # on Mac, slash in path with /
+  # so simply try:
+  if (length(which(strsplit(path, '')[[1]] == '/')) > 0) {
+    # then we are on a Mac, and the slash character is:
+    return('/')
+  } else if (length(which(strsplit(path, '')[[1]] == '\\')) > 0) {
+    # then we are on a Windows, and the slash character is:
+    return('\\\\')
+  }
+}
+
+
+
 # substrEnding ------------------------------------------------------------
 # take n last characters of a string
 # e.g. substrEnding('210907_12_RAWs.csv', 3) >>> csv

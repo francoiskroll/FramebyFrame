@@ -47,7 +47,6 @@ sleepParameter <- function(dn,
   # dnz for day/night asleep/not asleep booleans
   dnz <- detectNaps(ffsource=dn,
                     zebpath=zebpath,
-                    zebDeprecatedFormat=zebDeprecatedFormat,
                     woi=woi,
                     zthr_min=zthr_min,
                     inaThr=inaThr,

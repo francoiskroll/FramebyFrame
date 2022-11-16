@@ -10,6 +10,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Imports:
+    BBmisc,
     data.table,
     dplyr,
     emmeans,
@@ -22,13 +23,17 @@ Imports:
     lme4,
     lsa,
     lubridate,
+    naturalsort,
     R.matlab,
     readr,
     scales,
     snow,
+    stats,
     survival,
     tibble,
-    tidyr
+    tictoc,
+    tidyr,
+    zoo
 Depends:
     R (>= 2.10)
 LazyData: true
