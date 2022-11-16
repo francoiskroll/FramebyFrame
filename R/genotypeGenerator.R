@@ -126,10 +126,10 @@ genotypeGenerator <- function(plateMap) {
 
   datebox <- substr(strsplit(afterLastSlash(plateMap), split='.xlsx')[[1]], 1, 9)
 
-  readme_header <- rbind (paste('Date_Box: ', datebox, 1, 9), sep='',
+  readme_header <- rbind (paste('Date_Box:', datebox), sep='',
                           paste('Plate map: ', plateMap, sep=''),
                           '',
-                          paste('Total N = ', sum(geno_lgths), ' in ', length(genos), ' genotypes', sep=''),
+                          paste('Total N = ', sum(geno_lgths), ' in ', length(genos), ' groups', sep=''),
                           eachgeno,
                           '',
                           paste('Number of empty wells = ', length(which(cnts=='empty')), sep=''),

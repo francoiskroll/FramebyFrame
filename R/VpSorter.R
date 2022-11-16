@@ -255,6 +255,7 @@ SpeaknRecord <- function(..., header=0, warning=FALSE) {
 #' @importFrom dplyr %>%
 #' @importFrom tidyr pivot_longer
 #' @importFrom tibble add_column
+#' @importFrom dplyr inner_join
 
 vpSorter <- function(ffDir,
                      zebpath=NA,
