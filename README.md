@@ -19,7 +19,7 @@ ___
 
 ## Installation
 
-Below uses the package `devtools`. If you do not have it already, first run in R:
+Installation requires the package `devtools`. If you do not have it already, first run in R:
 
     install.packages("devtools")
 
@@ -38,3 +38,7 @@ Then:
 And you should be good to go!
 
 ___
+
+## Minimal example
+
+Impatient? Here is a quick step-by-step example of a FramebyFrame analysis. It can do many other things, so make sure to check the full documentation once you get the gist of it.

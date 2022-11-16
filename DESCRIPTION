@@ -33,6 +33,7 @@ Imports:
     tibble,
     tictoc,
     tidyr,
+    tidyxl,
     zoo
 Depends:
     R (>= 2.10)
