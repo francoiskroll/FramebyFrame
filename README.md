@@ -136,10 +136,10 @@ These are only brief notes on the settings, please refer to the documentation fo
 
 `vpSorter` should write _220531_14_RAWs.csv_ in your experiment folder. The format is fairly simple:  
 
-| fullts      | zhrs        | exsecs | f1 | f2 | ... |
-| ----------- | ----------- | ------- | -------| | |
-| 2022-05-31 14:08:12| 5.136678 |    0.040393   | 0 | 29 | ... |
-| 2022-05-31 14:08:12| 5.136689 |    0.079975   | 3 | 19 | ... |
+| fullts              | zhrs        | exsecs     | f1     | f2     | ...    |
+|:--------------------|:------------|:-----------|:-------|:-------|:-------|
+| 2022-05-31 14:08:12 | 5.136678    | 0.040393   | 0      | 29     | ...    |
+| 2022-05-31 14:08:12 | 5.136689    | 0.079975   | 3      | 19     | ...    |
 
 Each row is one frame. Each column is one well, plus a few timestamp columns at the start.
 
