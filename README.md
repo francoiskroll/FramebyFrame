@@ -189,6 +189,8 @@ To plot instantaneous frame rates during our experiment:
                 height=55,
                 exportPath='~/.../framerate.pdf')
 
+![](tutorialPics/framerate.pdf?raw=true)
+
 Every command that generates a plot starts with `gg` (it stands for "grammar of graphics", if you were curious).  
 
 Some minimal explanations of the important settings:  
@@ -219,7 +221,7 @@ ___
 * paths
 
 ## R tips
-> under construction, do not read 
+> under construction, do not read
 
 * here package  
 * don't save .Rdata
