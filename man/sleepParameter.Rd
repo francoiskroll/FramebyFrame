@@ -4,18 +4,10 @@
 \alias{sleepParameter}
 \title{Title}
 \usage{
-sleepParameter(
-  dn,
-  parameter,
-  zebpath,
-  woi = woi,
-  zthr_min,
-  inaThr,
-  dayduration
-)
+sleepParameter(dn, parameter, woi = woi, zthr_min, inaThr)
 }
 \arguments{
-\item{dayduration}{}
+\item{inaThr}{}
 }
 \description{
 Title

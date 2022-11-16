@@ -4,8 +4,6 @@
 #'
 #' @param ffpath
 #' @param genopath
-#' @param zebpath
-#' @param dayduration
 #' @param smoothOrNo
 #' @param smooth_nsecs
 #' @param binOrNo
@@ -19,8 +17,6 @@
 
 summaryActivityCourse <- function(ffpath,
                                   genopath,
-                                  zebpath,
-                                  dayduration=14,
                                   smoothOrNo=TRUE,
                                   smooth_nsecs=30*60,
                                   binOrNo=TRUE,
@@ -69,9 +65,9 @@ summaryActivityCourse <- function(ffpath,
   # could be there if was ran during a previous R session
 
   # fullpath it would be under is tcfpath, built above
-  # list all files in zebpath folder
+  # list all files in ffpath folder
   # all files in folder
-  allfiles <- list.files(beforeLastSlash(zebpath))
+  allfiles <- list.files(beforeLastSlash(ffpath))
 
   # if tcpath is in the folder
   if (tccsv %in% allfiles) {
@@ -79,7 +75,7 @@ summaryActivityCourse <- function(ffpath,
     cat('\t \t \t \t >>> Summary timecourse with same settings found in folder, will use it as shortcut... \n \n')
 
     # import it
-    fsbin <- data.table::fread( list.files(beforeLastSlash(zebpath), full.names=TRUE)[which(allfiles==tccsv)] )
+    fsbin <- data.table::fread( list.files(beforeLastSlash(ffpath), full.names=TRUE)[which(allfiles==tccsv)] )
     # as fsbin, i.e. final result of function
 
     # remove genotype row we added
@@ -97,9 +93,7 @@ summaryActivityCourse <- function(ffpath,
 
 
   # import frame-by-frame data ----------------------------------------------
-  ff <- importAddTimetoRAWs(ffpath=ffpath,
-                            zebpath=zebpath,
-                            dayduration=dayduration)
+  ff <- importRAWs(ffpath=ffpath)
 
 
   # calculate framerate -----------------------------------------------------

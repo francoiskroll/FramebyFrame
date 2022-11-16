@@ -7,11 +7,9 @@
 summarySleepCourse(
   ffpath,
   genopath,
-  zebpath,
   zthr_min,
   inaThr,
   epo_min = 10,
-  dayduration = 14,
   smoothOrNo = FALSE,
   smooth_npoints
 )

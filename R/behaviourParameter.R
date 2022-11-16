@@ -466,11 +466,9 @@ paramSummary <- function(pa,
 #' @param parameter
 #' @param ffpath
 #' @param genopath
-#' @param zebpath
 #' @param woi
 #' @param zthr_min
 #' @param inaThr
-#' @param dayduration
 #'
 #' @return
 #' @export
@@ -482,7 +480,6 @@ paramSummary <- function(pa,
 behaviourParameter <- function(parameter,
                                ffpath,
                                genopath,
-                               zebpath,
                                woi=NA,
                                zthr_min=1,
                                inaThr=0,
@@ -504,7 +501,7 @@ behaviourParameter <- function(parameter,
     stop('\t \t \t \t >>> Error behaviourParameter: sorry, calculating parameter activityTransitionDelta is not currently supported when analysing window(s) of interest \n')
 
 
-  # check ffpath(s), genopath(s), zebpath(s)
+  # check ffpath(s) and genopath(s)
 
   # need one geno file per ff
   if(length(genopath) != length(ffpath))
@@ -531,57 +528,6 @@ behaviourParameter <- function(parameter,
            \t \t \t Are you sure they are meant to be matched? \n')
   }
 
-  # check zebpaths
-  # broadly, same logic: zebpaths should be given in same order as ffpaths/genopaths
-  # however, regular situation is two boxes in parallel, so two ffpaths/genopaths but only one zebpath
-  # that case is frequent so will allow to just give the zebpath once
-
-  # check this case first
-  if(length(ffpath)==2 & length(genopath)==2 & length(zebpath)==1) {
-
-    zbdt <- substr(afterLastSlash(zebpath[1]), 1, 6)
-
-    ff1dt <- substr(afterLastSlash(ffpath[1]), 1, 6)
-    ff2dt <- substr(afterLastSlash(ffpath[2]), 1, 6)
-
-    gn1dt <- substr(afterLastSlash(genopath[1]), 1, 6)
-    gn2dt <- substr(afterLastSlash(genopath[2]), 1, 6)
-
-    # all the dates have to be identical
-    # or in other words, there should be only one unique date
-    if (length(unique(c(zbdt, ff1dt, ff2dt, gn1dt, gn2dt))) != 1)
-      stop('\t \t \t \t >>> Error: the date of one of the ffpath or genopath does not match the date of the zebpath.
-           Are you sure you gave the right Zebrabox .XLS file? \n')
-
-    # if we are in the case of two boxes/one Zebrabox XLS file are everything is ok
-    # repeat the zebpath so we can proceed the same for all cases after
-    zebpath <- c(zebpath, zebpath)
-
-  } else {
-
-    # check the zebpaths in other situations
-    # (partially repeats first check)
-    for (i in 1:length(ffpath)) {
-
-      # get date of ffpath i
-      ffdt <- substr(afterLastSlash(ffpath[i]), 1, 7)
-
-      # get date of genopath i
-      gndt <- substr(afterLastSlash(genopath[i]), 1, 7)
-
-      # get date of zebpath i
-      zbdt <- substr(afterLastSlash(zebpath[i]), 1, 7)
-
-      # check they are the same
-      if (length(unique(c(ffdt, gndt, zbdt))) != 1)
-        stop('\t \t \t \t >>> Error: frame-by-frame file *', afterLastSlash(ffpath[i]),
-             '* and genotype file *', afterLastSlash(genopath[i]), '* do not have the same date as Zebrabox file *',
-             afterLastSlash(zebpath[i]), '* \
-           \t \t \t Are you sure they are meant to be matched? \n')
-    }
-
-  }
-
 
   # import frame-by-frame data ----------------------------------------------
 
@@ -592,7 +538,7 @@ behaviourParameter <- function(parameter,
 
     cat('\n \n \t \t \t \t >>> Reading frame-by-frame data of experiment', substr(afterLastSlash(ffpath[i]), 1, 9), '\n')
 
-    ffL[[i]] <- importAddTimetoRAWs(ffpath[i], zebpath[i])
+    ffL[[i]] <- importRAWs(ffpath[i])
   }
 
 
@@ -684,11 +630,9 @@ behaviourParameter <- function(parameter,
     for (i in 1:length(dnL)) {
       paL[[i]] <- sleepParameter(dn=dnL[[i]],
                                  parameter=parameter,
-                                 zebpath=zebpath[i],
                                  woi=woi,
                                  zthr_min=zthr_min,
-                                 inaThr=inaThr,
-                                 dayduration=dayduration)
+                                 inaThr=inaThr)
     }
   }
 
@@ -749,8 +693,8 @@ behaviourParameter <- function(parameter,
   # in a new folder called bhvparams
 
   # create bhvparams
-  # ! will create wherever the first zebpath is
-  dir.create(paste0(beforeLastSlash(zebpath[1]), 'bhvparams/'), showWarnings=FALSE)
+  # ! will create wherever the first ffpath is
+  dir.create(paste0(beforeLastSlash(ffpath[1]), 'bhvparams/'), showWarnings=FALSE)
   # showWarnings=FALSE so it does not print a warning if directory exists already
 
   # remember object names we create below
@@ -769,7 +713,7 @@ behaviourParameter <- function(parameter,
     cat('\t \t \t \t >>> Recorded', panm, 'in Environment \n')
 
     # save parameter dataframe in folder bhvparams
-    data.table::fwrite(paL[[i]], file=paste0(beforeLastSlash(zebpath[1]), 'bhvparams/', panm, '.csv'))
+    data.table::fwrite(paL[[i]], file=paste0(beforeLastSlash(ffpath[1]), 'bhvparams/', panm, '.csv'))
     cat('\t \t \t \t >>> Saved', paste0(panm, '.csv'), 'in folder bhvparams \n')
 
   }
@@ -803,11 +747,9 @@ behaviourParameter <- function(parameter,
 #' @param parameters
 #' @param ffpath
 #' @param genopath
-#' @param zebpath
 #' @param woi
 #' @param zthr_min
 #' @param inaThr
-#' @param dayduration
 #'
 #' @return
 #' @export
@@ -816,7 +758,6 @@ behaviourParameter <- function(parameter,
 multiBehaviourParameter <- function(parameters,
                                     ffpath,
                                     genopath,
-                                    zebpath,
                                     woi=NA,
                                     zthr_min=1,
                                     inaThr=0,
@@ -883,7 +824,6 @@ multiBehaviourParameter <- function(parameters,
     behaviourParameter(parameter=parameters[p],
                        ffpath=ffpath,
                        genopath=genopath,
-                       zebpath=zebpath,
                        woi=woi,
                        zthr_min=zthr_min,
                        inaThr=inaThr,

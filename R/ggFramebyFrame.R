@@ -297,7 +297,6 @@ param2Yunit <- function(param) {
 #' Title
 #'
 #' @param ffpath
-#' @param zebpath
 #' @param subsample
 #' @param subsample_by
 #' @param xstart
@@ -320,7 +319,6 @@ param2Yunit <- function(param) {
 #' @import ggplot2
 
 ggFramerate <- function(ffpath,
-                        zebpath,
                         subsample=TRUE,
                         subsample_by=1000,
                         xstart=0,
@@ -350,7 +348,7 @@ ggFramerate <- function(ffpath,
 
 
   ### import frame-by-frame data ###
-  ff <- importAddTimetoRAWs(ffpath=ffpath, zebpath=zebpath)
+  ff <- importRAWs(ffpath=ffpath)
 
 
   # sunlines & xstop parameters ---------------------------------------------

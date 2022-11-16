@@ -140,10 +140,6 @@ importRAWs <- function(ffpath) {
 
     cat('\t \t \t \t >>> Detected *', nwells,'* -wells plate \n')
 
-    # check format looks correct
-    # detect number
-    if(ncol(ff)!=nwells+1) stop('\t \t \t \t >>> Error: why _RAWs.csv file does not have number of wells + 1 columns? \n')
-
     fps <- averageFramerate(ff$exsecs)
     cat('\t \t \t \t >>> Experiment lasted ***', round(nrow(ff)/fps/60/60,0), '*** hours \n')
 

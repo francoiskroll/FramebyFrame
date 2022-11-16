@@ -7,8 +7,6 @@
 summaryActivityCourse(
   ffpath,
   genopath,
-  zebpath,
-  dayduration = 14,
   smoothOrNo = TRUE,
   smooth_nsecs = 30 * 60,
   binOrNo = TRUE,

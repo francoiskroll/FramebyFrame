@@ -4,7 +4,7 @@
 \alias{expMerger}
 \title{Title}
 \usage{
-expMerger(ffpaths, genopaths, zebpath, dayduration = 14, exportPath)
+expMerger(ffpaths, genopaths, exportPath)
 }
 \arguments{
 \item{exportPath}{}

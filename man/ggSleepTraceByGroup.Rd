@@ -7,7 +7,6 @@
 ggSleepTraceByGroup(
   ffpath,
   genopath,
-  zebpath,
   zthr_min = 1,
   inaThr = 0,
   epo_min = 10,

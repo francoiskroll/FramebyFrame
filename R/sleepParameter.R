@@ -15,11 +15,9 @@
 #'
 #' @param dn
 #' @param parameter
-#' @param zebpath
 #' @param woi
 #' @param zthr_min
 #' @param inaThr
-#' @param dayduration
 #'
 #' @return
 #' @export
@@ -30,11 +28,9 @@
 
 sleepParameter <- function(dn,
                            parameter,
-                           zebpath,
                            woi=woi,
                            zthr_min,
-                           inaThr,
-                           dayduration) {
+                           inaThr) {
 
   # what is the parameter function we need to use?
 
@@ -46,11 +42,9 @@ sleepParameter <- function(dn,
   # first convert dn into asleep/not asleep booleans using detectNaps(...)
   # dnz for day/night asleep/not asleep booleans
   dnz <- detectNaps(ffsource=dn,
-                    zebpath=zebpath,
                     woi=woi,
                     zthr_min=zthr_min,
-                    inaThr=inaThr,
-                    dayduration=dayduration)
+                    inaThr=inaThr)
 
   # (how many time columns?)
   # need this number below so we do not loop through the time columns

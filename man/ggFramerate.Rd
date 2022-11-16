@@ -6,7 +6,6 @@
 \usage{
 ggFramerate(
   ffpath,
-  zebpath,
   subsample = TRUE,
   subsample_by = 1000,
   xstart = 0,

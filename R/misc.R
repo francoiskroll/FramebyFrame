@@ -10,8 +10,6 @@
 #' Title
 #'
 #' @param ffpaths
-#' @param zebpaths
-#' @param dayduration
 #' @param exportPath
 #'
 #' @return
@@ -19,17 +17,13 @@
 #'
 #' @examples
 appendRAWs <- function(ffpaths,
-                       zebpaths,
-                       dayduration=14,
                        exportPath) {
 
   if(length(ffpaths)!=2) stop('\t \t \t \t Error appendRAWs: sorry, only supports appending two RAWs.csv for now \n')
 
   ffs <- lapply(1:length(ffpaths), function(r) {
 
-    importAddTimetoRAWs(ffpath=ffpaths[r],
-                        zebpath=zebpaths[r],
-                        dayduration=dayduration)
+    addTimetoRAWs(ffpath=ffpaths[r])
 
   })
 
@@ -96,8 +90,6 @@ appendRAWs <- function(ffpaths,
 #'
 #' @param ffpaths
 #' @param genopaths
-#' @param zebpath
-#' @param dayduration
 #' @param exportPath
 #'
 #' @return
@@ -106,16 +98,12 @@ appendRAWs <- function(ffpaths,
 #' @examples
 expMerger <- function(ffpaths,
                       genopaths,
-                      zebpath,
-                      dayduration=14,
                       exportPath) {
 
   ### import the RAWs.csv one by one and put them in a list
   ffL <- lapply(1:length(ffpaths), function(r) {
 
-    importAddTimetoRAWs(ffpath=ffpaths[r],
-                        zebpath=zebpath,
-                        dayduration=dayduration)
+    importRAWs(ffpath=ffpaths[r])
 
   })
 

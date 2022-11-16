@@ -47,29 +47,24 @@
 # or because it was inactive but the fish had moved sometimes in the (60*fps)-1 (typically 1499) preceding frames
 
 # ffpath = full path to frame-by-frame deltapx data, typically YYMMDD_BX_RAWs.csv
-# zebpath = full path to xls Zebralab file, typically YYMMDD_BX1_BX2_XXX.xls
 # zthr_min = minimum number of minutes of inactivity for a period to be considered sleep
 # recommended to leave as default 1 minute, cf. Prober et al, 2006
 
 #' Title
 #'
 #' @param ffsource
-#' @param zebpath
 #' @param woi
 #' @param zthr_min
 #' @param inaThr
-#' @param dayduration
 #'
 #' @return
 #' @export
 #'
 #' @examples
 detectNaps <- function(ffsource,
-                       zebpath,
                        woi=NA,
                        zthr_min=1,
-                       inaThr=0,
-                       dayduration) {
+                       inaThr=0) {
 
   # did sleep detection settings changed since last time? -------------------
 
@@ -117,14 +112,12 @@ detectNaps <- function(ffsource,
   # dn, i.e. ff split in a list of day/night windows by splitFramesbyDayNight(...)
 
   # if ffsource is a string that finishes with .csv, will assume we are given the path to _RAWs.csv
-  # note, importAddTimetoRAWs checks if was loaded already
+  # note, importRAWs checks if was loaded already
   if (is.character(ffsource)) {
 
     if (substrEnding(ffsource, 4)=='.csv') { # need to put this as second If otherwise it checks the entire dataframes when given `dn`
       cat('\n \t \t \t \t >>> Running on complete timecourse...\n')
-      ffordn <- importAddTimetoRAWs(ffpath=ffsource,
-                                    zebpath=zebpath,
-                                    dayduration=dayduration)
+      ffordn <- importRAWs(ffpath=ffsource)
 
       # rest will be much simpler if put ff in a list with one element so we can run same commands whether using ff or dn
       ffordn <- list(ffordn)
@@ -141,33 +134,11 @@ detectNaps <- function(ffsource,
     # not if it was already ran on the same `dn` data during this R session
     # if object was recorded in Environment at the end of detectNaps() previously, it is called dnz_YYMMDD_BX
 
-    # so build name of object from zebpath
-    zebnm <- afterLastSlash(zebpath) # everything after last slash of path, should give something like 210927_14_15_APPA.xls
+    # so build name of object from ffpath
+    ffnm <- afterLastSlash(ffpath) # everything after last slash of path, should give something like 210927_14_RAWs.csv
 
-    # for the object's name, we want to get to dnz_YYMMDD_BX, e.g. dnz_210927_14 for box1 and dnz_210927_15 for box2
-    # so depends a bit whether box1 or box2
-
-    # guess whether we are given box1 data or box2 data
-    # regex below takes all column names that are like f + number
-    firstID <- colnames(ffordn[[1]]) [which(grepl("^f+[[:digit:]]", colnames(ffordn[[1]])))][1] # will get first fish ID
-
-    if (as.integer(substr(firstID, 2, 999)) %in% 1:96) {
-      boxnum <- 1
-    } else if (as.integer(substr(firstID, 2, 999)) %in% 97:192) {
-      boxnum <- 2
-    } else {
-      stop('\t \t \t \t >>> Issue with detecting box number in detectNaps(...). First fish ID is', firstID, '\n')
-    }
-
-    # dnz is for frame-by-frame data split by day/night, zzz booleans
-    # dnznm, nm is for name
-    if(boxnum==1) {
-      dnzname <- paste0('dnz_', substr(zebnm, 1, 9))
-    } else if(boxnum==2) {
-      dnzname <- paste0('dnz_', substr(zebnm, 1, 7), substr(zebnm, 11, 12))
-    } else {
-      stop('\t \t \t \t >>> boxnum argument must be 1 or 2 \n')
-    }
+    # for the object's name, we want to get to dnz_YYMMDD_BX
+    dnzname <- paste0('dnz_', substr(ffnm, 1, 9))
 
     # now, is there an object by the name of dnzname?
     # look in Environment (ls() lists all objects) if dnzname is there
@@ -364,24 +335,21 @@ detectNaps <- function(ffsource,
 
 # ffpath = full path to frame-by-frame data (typically YYMMDD_BX_RAWs.csv)
 # genopath = full path to genotype file (typically YYMMDD_BXgenotype.txt)
-# zebpath = full path to Zebralab XLS file (typically YYMMDD_BX_BX.xls)
 # zthr_min = minimum number of minutes to call a period of inactivity 'sleep'; usually 1 minute
 # epoch_min = epoch in minutes
 # used as a more intuitive metric of sleep overtime; time asleep in each epoch
 # usually 10 minutes; as in number of minutes asleep per 10 minutes
 # writeSleepdata = whether or not to write sleep data
 # it is a CSV file, columns = fish, rows = epochs, data = number of minutes spent asleep in `epo_min`-epochs (typically 10-min)
-# filename will be YYMMDD_BX_sleep.csv (if zebpath was written correctly)
+# filename will be YYMMDD_BX_sleep.csv (if ffpath was written correctly)
 
 #' Title
 #'
 #' @param ffpath
 #' @param genopath
-#' @param zebpath
 #' @param zthr_min
 #' @param inaThr
 #' @param epo_min
-#' @param dayduration
 #' @param smoothOrNo
 #' @param smooth_npoints
 #'
@@ -392,11 +360,9 @@ detectNaps <- function(ffsource,
 #' @importFrom data.table :=
 summarySleepCourse <- function(ffpath,
                                genopath,
-                               zebpath,
                                zthr_min,
                                inaThr,
                                epo_min=10,
-                               dayduration=14,
                                smoothOrNo=FALSE,
                                smooth_npoints) {
 
@@ -446,10 +412,8 @@ summarySleepCourse <- function(ffpath,
   # switch to frame asleep/awake with function detectNaps(...) --------------
 
   ffz <- detectNaps(ffsource=ffpath,
-                    zebpath=zebpath,
                     zthr_min=zthr_min,
-                    inaThr=inaThr,
-                    dayduration=dayduration)
+                    inaThr=inaThr)
 
 
 

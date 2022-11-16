@@ -7,7 +7,6 @@
 ggActivityTraceGrid(
   ffpath,
   genopath,
-  zebpath,
   dayduration = 14,
   smoothOrNo = FALSE,
   smooth_nsecs = 30 * 60,

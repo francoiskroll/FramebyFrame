@@ -8,15 +8,13 @@ multiBehaviourParameter(
   parameters,
   ffpath,
   genopath,
-  zebpath,
   woi = NA,
   zthr_min = 1,
-  inaThr = 0,
-  dayduration = 14
+  inaThr = 0
 )
 }
 \arguments{
-\item{dayduration}{}
+\item{inaThr}{}
 }
 \description{
 Title

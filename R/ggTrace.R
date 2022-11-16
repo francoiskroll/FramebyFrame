@@ -18,7 +18,6 @@
 #'
 #' @param ffpath
 #' @param genopath
-#' @param zebpath
 #' @param dayduration
 #' @param smoothOrNo
 #' @param smooth_nsecs
@@ -52,7 +51,6 @@
 
 ggActivityTraceGrid <- function (ffpath,
                                  genopath,
-                                 zebpath,
                                  dayduration=14,
                                  smoothOrNo=FALSE,
                                  smooth_nsecs=30*60,
@@ -97,7 +95,6 @@ ggActivityTraceGrid <- function (ffpath,
   # acttc for activity timecourse
   acttc <- summaryActivityCourse(ffpath=ffpath,
                                  genopath=genopath,
-                                 zebpath=zebpath,
                                  dayduration=dayduration,
                                  smoothOrNo=smoothOrNo,
                                  smooth_nsecs=smooth_nsecs,
@@ -219,7 +216,6 @@ ggActivityTraceGrid <- function (ffpath,
 #'
 #' @param ffpath
 #' @param genopath
-#' @param zebpath
 #' @param dayduration
 #' @param smoothOrNo
 #' @param smooth_nsecs
@@ -259,7 +255,6 @@ ggActivityTraceGrid <- function (ffpath,
 
 ggActivityTraceByGroup <- function(ffpath,
                                    genopath,
-                                   zebpath,
                                    dayduration=14,
                                    smoothOrNo=FALSE,
                                    smooth_nsecs=30*60,
@@ -299,8 +294,6 @@ ggActivityTraceByGroup <- function(ffpath,
   # acttc for activity timecourse
   acttc <- summaryActivityCourse(ffpath=ffpath,
                                  genopath=genopath,
-                                 zebpath=zebpath,
-                                 dayduration=dayduration,
                                  smoothOrNo=smoothOrNo,
                                  smooth_nsecs=smooth_nsecs,
                                  binOrNo=binOrNo,
@@ -351,7 +344,6 @@ ggActivityTraceByGroup <- function(ffpath,
 #'
 #' @param ffpath
 #' @param genopath
-#' @param zebpath
 #' @param zthr_min
 #' @param inaThr
 #' @param epo_min
@@ -391,7 +383,6 @@ ggActivityTraceByGroup <- function(ffpath,
 #' @examples
 ggSleepTraceByGroup <- function(ffpath,
                                 genopath,
-                                zebpath,
                                 zthr_min=1,
                                 inaThr=0,
                                 epo_min=10,
@@ -431,11 +422,9 @@ ggSleepTraceByGroup <- function(ffpath,
 
   zzztc <- summarySleepCourse(ffpath=ffpath,
                               genopath=genopath,
-                              zebpath=zebpath,
                               zthr_min=zthr_min,
                               inaThr=inaThr,
                               epo_min=epo_min,
-                              dayduration=dayduration,
                               smoothOrNo=smoothOrNo,
                               smooth_npoints=smooth_npoints)
 

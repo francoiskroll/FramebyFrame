@@ -4,10 +4,10 @@
 \alias{detectNaps}
 \title{Title}
 \usage{
-detectNaps(ffsource, zebpath, woi = NA, zthr_min = 1, inaThr = 0, dayduration)
+detectNaps(ffsource, woi = NA, zthr_min = 1, inaThr = 0)
 }
 \arguments{
-\item{dayduration}{}
+\item{inaThr}{}
 }
 \description{
 Title
