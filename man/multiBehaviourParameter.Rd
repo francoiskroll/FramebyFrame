@@ -10,7 +10,8 @@ multiBehaviourParameter(
   genopath,
   woi = NA,
   zthr_min = 1,
-  inaThr = 0
+  inaThr = 0,
+  dayduration = 14
 )
 }
 \arguments{

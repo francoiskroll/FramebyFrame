@@ -95,7 +95,6 @@ ggActivityTraceGrid <- function (ffpath,
   # acttc for activity timecourse
   acttc <- summaryActivityCourse(ffpath=ffpath,
                                  genopath=genopath,
-                                 dayduration=dayduration,
                                  smoothOrNo=smoothOrNo,
                                  smooth_nsecs=smooth_nsecs,
                                  binOrNo=binOrNo,
@@ -794,7 +793,7 @@ ggTrace <- function(tc,
   # Note; if no export, will stop there due to return() being called, so will not see below
 
   # export plot
-  ggsave(exportPath, width=width, height=height, units='mm', useDingbats=FALSE)
+  ggsave(exportPath, width=width, height=height, units='mm', device=cairo_pdf)
 
   # and return so can see in RStudio
   return(tracebygrp)
