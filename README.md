@@ -25,10 +25,10 @@ Below uses the package `devtools`. If you do not have it already, first run in R
 
 Then:
 
-    # load the package devtools:
+    # load the package devtools
     library(devtools)
 
-    # install the package FramebyFrame from the present repo:
+    # install the package FramebyFrame from the present repo
     install_github("francoiskroll/FramebyFrame")
 
     # load FramebyFrame
