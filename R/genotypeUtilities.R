@@ -6,7 +6,6 @@
 #' @param genopath
 #'
 #' @return
-#' @export
 #'
 #' @examples
 importGenotype <- function(genopath) {
@@ -30,7 +29,6 @@ importGenotype <- function(genopath) {
 #' @param boxnum
 #'
 #' @return
-#' @export
 #'
 #' @examples
 fillGenotype <- function(geno,
@@ -98,7 +96,6 @@ fillGenotype <- function(geno,
 #' @param genopath
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom dplyr %>%
@@ -157,7 +154,6 @@ pivotLongAssignGenotype <- function(txf,
 #' @param genopath
 #'
 #' @return
-#' @export
 #'
 #' @examples
 addGenotypefXColnames <- function(df,
@@ -226,7 +222,6 @@ addGenotypefXColnames <- function(df,
 #' @param geno
 #'
 #' @return
-#' @export
 #'
 #' @examples
 assignGenotype <- function(fs, geno) {

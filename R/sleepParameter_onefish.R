@@ -13,7 +13,6 @@
 #' @param fps
 #'
 #' @return
-#' @export
 #'
 #' @examples
 sleepHours_onefish <- function(zzc,
@@ -50,7 +49,6 @@ sleepHours_onefish <- function(zzc,
 #' @param fps
 #'
 #' @return
-#' @export
 #'
 #' @examples
 sleepNumNaps_onefish <- function(zzc,
@@ -82,7 +80,6 @@ sleepNumNaps_onefish <- function(zzc,
 #' @param fps
 #'
 #' @return
-#' @export
 #'
 #' @examples
 sleepLatency_onefish <- function(zzc,
@@ -119,7 +116,6 @@ sleepLatency_onefish <- function(zzc,
 #' @param fps
 #'
 #' @return
-#' @export
 #'
 #' @examples
 sleepNapDuration_onefish <- function(zzc,

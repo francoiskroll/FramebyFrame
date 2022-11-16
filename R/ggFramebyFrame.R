@@ -97,7 +97,6 @@ param2Title <- function(param) {
 #' @param param
 #'
 #' @return
-#' @export
 #'
 #' @examples
 param2Ytext <- function(param) {
@@ -177,7 +176,6 @@ param2Ytext <- function(param) {
 #' @param param
 #'
 #' @return
-#' @export
 #'
 #' @examples
 param2Yunit <- function(param) {
@@ -1200,7 +1198,9 @@ ggFingerprintGrid <- function(fgp,
 
 
 
-# function ggCorHeat(...) -------------------------------------------------
+
+# function ggPairwiseHeat(...) --------------------------------------------
+
 # pwm for pairwise matrix
 
 #' Title

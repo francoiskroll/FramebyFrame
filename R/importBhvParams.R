@@ -16,7 +16,6 @@
 #' @param skipNight0
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom dplyr %>%

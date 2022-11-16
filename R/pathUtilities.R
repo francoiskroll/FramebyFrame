@@ -6,7 +6,6 @@
 #' @param path
 #'
 #' @return
-#' @export
 #'
 #' @examples
 whatSlash <- function(path) {
@@ -35,7 +34,6 @@ whatSlash <- function(path) {
 #' @param n
 #'
 #' @return
-#' @export
 #'
 #' @examples
 substrEnding <- function(x, n){ # x = string (or vector of strings); n = last n characters
@@ -52,7 +50,6 @@ substrEnding <- function(x, n){ # x = string (or vector of strings); n = last n 
 #' @param stri
 #'
 #' @return
-#' @export
 #'
 #' @examples
 afterLastSlash <- function(stri) {
@@ -79,7 +76,6 @@ afterLastSlash <- function(stri) {
 #' @param stri
 #'
 #' @return
-#' @export
 #'
 #' @examples
 beforeLastSlash <- function(stri) {
@@ -97,7 +93,6 @@ beforeLastSlash <- function(stri) {
 #' @param stri
 #'
 #' @return
-#' @export
 #'
 #' @examples
 afterLastUnderscore <- function(stri) {
@@ -127,7 +122,6 @@ afterLastUnderscore <- function(stri) {
 #' @param stri
 #'
 #' @return
-#' @export
 #'
 #' @examples
 beforeLastUnderscore <- function(stri) {
@@ -161,7 +155,6 @@ beforeLastUnderscore <- function(stri) {
 #' @param stri
 #'
 #' @return
-#' @export
 #'
 #' @examples
 beforeFirstUnderscore <- function(stri) {
@@ -201,7 +194,6 @@ afterFirstUnderscore <- function(stri) {
 #' @param nth
 #'
 #' @return
-#' @export
 #'
 #' @examples
 strNthSplit <- function(stri,
@@ -227,7 +219,6 @@ strNthSplit <- function(stri,
 #' @param match
 #'
 #' @return
-#' @export
 #'
 #' @examples
 startsWith <- function(stri,
@@ -254,7 +245,6 @@ startsWith <- function(stri,
 #' @param slash
 #'
 #' @return
-#' @export
 #'
 #' @examples
 levelUpPath <- function(paths,
@@ -287,7 +277,6 @@ levelUpPath <- function(paths,
 #' @param slash
 #'
 #' @return
-#' @export
 #'
 #' @examples
 parentFolder <- function(paths,
@@ -355,7 +344,6 @@ parentFolder <- function(paths,
 #' @param output
 #'
 #' @return
-#' @export
 #'
 #' @examples
 gatherFiles <- function(parent, output) {

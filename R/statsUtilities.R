@@ -22,7 +22,6 @@
 #' @param na.rm
 #'
 #' @return
-#' @export
 #'
 #' @examples
 mad2 <- function(vector, na.rm=FALSE) {
@@ -50,7 +49,6 @@ mad2 <- function(vector, na.rm=FALSE) {
 #' @param vector
 #'
 #' @return
-#' @export
 #'
 #' @examples
 diff2 <- function(vector) {
@@ -68,7 +66,6 @@ diff2 <- function(vector) {
 #' @param x
 #'
 #' @return
-#' @export
 #'
 #' @examples
 sem <- function(x) {
@@ -81,7 +78,6 @@ sem <- function(x) {
 #' @param x
 #'
 #' @return
-#' @export
 #'
 #' @examples
 sem_narm <- function(x) {
@@ -100,7 +96,6 @@ sem_narm <- function(x) {
 #' @param skipCol
 #'
 #' @return
-#' @export
 #'
 #' @examples
 getUpperTri <- function(pwm,
@@ -123,7 +118,6 @@ getUpperTri <- function(pwm,
 #' @param skipCol
 #'
 #' @return
-#' @export
 #'
 #' @examples
 getLowerTri <- function(pwm,
@@ -148,7 +142,6 @@ getLowerTri <- function(pwm,
 #' @param sd
 #'
 #' @return
-#' @export
 #'
 #' @examples
 zScore <- function(datapoint,
@@ -173,7 +166,6 @@ zScore <- function(datapoint,
 #' @param num
 #'
 #' @return
-#' @export
 #'
 #' @examples
 pvalAsterisk <- function(num) {

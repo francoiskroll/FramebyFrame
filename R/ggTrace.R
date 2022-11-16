@@ -507,7 +507,6 @@ ggSleepTraceByGroup <- function(ffpath,
 #' @param height
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @import ggplot2

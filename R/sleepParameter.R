@@ -20,7 +20,6 @@
 #' @param inaThr
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom dplyr %>%

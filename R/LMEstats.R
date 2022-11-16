@@ -361,7 +361,6 @@ LMEreport <- function(paDir,
 #' @param silent
 #'
 #' @return
-#' @export
 #'
 #' @examples
 LMEsummary <- function(lmemodel,
@@ -470,7 +469,6 @@ LMEsummary <- function(lmemodel,
 #' @param lmemodel
 #'
 #' @return
-#' @export
 #'
 #' @examples
 LMEposthoc <- function(lmemodel) {
@@ -494,7 +492,6 @@ LMEposthoc <- function(lmemodel) {
 #' @param sameClutchMode
 #'
 #' @return
-#' @export
 #'
 #' @examples
 LMEmodel <- function(pdn,

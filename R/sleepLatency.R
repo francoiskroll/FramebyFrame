@@ -36,7 +36,6 @@
 #' @param removeDuplicates
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom dplyr %>%
@@ -134,7 +133,6 @@ timestampsToSurvival <- function(dts,
 #' @param detailsOrNo
 #'
 #' @return
-#' @export
 #'
 #' @examples
 survivalStats <- function(svd,

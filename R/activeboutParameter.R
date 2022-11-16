@@ -34,7 +34,6 @@
 #' @param dn
 #'
 #' @return
-#' @export
 #'
 #' @examples
 framesToActiveInactiveTransitions <- function(dn) {
@@ -109,7 +108,6 @@ framesToActiveInactiveTransitions <- function(dn) {
 #' @param parameter
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom dplyr %>%

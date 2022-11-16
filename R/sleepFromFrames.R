@@ -58,7 +58,6 @@
 #' @param inaThr
 #'
 #' @return
-#' @export
 #'
 #' @examples
 detectNaps <- function(ffsource,
@@ -354,7 +353,6 @@ detectNaps <- function(ffsource,
 #' @param smooth_npoints
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom data.table :=

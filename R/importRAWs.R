@@ -15,7 +15,6 @@
 #' @param tsecs Timestamps in seconds
 #'
 #' @return Average framerate
-#' @export
 #'
 #' @examples averageFramerate(c(0, 0.04, 0.08))
 #' ## returns 25 frames-per-second
@@ -53,7 +52,6 @@ averageFramerate <- function(tsecs) {
 #' @param transitionHour Time in Zeitgeber duration of the light transition to search for.
 #'
 #' @return Frame index.
-#' @export
 #'
 #' @examples
 
@@ -93,7 +91,6 @@ findLightTransitionFrame <- function(Zeitgeberdurations, transitionHour) {
 #' @param ffpath
 #'
 #' @return
-#' @export
 #'
 #' @examples
 

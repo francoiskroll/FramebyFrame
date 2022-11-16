@@ -15,7 +15,6 @@
 #' @param path
 #'
 #' @return
-#' @export
 #'
 #' @examples
 splitFramesbyDayNight <- function(tc,
@@ -78,7 +77,6 @@ splitFramesbyDayNight <- function(tc,
 #' @param woi
 #'
 #' @return
-#' @export
 #'
 #' @examples
 splitFramesbyWoi <- function(tc,
@@ -145,7 +143,6 @@ splitFramesbyWoi <- function(tc,
 #' @param poolExp3
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom dplyr %>%
@@ -403,7 +400,6 @@ paramReadPivot <- function(pa,
 #' @param poolWins
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom dplyr summarise_at

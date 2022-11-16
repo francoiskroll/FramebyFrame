@@ -13,7 +13,6 @@
 #' @param dayduration
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom dplyr %>%

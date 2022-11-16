@@ -30,7 +30,6 @@
 #' @param grpNum
 #'
 #' @return
-#' @export
 #'
 #' @examples
 getFromMat <- function(mat,

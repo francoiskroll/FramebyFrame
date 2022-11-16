@@ -113,7 +113,6 @@
 #' @param warning
 #'
 #' @return
-#' @export
 #'
 #' @examples
 
@@ -993,13 +992,4 @@ vpSorter <- function(ffDir,
 
 
 }
-
-
-
-
-
-
-
-
-
 

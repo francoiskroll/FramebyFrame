@@ -10,7 +10,6 @@
 #' @param bin_nsecs
 #'
 #' @return
-#' @export
 #'
 #' @examples
 #' @importFrom data.table :=
