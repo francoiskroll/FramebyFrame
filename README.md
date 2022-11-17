@@ -545,6 +545,7 @@ Here is the minimum you need to know about R to get started.
       [1] "Hello World"
 
 * The computer does not see lines that start with `#`. Use that to write comments as notes to yourself or others. e.g.
+
       # this is a comment
       print("Hello World")  
 
