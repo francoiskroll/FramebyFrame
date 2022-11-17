@@ -535,9 +535,12 @@ Here is the minimum you need to know about R to get started.
 * Open RStudio and start a new script (File > New File > R Script or Cmd/Ctrl + ↑ + N). The panel that just opened is your script. This is where you write R code. The bottom is the Console, this where the computer answers. In the top-right is the Environment, this is where you keep stuff in memory.
 
 * For example, try to write in your script:
+
       print("Hello World")
+
   Now to run the command, place your cursor at the end of the line or select the command and press Cmd/Ctrl + Enter.
   In the Console, you will see your command repeated, then the answer from the computer:
+
       > print("Hello World")
       [1] "Hello World"
 
@@ -548,6 +551,7 @@ Here is the minimum you need to know about R to get started.
 * As you may notice, you need to indicate to R what is actual text (and not computer code) by using double quotes, like `"Hello World"`. One unit of text is called a string.
 
 * You can give R a series of things at once, it is called a vector. In R it is written `c(thing1, thing2)`. Examples:
+
       c("ho", "hey")
       c(1, 2, 3)
       c("hey", 3)
