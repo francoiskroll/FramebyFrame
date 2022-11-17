@@ -553,6 +553,7 @@ Here is the minimum you need to know about R to get started.
       c("hey", 3)
 
 * `NA` stands for "Not Available". It is a way of telling R "missing value".
+* A "logical" simply means `TRUE` or `FALSE`. In R, you write the full word in uppercase.
 * You will often need to give R a path to some file on your computer. You need to give it as text.  
 Here is an example of a path on Mac: `"~/Desktop/myExperiment/210907_12_RAWs.csv"` (`~` means Home directory).  
 Here is an example of a path on Windows: `"C:\\Desktop\\myExperiment\\210907_12_RAWs.csv"` (the double `\\` is an unfortunate R quirk).
