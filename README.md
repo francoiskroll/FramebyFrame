@@ -35,15 +35,28 @@ Then:
     # install the package FramebyFrame from the present repo
     install_github("francoiskroll/FramebyFrame")
 
+It may say:
+
+> These packages have more recent versions available.  
+It is recommended to update all of them.  
+Which would you like to update?  
+[...]
+
+Answer `1` to update all.  
+
+If it asks:
+> _Do you want to install from sources the packages which need compiltation?_
+
+Answer _No_.
+
+Now to load the FramebyFrame package:
+
     # load FramebyFrame
     library(FramebyFrame)
 
-
 And you should be good to go!
 
-To be clear, you do not need to re-install the package every time you open R. Next time, just load it with:
-
-    library(FramebyFrame)
+To be clear, you do not need to re-install the package every time you open R. Next time, just load it with `library(FramebyFrame)`.
 
 But I recommend that you run the installation again once in a while so I can update things.
 
@@ -51,7 +64,7 @@ ___
 
 ## Minimal tutorial
 
-Ready? Here is the quickest possible tutorial of a FramebyFrame analysis. The package can do more than what is presented here, so make sure to check the full documentation once you got the gist of it.
+Ready? Here is the shortest possible tutorial of a FramebyFrame analysis. The package can do more than what is presented here, so make sure to check the full documentation once you got the gist of it.
 
 I will assume you have R and RStudio installed. If not, have a look at section **R basics**.
 
@@ -124,9 +137,7 @@ We then run the `vpSorter` command to sort our raw .xls files.
 
 Our script so far:  
 
-    ## repeating Installation instructions...
-    library(devtools)
-    install_github("francoiskroll/FramebyFrame")
+    ## do not forget to load the package first...
     library(FramebyFrame)
 
     ## vpSorter
