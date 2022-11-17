@@ -310,9 +310,13 @@ LMEreport <- function(paDir,
                       sameClutch3=NA,
                       grporder=NA,
                       skipNight0=FALSE,
-                      silent=TRUE,
+                      silent=FALSE,
                       detailsOrNo=FALSE,
                       exportPath) {
+
+  ### check export is .csv ###
+  if(!endsWith(exportPath, '.csv'))
+    stop('\t \t \t \t >>> Error LMEreport: exportPath should finish with .csv. \n')
 
   ### import parameter tables ###
   psL <- importBhvParams(paDir=paDir,
@@ -339,10 +343,10 @@ LMEreport <- function(paDir,
   })
 
   # LMEdaynight returns exps and parameter so we can merge it all in one big table
-  lmeall <- rbindlist(lmeall)
+  lmeall <- data.table::rbindlist(lmeall)
 
   # export
-  fwrite(lmeall, file=exportPath)
+  data.table::fwrite(lmeall, file=exportPath)
   cat('\t \t \t \t >>> Saved', exportPath, ' \n')
 
 }
