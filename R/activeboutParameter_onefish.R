@@ -118,6 +118,7 @@ transitionsToActiveBoutStartStop <- function(colAI) { # column of active/inactiv
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activeboutLength_onefish <- function(ffc,
@@ -180,6 +181,7 @@ activeboutLength_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activeboutMean_onefish <- function(ffc,
@@ -248,6 +250,7 @@ activeboutMean_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activeboutSum_onefish <- function(ffc,
@@ -319,6 +322,7 @@ activeboutSum_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activeboutStd_onefish <- function(ffc,
@@ -393,6 +397,7 @@ activeboutStd_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activeboutMin_onefish <- function(ffc,
@@ -467,6 +472,7 @@ activeboutMin_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activeboutMax_onefish <- function(ffc,
@@ -536,6 +542,7 @@ activeboutMax_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activeboutNum_onefish <- function(ffc,

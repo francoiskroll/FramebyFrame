@@ -30,6 +30,7 @@
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activityPercentageTimeActive_onefish <- function(ffc,
@@ -57,6 +58,7 @@ activityPercentageTimeActive_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activityTotalPx_onefish <- function(ffc,
@@ -91,6 +93,7 @@ activityTotalPx_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activitySunsetStartle_onefish <- function(ffc,
@@ -124,6 +127,7 @@ activitySunsetStartle_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activityRegression_onefish <- function(ffc,
@@ -211,6 +215,7 @@ activityRegression_onefish <- function(ffc,
 #' @param fps
 #'
 #' @return
+#' @export
 #'
 #' @examples
 activityFractalDim_onefish <- function(ffc,
