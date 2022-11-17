@@ -14,7 +14,7 @@ LMEreport(
   sameClutch3 = NA,
   grporder = NA,
   skipNight0 = FALSE,
-  silent = TRUE,
+  silent = FALSE,
   detailsOrNo = FALSE,
   exportPath
 )

@@ -276,8 +276,8 @@ If you want to exclude a larva, edit the genotypeMap and re-run the `genotypeGen
 We are ready to draw our first nice plot! Let's start with activity:
 
     ## activity trace by group
-    ggActivityTraceByGroup(ffpath="~/Dropbox/ZFAD/220531_SORL1/220531_14_RAWsv2.csv",
-                           genopath="~/Dropbox/ZFAD/tmp/220531_14genotype.txt",
+    ggActivityTraceByGroup(ffpath="~/.../220531_14_RAWs.csv",
+                           genopath="~/.../220531_14genotype.txt",
                            smoothOrNo=TRUE,
                            smooth_nsecs=30*60,
                            binOrNo=TRUE,
@@ -299,7 +299,7 @@ We are ready to draw our first nice plot! Let's start with activity:
                            nightBgOrNo=TRUE,
                            legendOrNo=FALSE,
                            exportOrNo=TRUE,
-                           exportPath="~/Dropbox/ZFAD/tmp/activitybygroup.pdf",
+                           exportPath="~/.../activitybygroup.pdf",
                            width=75,
                            height=55)
 
@@ -484,10 +484,10 @@ So far, our examples of commands only had two groups. Let's analyse an experimen
 To calculate the LME statistics, we run:
 
     ## LME stats
-    LMEreport(paDir="~/Dropbox/ZFAD/220316_sorl1Stable/bhvparams/",
+    LMEreport(paDir="~/.../bhvparams/",
               grporder=c('wt', 'het', 'hom'),
               skipNight0=TRUE,
-              exportPath="~/Dropbox/ZFAD/tmp/LMEreport.csv")
+              exportPath="~/.../LMEreport.csv")
 
 * `grporder`: put the group you want as reference group (e.g. wild-type or DMSO-treated) as the _first_ group.
 * `exportPath`: full path to the statistics report we will write. You can call this file however you like but make sure it finishes with .csv.  

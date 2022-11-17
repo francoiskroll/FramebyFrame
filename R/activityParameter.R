@@ -55,7 +55,9 @@ activityParameter <- function(dn,
 
     # activityFunction is still only a string
     # need to match.fun so points to a real function which can be used below
-    activityFunction <- match.fun(activityFunction)
+    # activityFunction <- match.fun(activityFunction)
+    # test 17/11/2022
+    activityFunction <- get(activityFunction, envir=environment(FramebyFrame))
 
     # will convert that time window's data into dataframe temporarily
     dnw <- as.data.frame(dn[[win]])
