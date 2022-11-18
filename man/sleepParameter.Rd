@@ -4,7 +4,7 @@
 \alias{sleepParameter}
 \title{Title}
 \usage{
-sleepParameter(dn, parameter, woi = woi, zthr_min, inaThr)
+sleepParameter(dn, dtbx, parameter, woi = NA, zthr_min, inaThr)
 }
 \arguments{
 \item{inaThr}{}

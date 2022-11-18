@@ -61,6 +61,7 @@
 #'
 #' @examples
 detectNaps <- function(ffsource,
+                       dtbx=NA,
                        woi=NA,
                        zthr_min=1,
                        inaThr=0) {
@@ -110,8 +111,8 @@ detectNaps <- function(ffsource,
   # or
   # dn, i.e. ff split in a list of day/night windows by splitFramesbyDayNight(...)
 
-  # if ffsource is a string that finishes with .csv, will assume we are given the path to _RAWs.csv
-  # note, importRAWs checks if was loaded already
+  # if ffsource is a string, will assume we are given the path to _RAWs.csv
+  # note, importRAWs skips import if was loaded already
   if (is.character(ffsource)) {
 
     if (substrEnding(ffsource, 4)=='.csv') { # need to put this as second If otherwise it checks the entire dataframes when given `dn`
@@ -133,11 +134,9 @@ detectNaps <- function(ffsource,
     # not if it was already ran on the same `dn` data during this R session
     # if object was recorded in Environment at the end of detectNaps() previously, it is called dnz_YYMMDD_BX
 
-    # so build name of object from ffpath
-    ffnm <- afterLastSlash(ffpath) # everything after last slash of path, should give something like 210927_14_RAWs.csv
-
     # for the object's name, we want to get to dnz_YYMMDD_BX
-    dnzname <- paste0('dnz_', substr(ffnm, 1, 9))
+    # we recorded YYMMDD_BX as dtbx prior in behaviourParameter
+    dnzname <- paste0('dnz_', dtbx)
 
     # now, is there an object by the name of dnzname?
     # look in Environment (ls() lists all objects) if dnzname is there

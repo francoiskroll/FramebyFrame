@@ -26,8 +26,9 @@
 #' @importFrom tibble add_column
 
 sleepParameter <- function(dn,
+                           dtbx,
                            parameter,
-                           woi=woi,
+                           woi=NA,
                            zthr_min,
                            inaThr) {
 
@@ -41,6 +42,7 @@ sleepParameter <- function(dn,
   # first convert dn into asleep/not asleep booleans using detectNaps(...)
   # dnz for day/night asleep/not asleep booleans
   dnz <- detectNaps(ffsource=dn,
+                    dtbx=dtbx,
                     woi=woi,
                     zthr_min=zthr_min,
                     inaThr=inaThr)

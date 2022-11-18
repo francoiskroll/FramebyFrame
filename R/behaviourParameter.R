@@ -541,7 +541,7 @@ behaviourParameter <- function(parameter,
   # split data by day/night or windows of interest (woi) --------------------
 
   # results will be stored as a list of lists
-  # above level = experiment, below level = day/night or woi
+  # top level = experiment, bottom level = day/night or woi
 
   # we loop through each experiment and for each we split by day/night or woi, which generates a list
   # (lapply would be better here, but not simple when looking for the light transitions file in the folder)
@@ -555,6 +555,7 @@ behaviourParameter <- function(parameter,
 
     dnL[[i]] <- splitFramesbyWoi(tc=ffL[[i]],
                                  woi=woi)
+
     # if not, assume we are splitting by day/night:
   } else {
     for (i in 1:length(ffL)) {
@@ -563,7 +564,14 @@ behaviourParameter <- function(parameter,
 
       dnL[[i]] <- splitFramesbyDayNight(tc=ffL[[i]],
                                         path=ffpath[i])
+
     }
+
+    # either way, at the top level each element of the list is an experiment
+    # so we will put name as YYMMDD_BX
+    # which we can obtain from ffpath
+    names(dnL) <- substr(afterLastSlash(ffpath), 1, 9)
+
   }
 
 
@@ -625,6 +633,7 @@ behaviourParameter <- function(parameter,
     paL <- vector(mode='list', length=length(dnL)) # preallocate
     for (i in 1:length(dnL)) {
       paL[[i]] <- sleepParameter(dn=dnL[[i]],
+                                 dtbx=names(dnL)[i], # we just need YYMMDD_BX of experiment for some path things
                                  parameter=parameter,
                                  woi=woi,
                                  zthr_min=zthr_min,

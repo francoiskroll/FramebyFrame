@@ -4,7 +4,7 @@
 \alias{detectNaps}
 \title{Title}
 \usage{
-detectNaps(ffsource, woi = NA, zthr_min = 1, inaThr = 0)
+detectNaps(ffsource, dtbx = NA, woi = NA, zthr_min = 1, inaThr = 0)
 }
 \arguments{
 \item{inaThr}{}
