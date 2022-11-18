@@ -30,6 +30,7 @@
 #' @param colAI
 #'
 #' @return
+#' @export
 #'
 #' @examples
 transitionsToActiveBoutStartStop <- function(colAI) { # column of active/inactive transitions

@@ -15,6 +15,7 @@
 #' @param tsecs Timestamps in seconds
 #'
 #' @return Average framerate
+#' @export
 #'
 #' @examples averageFramerate(c(0, 0.04, 0.08))
 #' ## returns 25 frames-per-second
