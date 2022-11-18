@@ -576,9 +576,13 @@ Also change > Save workspace to .RData on exit to _Never_
 
 * For paths, I recommend the `here` package. This is how it works: open RStudio, then File > New Project > Existing Directory > navigate to your experiment folder > Open > Create Project. This will create a .Rproj file in your folder.
 Now install and load the `here` package:
+
       install.packages("here")
       library(here)
+
 In Console, you should see: `> here() starts at /Users/.../myExperiment`. Basically, `here` sees your .Rproj file and will now start all the paths from there. This makes writing paths less painful. For example, instead of writing `"~/Desktop/myExperiment/210907_12_RAWs.csv"`, you can simply write `here("210907_12_RAWs.csv")`. Another advantage is that if you move your experiment folder or change its name, you will not need to update all the paths in your script. For example, imagine we moved the folder _myExperiment_ to _Documents_, we would need to update all our paths if we were using absolute paths. Instead, if we use relative paths (thanks to `here`), as long as you did not touch the .Rproj file everything is still working.
+
+Next time you work on that analysis, double-click the .Rproj file to open RStudio and get started, not the .R script. This will ensure `here()` starts in your project folder.  
 
 ___
 
