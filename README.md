@@ -590,11 +590,11 @@ ___
 
 > _I use the Noldus from DanioVision (or else). Can I still use your amazing package?_  
 
-Yes, it is possible. Get in touch with me. At least one person has used it successfully with data from DanioVision's Noldus, but the conversion is not yet integrated in the package.
+Yes, it is possible. Get in touch with me. At least one person has used it successfully with data from DanioVision's Noldus, but the conversion is not yet integrated in the package. I could work on it if there is demand.
 
 > _I do not have a Zebralab .xls results file!_
 
-No problem. All we need the Zebralab file for is to read the date and time when your experiment started. You can give that information manually to `vpSorter()` instead:
+No problem. The only information we get from the Zebralab file is the date and time when your experiment started. You can give that information manually to `vpSorter()` instead:
 
       vpSorter(ffDir=...,
                zebpath=NA,
