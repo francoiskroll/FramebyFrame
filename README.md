@@ -21,6 +21,18 @@ I wrote everything with that in mind, I promise. The amount of R (or any coding 
 
 ___
 
+## Credit
+
+FramebyFrame builds upon work from Rihel lab members/alumni & collaborators, primarily:
+
+* Original work describing sleep/wake tracking in zebrafish larvae: [Rihel, Prober, Schier, 2010. _Methods in Cell Biology_](https://doi.org/10.1016/B978-0-12-384892-5.00011-6).
+
+* MATLAB analyses written by Rihel & Prober labs, e.g. [Lee, Oikonomou, Prober, 2022. _Bio Protocols_](https://bio-protocol.org/e4313). The definitions of the sleep parameters were taken from there.
+
+* Work on analysis of the FramebyFrame data: Ghosh and Rihel, 2020. _eNeuro_. The definitions of the "active bout" parameters were taken from there.
+
+___
+
 ## Installation
 
 Installation requires the package `devtools`. If you do not have it already, first run in R:
@@ -614,5 +626,35 @@ Yes, this happens when running a Replay on Zebralab, for example. The software (
 
 ___
 
-## Recommended experimental design
-> section under construction, do not read
+## Experimental design commandments
+> section under construction, this is a draft
+
+Or "recommendations"...
+
+* _**I shall track a single clutch in each Zebrabox**_  
+Where clutch means offspring from the same parents and (ideally) mating event.  
+Or in other words: I recommend you do not mix multiple clutches in the same Zebrabox.  
+If you are lucky enough to have multiple Zebraboxes and a very large clutch, you can track the same clutch in two Zebraboxes. You should mention this when calculating the LME statistics so it can adapt the random effects accordingly (more details in Documentation). For example:
+
+      LMEreport(paDir=c(here('220906_run1', 'bhvparams'),
+                        here('220912_run2', 'bhvparams')),
+                sameClutch1=c('220906_01', '220906_02'),
+                sameClutch2=c('220912_03', '220912_04'),
+                grporder=c('wt', 'het', 'hom'),
+                skipNight0=TRUE,
+                exportPath=here('LMEreport.csv'))
+
+  means that experiments _220906_01_ + _220906_02_ tracked the same clutch #1 and that experiments _220912_03_ + _220912_04_ tracked the same clutch #2.
+
+* _**I shall have my controls in the same Zebrabox**_  
+As you likely have variability between Zebraboxes (e.g. light levels or temperature not being exactly equal) or between runs.  
+More broadly, when analysing multiple experiments simultaneously, try to have every group represented in each Zebrabox.  
+
+* _**I shall refrain from drawing important conclusions from a single clutch**_  
+The variability between clutches can be _very_ important. Accordingly, drawing important conclusions from a single clutch is asking for future trouble, for example the phenotype not replicating in a more complex experiment. Try to track at least two clutches to control for biological (clutch-to-clutch) and technical (Zebrabox-to-Zebrabox or run-to-run) variability. Give all your replicates to the LME command and let it worry about it, I think this is a better solution than calculating statistics on experiments one by one.  
+
+* _**I shall refrain from comparing absolute datapoints between clutches**_  
+Again, the variability between clutches can be _very_ important, so making comparisons where both the group and the clutch/Zebrabox are different (e.g. wild-type from clutch #1 vs homozygous from clutch #2) is asking for wrong conclusions. It is still possible to do comparisons between clutches (e.g. is the effect size larger in clutch #1 vs clutch #2), but you will need to normalise the datapoints to within-clutch and within-Zebrabox controls, using for example _Z_-scores.  
+
+* _**I shall randomise the well positions as best as possible**_  
+When you place the larvae in the wells, do you know which group each larva belongs to (e.g. injected vs uninjected or drug-treated vs DMSO)? If yes, then alternate the rows or columns to avoid edge effects (e.g. water from the well evaporates faster from the outer rows/columns). If you are tracking the offspring of a cross (e.g. heterozygous in-cross) and will genotype the larvae _after_ the experiment, then the wells are already randomised. Problem solved!  
