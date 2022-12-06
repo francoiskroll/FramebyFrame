@@ -16,7 +16,7 @@ Francois Kroll, 2022 @Rihel lab, UCL.
 [1]: https://twitter.com/francois_kroll
 
 
-> —"_I do not know anything about R so this package is not for me._".  
+> —_I do not know anything about R so this package is not for me._    
 I wrote everything with that in mind, I promise. The amount of R (or any coding language) you need to know in order to run a complete analysis is minuscule, and I wrote it all in section **R basics** below.
 
 ___
@@ -29,7 +29,7 @@ FramebyFrame builds upon work from Rihel lab members/alumni & collaborators, pri
 
 * MATLAB analyses written by Rihel & Prober labs, e.g. [Lee, Oikonomou, Prober, 2022. _Bio Protocols_](https://bio-protocol.org/e4313). The definitions of the sleep parameters were taken from there.
 
-* Work on analysis of the FramebyFrame data: Ghosh and Rihel, 2020. _eNeuro_. The definitions of the "active bout" parameters were taken from there.
+* Work on analysis of the FramebyFrame data: [Ghosh and Rihel, 2020. _eNeuro_](https://www.eneuro.org/content/7/4/ENEURO.0408-19.2020). The definitions of the "active bout" parameters were taken from there.
 
 ___
 
@@ -149,6 +149,7 @@ We then run the `vpSorter` command to sort our raw .xls files.
 
 Our script so far:  
 
+```r
     ## do not forget to load the package first...
     library(FramebyFrame)
 
@@ -160,6 +161,7 @@ Our script so far:
              boxnum=1,
              zt0="09:00:00",
              dayduration=14)
+```
 
 * `ffDir`: path to the folder with your raw .xls files.  
 * `zebpath`: path to the Zebralab results file (.xls).  
