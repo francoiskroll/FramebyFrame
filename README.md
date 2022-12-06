@@ -149,7 +149,6 @@ We then run the `vpSorter` command to sort our raw .xls files.
 
 Our script so far:  
 
-```r
     ## do not forget to load the package first...
     library(FramebyFrame)
 
@@ -161,7 +160,21 @@ Our script so far:
              boxnum=1,
              zt0="09:00:00",
              dayduration=14)
+
+```r
+## do not forget to load the package first...
+library(FramebyFrame)
+
+## vpSorter
+vpSorter(ffDir="~/.../220531_14_15_rawoutput/",
+         zebpath="~/.../220531_14_15_myexp.xls",
+         boxGen=2,
+         twoBoxMode=TRUE,
+         boxnum=1,
+         zt0="09:00:00",
+         dayduration=14)
 ```
+
 
 * `ffDir`: path to the folder with your raw .xls files.  
 * `zebpath`: path to the Zebralab results file (.xls).  
