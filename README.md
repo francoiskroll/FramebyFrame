@@ -37,15 +37,19 @@ ___
 
 Installation requires the package `devtools`. If you do not have it already, first run in R:
 
-    install.packages("devtools")
+```r
+install.packages("devtools")
+```
 
 Then:
 
-    # load the package devtools
-    library(devtools)
+```r
+# load the package devtools
+library(devtools)
 
-    # install the package FramebyFrame from the present repo
-    install_github("francoiskroll/FramebyFrame")
+# install the package FramebyFrame from the present repo
+install_github("francoiskroll/FramebyFrame")
+```
 
 It may say:
 
@@ -63,8 +67,10 @@ Answer _No_.
 
 Now to load the FramebyFrame package:
 
-    # load FramebyFrame
-    library(FramebyFrame)
+```r
+# load FramebyFrame
+library(FramebyFrame)
+```
 
 And you should be good to go!
 
@@ -149,18 +155,6 @@ We then run the `vpSorter` command to sort our raw .xls files.
 
 Our script so far:  
 
-    ## do not forget to load the package first...
-    library(FramebyFrame)
-
-    ## vpSorter
-    vpSorter(ffDir="~/.../220531_14_15_rawoutput/",
-             zebpath="~/.../220531_14_15_myexp.xls",
-             boxGen=2,
-             twoBoxMode=TRUE,
-             boxnum=1,
-             zt0="09:00:00",
-             dayduration=14)
-
 ```r
 ## do not forget to load the package first...
 library(FramebyFrame)
@@ -223,21 +217,23 @@ It is a good idea to check that the frame rate was fairly stable throughout our 
 
 To plot instantaneous frame rates during our experiment:  
 
-    ggFramerate(ffpath="~/.../220531_14_RAWs.csv",
-                subsample=TRUE,
-                subsample_by=1000,
-                xstart=0,
-                xstop=0,
-                ymin=0,
-                ymax=50,
-                sunlines=TRUE,
-                dayduration=14,
-                xname='hours since first 9 AM',
-                yname='frames-per-second',
-                exportOrNo=TRUE,
-                width=75,
-                height=55,
-                exportPath="~/.../framerate.pdf")
+```r
+ggFramerate(ffpath="~/.../220531_14_RAWs.csv",
+            subsample=TRUE,
+            subsample_by=1000,
+            xstart=0,
+            xstop=0,
+            ymin=0,
+            ymax=50,
+            sunlines=TRUE,
+            dayduration=14,
+            xname='hours since first 9 AM',
+            yname='frames-per-second',
+            exportOrNo=TRUE,
+            width=75,
+            height=55,
+            exportPath="~/.../framerate.pdf")
+```
 
 Every command that generates a plot starts with `gg` (it stands for "grammar of graphics", if you were curious).  
 
@@ -258,28 +254,30 @@ Plotting every instantaneous frame rates would take a while and is completely un
 ### 5– Any aberrant larva we should be excluding?
 We can plot the activity trace of every well with  
 
-    ## activity grid
-    ggActivityTraceGrid(ffpath="~/.../220531_14_RAWs.csv",
-                        genopath="~/.../220531_14genotype.txt",
-                        smoothOrNo=TRUE,
-                        smooth_nsecs=30*60,
-                        binOrNo=TRUE,
-                        bin_nsecs=10*60,
-                        tracecols=NA,
-                        linethick=0.4,
-                        ymin=0,
-                        ymax=60000,
-                        xstart=0,
-                        xstop=0,
-                        trimstart=0,
-                        trimstop=0,
-                        nightBgOrNo=TRUE,
-                        ncol=12,
-                        nrow=8,
-                        exportOrNo=TRUE,
-                        exportPath="~/.../activitygrid.pdf",
-                        width=255,
-                        height=171)
+```r
+## activity grid
+ggActivityTraceGrid(ffpath="~/.../220531_14_RAWs.csv",
+                    genopath="~/.../220531_14genotype.txt",
+                    smoothOrNo=TRUE,
+                    smooth_nsecs=30*60,
+                    binOrNo=TRUE,
+                    bin_nsecs=10*60,
+                    tracecols=NA,
+                    linethick=0.4,
+                    ymin=0,
+                    ymax=60000,
+                    xstart=0,
+                    xstop=0,
+                    trimstart=0,
+                    trimstop=0,
+                    nightBgOrNo=TRUE,
+                    ncol=12,
+                    nrow=8,
+                    exportOrNo=TRUE,
+                    exportPath="~/.../activitygrid.pdf",
+                    width=255,
+                    height=171)
+```
 
 Minimal explanations of the important settings:  
 
@@ -302,33 +300,35 @@ If you want to exclude a larva, edit the genotypeMap and re-run the `genotypeGen
 ### 7– Activity trace by group
 We are ready to draw our first nice plot! Let's start with activity:
 
-    ## activity trace by group
-    ggActivityTraceByGroup(ffpath="~/.../220531_14_RAWs.csv",
-                           genopath="~/.../220531_14genotype.txt",
-                           smoothOrNo=TRUE,
-                           smooth_nsecs=30*60,
-                           binOrNo=TRUE,
-                           bin_nsecs=10*60,
-                           grporder=c('sorl1', 'scr'),
-                           tracecols=c('#417dcd', '#697a87'),
-                           ribboncols=c('#a3bbdb', '#b3bcc3'),
-                           linethick=0.4,
-                           xname='hours since ZT0',
-                           yname='activity (sum of Δ px/10 min)',
-                           xtextOrNo=FALSE,
-                           ytextOrNo=TRUE,
-                           ymin=0,
-                           ymax=50000,
-                           xstart=24,
-                           xstop=72,
-                           trimstart=24,
-                           trimstop=72,
-                           nightBgOrNo=TRUE,
-                           legendOrNo=FALSE,
-                           exportOrNo=TRUE,
-                           exportPath="~/.../activitybygroup.pdf",
-                           width=75,
-                           height=55)
+```r
+## activity trace by group
+ggActivityTraceByGroup(ffpath="~/.../220531_14_RAWs.csv",
+                       genopath="~/.../220531_14genotype.txt",
+                       smoothOrNo=TRUE,
+                       smooth_nsecs=30*60,
+                       binOrNo=TRUE,
+                       bin_nsecs=10*60,
+                       grporder=c('sorl1', 'scr'),
+                       tracecols=c('#417dcd', '#697a87'),
+                       ribboncols=c('#a3bbdb', '#b3bcc3'),
+                       linethick=0.4,
+                       xname='hours since ZT0',
+                       yname='activity (sum of Δ px/10 min)',
+                       xtextOrNo=FALSE,
+                       ytextOrNo=TRUE,
+                       ymin=0,
+                       ymax=50000,
+                       xstart=24,
+                       xstop=72,
+                       trimstart=24,
+                       trimstop=72,
+                       nightBgOrNo=TRUE,
+                       legendOrNo=FALSE,
+                       exportOrNo=TRUE,
+                       exportPath="~/.../activitybygroup.pdf",
+                       width=75,
+                       height=55)
+```
 
 `ggActivityTraceByGroup()` plots one activity trace by group as mean (main trace) ± SEM (ribbon around the trace).  
 
@@ -356,32 +356,34 @@ Important: the `bin_nsecs` setting determines the unit of the Y axis. In example
 ### 8– Sleep trace by group
 Now let's plot the sleep traces.  
 
-    ## sleep trace by group
-    ggSleepTraceByGroup(ffpath="~/.../220531_14_RAWs.csv",
-                        genopath="~/.../220531_14genotype.txt",
-                        epo_min=10,
-                        smoothOrNo=TRUE,
-                        smooth_npoints=5,
-                        grporder=c('sorl1', 'scr'),
-                        tracecols=c('#417dcd', '#697a87'),
-                        ribboncols=c('#a3bbdb', '#b3bcc3'),
-                        linethick=0.4,
-                        xname='',
-                        yname='',
-                        xtextOrNo=FALSE,
-                        ytextOrNo=TRUE,
-                        ymin=0,
-                        ymax=10,
-                        xstart=24,
-                        xstop=72,
-                        trimstart=24,
-                        trimstop=72,
-                        nightBgOrNo=TRUE,
-                        legendOrNo=FALSE,
-                        exportOrNo=TRUE,
-                        exportPath="~/.../sleepbygroup.pdf",
-                        width=75,
-                        height=55)
+```r
+## sleep trace by group
+ggSleepTraceByGroup(ffpath="~/.../220531_14_RAWs.csv",
+                    genopath="~/.../220531_14genotype.txt",
+                    epo_min=10,
+                    smoothOrNo=TRUE,
+                    smooth_npoints=5,
+                    grporder=c('sorl1', 'scr'),
+                    tracecols=c('#417dcd', '#697a87'),
+                    ribboncols=c('#a3bbdb', '#b3bcc3'),
+                    linethick=0.4,
+                    xname='',
+                    yname='',
+                    xtextOrNo=FALSE,
+                    ytextOrNo=TRUE,
+                    ymin=0,
+                    ymax=10,
+                    xstart=24,
+                    xstop=72,
+                    trimstart=24,
+                    trimstop=72,
+                    nightBgOrNo=TRUE,
+                    legendOrNo=FALSE,
+                    exportOrNo=TRUE,
+                    exportPath="~/.../sleepbygroup.pdf",
+                    width=75,
+                    height=55)
+```
 
 Some notes about the settings we have not encountered yet:
 * `epo_min`: size of the epoch in minutes, e.g. `epo_min=10` means that each datapoint represent the total sleep (in minutes) in each 10-minute epoch.  
@@ -416,21 +418,25 @@ or `alluparams` to see the list of every unique parameter:
 
 We calculate every parameter with:
 
-    ## calculate behaviour parameters
-    multiBehaviourParameter(parameters="all",
-                            ffpath="~/.../20531_14_RAWs.csv",
-                            genopath="~/.../220531_14genotype.txt",
-                            dayduration=14)
+```r
+## calculate behaviour parameters
+multiBehaviourParameter(parameters="all",
+                        ffpath="~/.../20531_14_RAWs.csv",
+                        genopath="~/.../220531_14genotype.txt",
+                        dayduration=14)
+```
 
 Did you run two Zebraboxes in parallel? I would recommend calculating the behaviour parameters for both Zebraboxes in one command, simply give the multiple `ffpath` and `genopath`. For example:
 
-    ## for two Zebraboxes at once
-    multiBehaviourParameter(parameters='all',
-                            ffpath=c("~/.../220531_14_RAWs.csv",
-                                     "~/.../220531_15_RAWs.csv"),
-                            genopath=c("~/.../220531_14genotype.txt",
-                                       "~/.../220531_15genotype.txt"),
-                            dayduration=14)
+```r
+## for two Zebraboxes at once
+multiBehaviourParameter(parameters='all',
+                        ffpath=c("~/.../220531_14_RAWs.csv",
+                                 "~/.../220531_15_RAWs.csv"),
+                        genopath=c("~/.../220531_14genotype.txt",
+                                   "~/.../220531_15genotype.txt"),
+                        dayduration=14)
+```
 
 Make sure that the `ffpath` and the `genopath` are given in the same order!  
 
@@ -451,23 +457,25 @@ The values depend on the parameter. In the example above, the parameter is sleep
 
 We can plot a grid of parameter scatterplots using:  
 
-    ## plot grid of parameters
-    ggParameterGrid(paDir="~/.../bhvparams/",
-                    grporder=c('sorl1', 'scr'),
-                    skipNight0=TRUE,
-                    colours=c('#417dcd', '#697a87'),
-                    legendOrNo=FALSE,
-                    ynameOrNo=FALSE,
-                    yunitOrNo=TRUE,
-                    xtextOrNo=FALSE,
-                    titleOrNo=TRUE,
-                    nightBgOrNo=TRUE,
-                    statsOrNo=TRUE,
-                    ncol=5,
-                    nrow=4,
-                    width=500,
-                    height=230,
-                    exportPath="~/.../paramgrid.pdf")
+```r
+## plot grid of parameters
+ggParameterGrid(paDir="~/.../bhvparams/",
+                grporder=c('sorl1', 'scr'),
+                skipNight0=TRUE,
+                colours=c('#417dcd', '#697a87'),
+                legendOrNo=FALSE,
+                ynameOrNo=FALSE,
+                yunitOrNo=TRUE,
+                xtextOrNo=FALSE,
+                titleOrNo=TRUE,
+                nightBgOrNo=TRUE,
+                statsOrNo=TRUE,
+                ncol=5,
+                nrow=4,
+                width=500,
+                height=230,
+                exportPath="~/.../paramgrid.pdf")
+```
 
 You will see a bunch of statistics passing by in the Console, we will get to them in a minute.  
 
@@ -510,11 +518,13 @@ So far, our examples of commands only had two groups. Let's analyse an experimen
 
 To calculate the LME statistics, we run:
 
-    ## LME stats
-    LMEreport(paDir="~/.../bhvparams/",
-              grporder=c('wt', 'het', 'hom'),
-              skipNight0=TRUE,
-              exportPath="~/.../LMEreport.csv")
+```r
+## LME stats
+LMEreport(paDir="~/.../bhvparams/",
+          grporder=c('wt', 'het', 'hom'),
+          skipNight0=TRUE,
+          exportPath="~/.../LMEreport.csv")
+```
 
 * `grporder`: put the group you want as reference group (e.g. wild-type or DMSO-treated) as the _first_ group.
 * `exportPath`: full path to the statistics report we will write. You can call this file however you like but make sure it finishes with .csv.  
@@ -563,7 +573,9 @@ Here is the minimum you need to know about R to get started.
 
 * For example, try to write in your script:
 
-      print("Hello World")
+```r
+print("Hello World")
+```
 
   Now to run the command, place your cursor at the end of the line or select the command and press Cmd/Ctrl + Enter.
   In the Console, you will see your command repeated, then the answer from the computer:
@@ -573,16 +585,20 @@ Here is the minimum you need to know about R to get started.
 
 * The computer does not see lines that start with `#`. Use that to write comments as notes to yourself or others. e.g.
 
-      # this is a comment
-      print("Hello World")  
+```r
+# this is a comment
+print("Hello World")
+```
 
 * As you may notice, you need to indicate to R what is actual text (and not computer code) by using double quotes, like `"Hello World"`. One unit of text is called a string.
 
 * You can give R a series of things at once, it is called a vector. In R it is written `c(thing1, thing2)`. Examples:
 
-      c("ho", "hey")
-      c(1, 2, 3)
-      c("hey", 3)
+```r
+c("ho", "hey")
+c(1, 2, 3)
+c("hey", 3)
+```
 
 * `NA` stands for "Not Available". It is a way of telling R "missing value".
 * A "logical" simply means `TRUE` or `FALSE`. In R, you write the full word in uppercase.
@@ -604,8 +620,10 @@ Also change > Save workspace to .RData on exit to _Never_
 * For paths, I recommend the `here` package. This is how it works: open RStudio, then File > New Project > Existing Directory > navigate to your experiment folder > Open > Create Project. This will create a .Rproj file in your folder.
 Now install and load the `here` package:
 
-      install.packages("here")
-      library(here)
+```r
+install.packages("here")
+library(here)
+```
 
 In Console, you should see: `> here() starts at /Users/.../myExperiment`. Basically, `here` sees your .Rproj file and will now start all the paths from there. This makes writing paths less painful. For example, instead of writing `"~/Desktop/myExperiment/210907_12_RAWs.csv"`, you can simply write `here("210907_12_RAWs.csv")`. Another advantage is that if you move your experiment folder or change its name, you will not need to update all the paths in your script. For example, imagine we moved the folder _myExperiment_ to _Documents_, we would need to update all our paths if we were using absolute paths. Instead, if we use relative paths (thanks to `here`), as long as you did not touch the .Rproj file everything is still working.
 
@@ -623,15 +641,17 @@ Yes, it is possible. Get in touch with me. At least one person has used it succe
 
 No problem. The only information we get from the Zebralab file is the date and time when your experiment started. You can give that information manually to `vpSorter()` instead:
 
-      vpSorter(ffDir=...,
-               zebpath=NA,
-               boxGen=...,
-               twoBoxMode=...,
-               boxnum=...,
-               zt0=...,
-               date0="07/09/2021",
-               time0="15:34:05",
-               dayduration=...)
+```r
+vpSorter(ffDir=...,
+         zebpath=NA,
+         boxGen=...,
+         twoBoxMode=...,
+         boxnum=...,
+         zt0=...,
+         date0="07/09/2021",
+         time0="15:34:05",
+         dayduration=...)
+```
 
 Ideally, you should be precise at the second as FramebyFrame will use this to determine when the light transitions occured.  
 
@@ -651,13 +671,15 @@ Where clutch means offspring from the same parents and (ideally) mating event.
 Or in other words: I recommend you do not mix multiple clutches in the same Zebrabox.  
 If you are lucky enough to have multiple Zebraboxes and a very large clutch, you can track the same clutch in two Zebraboxes. You should mention this when calculating the LME statistics so it can adapt the random effects accordingly (more details in Documentation). For example:
 
-      LMEreport(paDir=c(here('220906_run1', 'bhvparams'),
-                        here('220912_run2', 'bhvparams')),
-                sameClutch1=c('220906_01', '220906_02'),
-                sameClutch2=c('220912_03', '220912_04'),
-                grporder=c('wt', 'het', 'hom'),
-                skipNight0=TRUE,
-                exportPath=here('LMEreport.csv'))
+```r
+LMEreport(paDir=c(here('220906_run1', 'bhvparams'),
+                  here('220912_run2', 'bhvparams')),
+          sameClutch1=c('220906_01', '220906_02'),
+          sameClutch2=c('220912_03', '220912_04'),
+          grporder=c('wt', 'het', 'hom'),
+          skipNight0=TRUE,
+          exportPath=here('LMEreport.csv'))
+```
 
   means that experiments _220906_01_ + _220906_02_ tracked the same clutch #1 and that experiments _220912_03_ + _220912_04_ tracked the same clutch #2.
 
