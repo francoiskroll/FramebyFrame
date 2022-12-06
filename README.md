@@ -205,8 +205,10 @@ Let's say you called it _220531_14_genotypeMap.xlsx_.
 ### 3– Generate the genotype file
 We need a simple .txt file listing the wells belonging to each group. You can write this file manually (and skip making the genotypeMap above) but it is not a very rewarding task and is prone to errors. Instead, we can use the genotypeGenerator on our genotypeMap:  
 
-    ## genotypeGenerator
-    genotypeGenerator(plateMap="~/.../220531_14_genotypeMap.xlsx")
+```r
+## genotypeGenerator
+genotypeGenerator(plateMap="~/.../220531_14_genotypeMap.xlsx")
+```
 
 `genotypeGenerator` should write _220531_14genotype.txt_ in your experiment folder, which lists the number of the wells belonging to each group.  
 
