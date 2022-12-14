@@ -56,9 +56,11 @@ Plots a grid of single activity traces.
 
 **ffpath**: full path to _RAWs.csv.  
 
-**genopath**: full path to genotype.txt.  
+**genopath**  
+full path to genotype.txt.  
 
-**zebpath**: full path to Zebralab .xls results file.  
+**zebpath**  
+full path to Zebralab .xls results file.  
 
 **dayduration**: how many hours do the days last in your experiment. Default is 14.  
 **smoothOrNo**: whether or not (TRUE or FALSE) to smooth the frame-by-frame data. Default is TRUE.  
