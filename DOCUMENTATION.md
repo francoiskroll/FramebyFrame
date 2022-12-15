@@ -728,27 +728,66 @@ Where x is f5’s activeBoutLength, i.e. 0.5 sec; $μ_{con}$ is the mean of cont
 Z_{day1} = {0.5-0.3 \over 0.1} = 2
 ```
 
-	Calculate the mean and standard deviation of activeBoutLength of the N=40 controls during day1, e.g. 0.3 ± 0.1 sec.
-	Now we repeat for day2, obtaining e.g. Z_day2= 3
-	To get a common Z-score for day activeboutLength of larvae f5, we simply calculate the average of both Z-score day1 and Z-score day2:
-Z_day=  (2 + 3)/2=2.5
-	We repeat the process for every mutant larva to obtain N=20 day activeboutLength Z-scores.
-	To summarise these 20 Z-scores, we calculate the mean and standard error of the mean (SEM) of the 20 day activeboutLength Z-scores. The mean of the Z-scores tells us by how much mutant larvae deviate from controls during the day for the parameter activeboutLength. Say it’s +2.3; it means: in average, mutant larvae have activeboutLength that are 2.3 standard deviations greater than controls.
+
+2. Calculate the mean and standard deviation of activeBoutLength of the N=40 controls during day1, e.g. 0.3 ± 0.1 sec.
+
+
+3. Now we repeat for day2, obtaining e.g. $Z_{day2} = 3$.  
+
+
+4. To get a common Z-score for day activeboutLength of larvae f5, we simply calculate the average of both Z-score day1 and Z-score day2:
+```math
+Z_{day} = { 2 + 3 \over 2} = 2.5
+```
+
+5. We repeat the process for every mutant larva to obtain N=20 day activeboutLength Z-scores.
+
+6. To summarise these 20 Z-scores, we calculate the mean and standard error of the mean (SEM) of the 20 day activeboutLength Z-scores. The mean of the Z-scores tells us by how much mutant larvae deviate from controls during the day for the parameter activeboutLength. Say it’s +2.3; it means: in average, mutant larvae have activeboutLength that are 2.3 standard deviations greater than controls.
+
 The process is the same for nights and for each behavioural parameter.
 
-paDir: directory that stores the parameter tables, typically called bhvparams. For example, paDir=here('bhvparams/'). You can have as many experiments/parameters as you want in this directory. There is some flexibility later to exclude experiments or parameters, but broadly I would recommend having in the directory the experiments and parameters you want plotted together in one fingerprint plot.
-controlGrp: name of control group, e.g. ‘wt’. Does the name cof the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').
-mergeExp1: a set of experiments to merge, each written as YYMMDD_BX. For example, mergeExp1=c('220906_14', '220906_15'). Important note: this pools Z-scores normalised to controls, not raw datapoints. Steps 1–6 (see process above) are executed for each experiment, then the Z-scores for the experiments to merge are pooled to make them look as if they were generated during a single experiment. Step 7 is then executed on the pool of Z-scores. Experiments will be merged into one experiment called “mergeExp_1'' in the results. Default is NA.
-mergeExp2: a second set of experiments to merge. See above. Experiments will be merged into one experiment called “mergeExp_2” in the results. Default is NA.
-mergeExp3: a third set of experiments to merge. See above. Experiments will be merged into one experiment called “mergeExp_3” in the results. Default is NA.
-singleFish: where or not (TRUE or FALSE) to calculate single larva fingerprints. This essentially makes the code stop before executing the last step 7 (see above) so you get for each larva and each parameter (e.g. activeBoutLength during the day) its Z-score normalised to controls.
-grporder: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.
-skipNight0: whether or not (TRUE or FALSE) to remove the night0’s datapoints prior to calculating the fingerprint. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
-avgDayNight: whether or not (TRUE or FALSE) to average, for each parameter and each larva, its days datapoints together and its nights datapoints together prior to calculating the fingerprint. This will affect what each unique parameter is in the fingerprint: if TRUE, parameters are e.g. day_sleepHours and night_sleepHours; if FALSE, parameters are e.g. day1_sleepHours, day2_sleepHours, night1_sleepHours, night2_sleepHours. In other words, do you want to keep individual day/night resolution or not?
+**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, paDir=here('bhvparams/'). You can have as many experiments/parameters as you want in this directory. There is some flexibility later to exclude experiments or parameters, but broadly I would recommend having in the directory the experiments and parameters you want plotted together in one fingerprint plot.
 
-About mergeExp1–3 settings: this can be useful if you tracked a single clutch into multiple boxes to boost sample sizes. As we are pooling Z-scores to controls within each box, this should in theory control for technical variability between boxes. A benefit of pooling is to avoid creating “fake replicates”. Indeed, keeping boxes separate can make it look like you had more replicates than in reality (the technical replicates should probably not count).
+**controlGrp**: name of control group, e.g. ‘wt’. Does the name cof the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').
+
+**mergeExp1**: a set of experiments to merge, each written as YYMMDD_BX. For example, mergeExp1=c('220906_14', '220906_15'). Important note: this pools Z-scores normalised to controls, not raw datapoints. Steps 1–6 (see process above) are executed for each experiment, then the Z-scores for the experiments to merge are pooled to make them look as if they were generated during a single experiment. Step 7 is then executed on the pool of Z-scores. Experiments will be merged into one experiment called “mergeExp_1'' in the results. Default is NA.
+
+**mergeExp2**: a second set of experiments to merge. See above. Experiments will be merged into one experiment called “mergeExp_2” in the results. Default is NA.
+
+**mergeExp3**: a third set of experiments to merge. See above. Experiments will be merged into one experiment called “mergeExp_3” in the results. Default is NA.
+
+**singleFish**: where or not (TRUE or FALSE) to calculate single larva fingerprints. This essentially makes the code stop before executing the last step 7 (see above) so you get for each larva and each parameter (e.g. activeBoutLength during the day) its Z-score normalised to controls.
+
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.
+
+**skipNight0**: whether or not (TRUE or FALSE) to remove the night0’s datapoints prior to calculating the fingerprint. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
+
+**avgDayNight**: whether or not (TRUE or FALSE) to average, for each parameter and each larva, its days datapoints together and its nights datapoints together prior to calculating the fingerprint. This will affect what each unique parameter is in the fingerprint: if TRUE, parameters are e.g. day_sleepHours and night_sleepHours; if FALSE, parameters are e.g. day1_sleepHours, day2_sleepHours, night1_sleepHours, night2_sleepHours. In other words, do you want to keep individual day/night resolution or not?
+
+About **mergeExp1–3** settings: this can be useful if you tracked a single clutch into multiple boxes to boost sample sizes. As we are pooling Z-scores to controls within each box, this should in theory control for technical variability between boxes. A benefit of pooling is to avoid creating “fake replicates”. Indeed, keeping boxes separate can make it look like you had more replicates than in reality (the technical replicates should probably not count).
+
+### ggFingerprint(...)
+
+**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, paDir=here('bhvparams/'). You can have as many experiments/parameters as you want in this directory. There is some flexibility later to exclude experiments or parameters, but broadly I would recommend having in the directory the experiments and parameters you want plotted together in one fingerprint plot.
+
+**metric**: XXX
+
+**controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').
+
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.
+
+**skipNight0**: whether or not (TRUE or FALSE) to remove the night0’s datapoints prior to calculating the fingerprint. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
+
+**avgDayNight**: whether or not (TRUE or FALSE) to average, for each parameter and each larva, its days datapoints together and its nights datapoints together prior to calculating the fingerprint. This will affect what each unique parameter is in the fingerprint: if TRUE, parameters are e.g. day_sleepHours and night_sleepHours; if FALSE, parameters are e.g. day1_sleepHours, day2_sleepHours, night1_sleepHours, night2_sleepHours. In other words, do you want to keep individual day/night resolution or not?
 
 
+fingerprintSimilarity(...)
+
+ggPairwiseHeat(...)
+
+___
+
+##### scrap
 
 It can also write the results of the linear mixed effects (LME) model (read LMEdaynight(...) below) as a .csv file which looks like:
 
