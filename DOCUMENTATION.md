@@ -725,7 +725,7 @@ Z_{day1} = {x-μ_{con} \over σ_{con}}
 ```
 Where x is f5’s activeBoutLength, i.e. 0.5 sec; $μ_{con}$ is the mean of controls, i.e. 0.3 sec.; $σ_{con}$ is the standard deviation of controls, i.e. 0.1. So:
 ```math
-Z_{day1} = {0.5-0.3 \over 0.1 = 2}
+Z_{day1} = {0.5-0.3 \over 0.1} = 2
 ```
 
 	Calculate the mean and standard deviation of activeBoutLength of the N=40 controls during day1, e.g. 0.3 ± 0.1 sec.
