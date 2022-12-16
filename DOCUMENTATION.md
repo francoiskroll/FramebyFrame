@@ -398,7 +398,7 @@ Any idea for a new behavioural parameter? Let me know.
 
 Calculates multiple behaviour parameters.
 
-**parameters**: names of the parameters to be calculated. Options are: 'all' for every available parameter, 'activity' for all activity parameters, 'activebout' for all activebout parameters, ‘sleep’ for all sleep parameters, or a list of parameters e.g. parameters=c('activityTotalPx', 'activeboutNum', 'sleepHours'). See above for parameter names.
+**parameters**: names of the parameters to be calculated. Options are: 'all' for every available parameter, 'activity' for all activity parameters, 'activebout' for all activebout parameters, ‘sleep’ for all sleep parameters, or a list of parameters e.g. `parameters=c('activityTotalPx', 'activeboutNum', 'sleepHours')`. See above for parameter names. You can also run `allparameters` in Console to get all the parameter names.
 
 **ffpath**: full path(s) to _RAWs.csv.
 
@@ -406,21 +406,45 @@ Calculates multiple behaviour parameters.
 
 **zebpath**: full path(s) to Zebralab .xls results file. In the case of two Zebraboxes run in parallel, give the path to the common Zebralab .xls results file here. It is possible to calculate parameters for experiments not run in parallel, in which case you should give one zebpath for each ffpath, with orders matching.
 
-**woi**: window(s) of interest. This is if you want to analyse specific window(s) of data. Give them as: c('start1', 'stop1', 'start2', 'stop2', ...), each start or stop timestamp is given in the format YYYY-MM-DD HH:MM:SS. Here woi1 will be from start1 until stop1; woi2 will be from start2 until stop2, etc. For example, woi=c('2022-01-25 20:00:00', '2022-01-25 23:00:00', '2022-01-26 20:00:00', '2022-01-26 23:00:00') will analyse two windows of interest: woi1 from 8 PM to 11 PM on 25/01/2022 (3 hours of data) and woi2 is from 8 PM to 11 PM on 26/01/2022 (3 hours of data). Not mentioning this setting or giving NA will analyse days/nights present in the data. Default is NA.
+**woi**: window(s) of interest. This is if you want to analyse specific window(s) of data, _instead_ of analysing days/nights. Give the time windows as: `c('start1', 'stop1', 'start2', 'stop2', ...)`, each *start* or *stop* timestamp is given in the format YYYY-MM-DD HH:MM:SS. Here _woi1_ will be from _start1_ until _stop1_; _woi2_ will be from _start2_ until _stop2_, etc. For example, `woi=c('2022-01-25 20:00:00', '2022-01-25 23:00:00', '2022-01-26 20:00:00', '2022-01-26 23:00:00')` will analyse two windows of interest: _woi1_ from 8 PM to 11 PM on 25/01/2022 (3 hours of data) and _woi2_ is from 8 PM to 11 PM on 26/01/2022 (3 hours of data). Not mentioning this setting or giving NA will analyse days/nights present in the data. Default is NA.
 
-**zthr_min**: stands for zzz threshold in minutes, i.e. minimum number of minutes of inactivity to call a period of inactivity a sleep bout. This setting is only used for sleep parameters, it will simply be ignored when calculating an activity or activebout parameters. Default is 1.
+**zthr_min**: stands for zzz threshold in minutes, i.e. minimum number of minutes of inactivity to call a period of inactivity a sleep bout. This setting is only used for sleep parameters, it will simply be ignored when calculating an _activity_ or _activebout_ parameters. Default is 1.
 
 **inaThr**: the maximum Δpixel to call a frame inactive during sleep bout detection. For example, inaThr=3 means “count any frame below or equal 3 Δpixel as inactive”. The setting is analogous to the Freezing threshold in Zebralab. I do not recommend changing this parameter without a good reason to do so. In my opinion, 1 minute of inactivity should genuinely mean 1 minute of inactivity, i.e. a continuous 1,500 frames which are all 0 Δ pixel. Having said that, if you used a low Sensitivity setting in Zebralab (< 20 on the newer Zebrabox), you may get some false positive Δ pixel detection. A good test is to scroll through the frame-by-frame data (in the _RAWs.csv) of empty wells. If there are some small scattered numbers (e.g. 1–3), it may be justified to set inaThr above 0, for example inaThr=3. Default is 0.
 
 **dayduration**: how many hours do the days last in your experiment. Default is 14.
 
-On the common Rihel lab computer, for two parallel night0/day1/night1/day2/night2 experiments, calculating all parameters takes ~ 50 min. Most of it is spent on calculating the activebout parameters, the other parameters are fast to calculate. It always throws some Warnings when it’s done running, you can ignore them.
+The function records in Environment<sup>1</sup> and saves in a folder called bhvparams<sup>2</sup> a “parameter table”. It is a fairly self-explanatory table storing the parameter calculation per larva per time window.
 
-About calculating behaviour parameters within window(s) of interest:
+These tables (precisely the directory _bhvparams_) will be used as input for a series of commands.
+
+> <sup>1</sup> Objects in Environment are listed in the top right corner of RStudio. You may need to stretch the first column to see the full name of each object.
+
+> <sup>2</sup> Folder bhvparams is created (if it did not exist already) in the same folder as the Zebralab .xls results file. Find inside the parameter tables as _parameter_YYMMDD_BX_, e.g. _activityPercentageTimeActive_210913_12.csv_.
+
+For two parallel experiments each of the format night0/day1/night1/day2/night2, calculating all parameters on my MacBook Pro 2017 takes ~ 1 hr. Most of it is spent on calculating the activebout parameters, e.g. activeboutSum alone takes ~ 7 minutes. The activity and sleep parameters are fast to calculate.
+
+Calculations of activebout parameters often throw warnings, you can ignore them.
+
+###### How are sleep parameters affected by the inaThr setting?
+Again, I do not recommend using an inaThr other than 0, but if you are curious: I have tested on one of my experiments (for one night and N = 3 larvae) how gradually increasing inaThr from 0 to 10 affects each sleep parameter. Slope represents the linear regression of Y = parameter (e.g. total number of hours spent asleep during night2 for sleepHours) vs X = inaThr from 0 to 10.
+* **sleepHours**: slope ~ 0.14, so increasing inaThr by 1 Δpixel overestimates total sleep time by an additional ~ 8.5 minutes.
+* **sleepNumNaps**: negligible effect for 2 of the 3 larvae tested.
+* **sleepLatency**: negligible effect.
+* **sleepNapDuration**: slope ~ 0.07, so increasing inaThr by 1 Δpixel overestimates sleep bout duration by an additional ~ 4 seconds.
+
+Note this conclusion is very likely to be dependent on the Sensitivity threshold used in Zebralab. Lowering Sensitivity makes the camera more sensitive. It may, for example, record positive Δpixels from empty wells. My experiment was recorded at Sensitivity = 20.
+
+
+###### About calculating behaviour parameters within window(s) of interest
 Parameters were originally defined and coded with complete days/nights in mind, not window(s) of interest of arbitrary lengths. Therefore, some parameters may not be directly suited to being calculated within window(s) of interest. Namely:
-*	Calculating parameter activityTransitionDelta is not currently supported when analysing by window(s) of interest. The rationale was that windows of interest do not typically follow each other, in which case it does not make sense to calculate the ‘transition’. However, it could make sense to calculate it when the windows of interest directly follow each other, but it requires more significant adjustments so let me know if it’s ever needed.
-*	activitySunsetStartle: it will return the maximum Δ px during the 3 seconds at the beginning of each window of interest. You can decide whether this is any interesting in the context of your experiment.
-* activitySlope: the first 10 minutes of data is skipped prior to linear regression, then the data is summed in 10-minute bins. Accordingly, if the window of interest is only a few minutes long it will throw an error. If the window of interest is only a few tens of minutes long, it may return a result that is not extremely meaningful as the regression is calculated on only a few datapoints.
+
+*	Calculating parameter **activityTransitionDelta** is not currently supported when analysing by window(s) of interest. The rationale for not calculating it is that windows of interest do not typically follow each other, in which case it does not make sense to calculate the ‘transition’. However, it could make sense to calculate it when the windows of interest directly follow each other, but it requires more work so let me know if it is ever needed.
+*	**activitySunsetStartle**: it will return the maximum Δ px during the 3 seconds at the beginning of each window of interest. You can decide whether this is any interesting in the context of your experiment.
+* **activitySlope**: the first 10 minutes of data is skipped prior to linear regression, then the data is summed in 10-minute bins. Accordingly, if the window of interest is only a few minutes long it will throw an error. If the window of interest is only a few tens of minutes long, it may return a result that is not particularly meaningful as the regression is calculated on only a few datapoints.
+
+
+## Plots of behavioural parameters
 
 ### ggParameter(...)
 
@@ -636,7 +660,7 @@ grporder: do you have a preferred order for the groups (genotypes)? If yes, ment
 ### LMEdaynight(...)
 Runs linear mixed effects (LME) models as statistical tests on a behavioural parameter. Day data and night data are analysed separately. It prints in Console a summary in the form:
 
-> reference group vs treatment group = slope ± error ; pval = … ns/*/**/***
+> reference group vs treatment group = slope ± error ; pval = … ns / * / ** / ***
 
 Slope (i.e. the effect, read below) is given in relation to the first group, here wt. It is in the units of the behavioural parameter you are analysing.
 
@@ -780,12 +804,27 @@ About **mergeExp1–3** settings: this can be useful if you tracked a single clu
 
 **avgDayNight**: whether or not (TRUE or FALSE) to average, for each parameter and each larva, its days datapoints together and its nights datapoints together prior to calculating the fingerprint. This will affect what each unique parameter is in the fingerprint: if TRUE, parameters are e.g. day_sleepHours and night_sleepHours; if FALSE, parameters are e.g. day1_sleepHours, day2_sleepHours, night1_sleepHours, night2_sleepHours. In other words, do you want to keep individual day/night resolution or not?
 
+# TODO
 
 fingerprintSimilarity(...)
 
 ggPairwiseHeat(...)
 
+
+LMEreport
+
 ___
+
+error in windows when pdf of plot is open
+
+"manifesto" – in README
+
+genotypeGenerator
+
+check all arguments. may be differences with last updates etc.
+
+examples of each function
+
 
 ##### scrap
 
