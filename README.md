@@ -32,7 +32,7 @@ FramebyFrame builds upon work from Rihel lab members/alumni & collaborators, pri
 
 * MATLAB analyses written by Rihel & Prober labs, e.g. [Lee, Oikonomou, Prober, 2022. _Bio Protocols_](https://bio-protocol.org/e4313). The definitions of the sleep parameters were taken from there.
 
-* Work on analysis of the FramebyFrame data: [Ghosh and Rihel, 2020. _eNeuro_](https://www.eneuro.org/content/7/4/ENEURO.0408-19.2020). The definitions of the "active bout" parameters were taken from there.
+* Work on analysis of the frame-by-frame data: [Ghosh and Rihel, 2020. _eNeuro_](https://www.eneuro.org/content/7/4/ENEURO.0408-19.2020). The definitions of the "active bout" parameters were taken from there.
 
 ___
 
