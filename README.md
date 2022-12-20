@@ -83,30 +83,62 @@ But I recommend that you run the installation again once in a while so I can upd
 
 ___
 
-## Frame-by-frame manifesto
+## The frame-by-frame manifesto
 
 Already using the Zebrabox or similar? Here is why you should consider doing the analysis on the frame-by-frame data.
 
 #### How Zebralab actually works
 At its core, the Zebrabox in "Quantization" mode records, at each frame transition and for each well, the number of pixels that changed grey pixel value above the Sensitivity threshold set by the user. The Sensitivity threshold is in grey pixel value (0 for black to 255 for white). On the new generation of Zebraboxes, we typically use Sensitivity = 20 when tracking 5–8 dpf larvae in 96-well plates.
 
-Precisely, my understanding of how Zebrabox works is: at frame $f$, it asks: “in this well, how many pixels changed intensity between frame ${f−1}$ and frame $f$”. To decide whether _one_ pixel counts as having changed intensity it asks “did that pixel’s grey value change by more than _Sensitivity_”. For example, say the larva swam over pixel X at frame $f$. The grey value of pixel X was 220 (almost white) at frame ${f−1} and became 11 (almost black) at frame $f$ as the larva covered it. Therefore, pixel X changed intensity by ${220−11 = 209}$ grey values, which is above the Sensitivity threshold, so that pixel is counted as having changed intensity at frame f. On the other hand, say pixel X had changed from 220 to 218 because of some noise in the camera, the difference is 220−218 = 2, which is below the Sensitivity threshold, so that pixel is not counted as having changed intensity at frame f. The number of pixels that changed intensity between two successive frames is called Δ pixel.
+Precisely, my understanding of how Zebrabox works is: at frame $f$, it asks: “in this well, how many pixels changed intensity between frame ${f−1}$ and frame $f$”. To decide whether _one_ pixel counts as having changed intensity it asks “did that pixel’s grey value change by more than _Sensitivity_”. For example, say the larva swam over pixel X at frame $f$. The grey value of pixel X was 220 (almost white) at frame ${f−1}$ and became 11 (almost black) at frame $f$ as the larva covered it. Therefore, pixel X changed intensity by ${220−11 = 209}$ grey values, which is above the _Sensitivity_ threshold. Pixel X is thus counted as having changed intensity at frame f. The number of pixels that changed intensity between two successive frames is called Δ pixel.
 
-Therefore, a higher Sensitivity threshold makes the camera less sensitive, as each pixel has to change more to be detected. Conversely, a lower Sensitivity threshold sets the bar lower for each pixel, so it makes the camera more sensitive, i.e. a pixel does not have to change as much to be detected. The threshold is a sensitivity vs specificity balance: a low threshold will catch even small movements that the larva makes (i.e. be more sensitive) but will also detect ‘false positive’ pixel changes (i.e. be less specific), for example counting pixels in empty wells. A high threshold will miss some small movements (i.e. be less sensitive) but will not generate false positive pixel counts (i.e. be more specific). We detect sleep as a continuous (at least) 1 min of inactivity (more about this below), so I think it is best to prioritise specificity, i.e. using a threshold that does not generate false positive pixel counts. Indeed, if these false positive pixel counts are frequent they could (incorrectly) interrupt a genuine sleep bout.
+Therefore, the frame-by-frame data is, for each well, a long list of pixel counts. Each row representing the number of pixels which changed intensity vs. the previous frame. Something like:
 
-The raw data is, for each well, a long list of number of pixels changing intensity between successive frames, something like:
-frame1 – 0 px
-frame2 – 0 px
-frame3 – 12 px
-frame4 – 8 px
-frame6 – 0 px
-…
+| frame | Δ pixel |
+|:---|:---|
+|frame 1|0 px|
+|frame 2|0 px|
+|frame 3|12 px|
+|frame 4|8 px|
+|frame 5|0 px|
 
-Looking at the larval behaviour in this way, zebrafish larvae are inactive the great majority of the time (i.e. most of the pixel counts are 0) interrupted frequently by swimming bouts which appear as a ‘peak’ in the pixel counts, e.g. 0 0 0 0 0 0 2 4 11 18 20 5 0 0 0 0 0…
 
-The 1-min binned parameter we use in the standard analysis is called middur by Viewpoint, for duration in mid-activity. How does Zebralab calculate middur?
-Assume the frame rate is 25 frames-per-second. Zebralab takes the first 1-min of frame-by-frame data, i.e. 25 frames-per-second * 60 seconds = 1500 frames or Δ pixels. Of these 1500 Δ pixels, it counts the number which are above or equal to Freezing (usually set to 3 Δ pixel) but below or equal to Burst (usually set at 200 Δ pixel). For example, say that of the first 1500 frames, 400 were below Freezing (i.e. they were 0 or 1 or 2 Δ pixel) and 100 were above Burst (i.e. they were 201 or 202 or … Δ pixel), so we are left with 1000 frames, i.e. ⅔ of the 1500 frames. So, during the first minute, the larva spent middur = 0.66 minute active. You can also think about it as: each frame represents 1 second / 25 frames-per-second = 0.04 second, so 1000 frames represent 40 seconds or 0.66 minute.
+Looking at the larval behaviour in this way, zebrafish larvae are inactive the great majority of the time (i.e. most of the Δ pixels are 0) interrupted frequently by swimming bouts which appear as a ‘peak’ in the Δ pixel values, e.g. `0 0 0 0 0 0 2 4 11 18 20 5 0 0 0 0 0`…
 
+#### What is the _middur_ parameter
+
+Many users of the Zebrabox analyse the _middur_ parameter, typically binned in 1-minute epochs. _middur_ stands for "duration in mid-activity". Precisely, it is the number of seconds the larva spent in "mid-activity" during a given minute. How does Zebralab (the software) calculates it exactly?
+
+Let us assume the frame rate is 25 frames-per-second and the integration period is 1 minute. Zebralab takes the first 1 minute of frame-by-frame data, i.e. 25 frames-per-second × 60 seconds = 1500 frames or Δ pixel values. Of these 1500 Δ pixels, it counts the number which are above or equal to the _Freezing_ threshold (set by the user, we use 3 Δ pixel) but below or equal to the _Burst_ threshold (set by the user, we use 200 Δ pixel). This is the number of frames spent in "mid-activity", which Zebralab then converts into a number of seconds assuming 25 frames-per-second.
+
+For example, of the first 1500 frames, 400 were below _Freezing_ (i.e. they were 0 or 1 or 2 Δ pixel) and 100 were above _Burst_ (i.e. they were 201 or 202 or … Δ pixel). We are left with 1000 frames, i.e. ⅔ of one minute. So, during the first minute, the larva spent middur = 40 seconds active.
+
+Analysing the frame-by-frame (Δ pixels) data is more accurate and more interesting than analysing the _middur_ datapoints. Here are a few reasons.
+
+#### Sleep detection on the frame-by-frame data is more accurate
+
+A bunch of labs use the Zebrabox to monitor sleep in zebrafish larvae. To detect sleep bouts, the widely used definition is any period of inactivity longer than one minute. If you are analysing the _middur_ parameter and assuming you set the integration period to 1 minute, this translates to "at least one _middur_ datapoint = 0" (or < 0.1 is sometimes used).
+
+Unfortunately, this approach misses many sleep bouts. Here is why.
+
+The _middur_ algorithm runs on **non-overlapping** chunks of 1 minute of data (~ 1500 frames), i.e. the first minute is frame #1 to #1500, the second minute is frame #1501 to #3000, etc. This is not ideal for detection of sleep bouts. Consider the following example: the larva stops moving at frame #1000 then starts moving again at frame #2900, for a total of 1900 inactive frames. Zebralab calculates the middur value for the first minute (frame #1 to #1500): the larva was active during this period, as it only stopped moving at frame #1000. It then calculates the middur value for the second minute (frame #1501 to #3000(): the larva was also active during this period, as it started moving at frame #2900. Result: we get two middur values > 0, i.e. no sleep is detected. But the larva was inactive for 1900 frames = 1.26 minutes, which should count as a sleep bout!
+
+This is how analysing _middur_ datapoints binned in 1-minute epochs misses sleep bouts. For a typical 10-hr night, the _middur_ analysis:
+* underestimates total sleep time by 1.2 ± 0.4 hr.
+* underestimates the number of sleep bouts by 38 ± 16 sleep bouts.
+* overestimates sleep bout duration by 0.4 ± 0.6 min.
+
+This last point may be counterintuitive. Imagine a sleep bout that is exactly 1 minute. To detect this sleep bout, we would need the larva to fall asleep exactly at frame #1501 and wake up exactly at frame #3000, for example. Obviously this is very unlikely. With the _middur_ analysis: the longer the sleep bout, the more likely it is detected. In other words, the detection is biased _against_ the detection of shorter sleep bouts, so it overestimates the typical sleep bout duration.
+
+Why is working with the frame-by-frame data better? The FramebyFrame R package detects every sleep bout (period of > 1500 inactive frames) present in the data. In practice, at each frame, it sums the Δ pixels of the previous 1500 frames. Was there any positive Δ pixel in the previous 1500 frames? Then the sum will give some positive number. Were all the previous 1500 Δ pixels all 0? Then ${0 + 0 + 0 + … = 0}$.  So, at each frame, we can ask: “prior to this exact frame, had the larva been inactive for a complete minute?”. If yes (the previous 1500 frames were all 0), then the larva had been asleep for exactly 1 minute at that frame. In other words, the larva fell asleep exactly 1 minute ago. We can go back to 1 minute ago and label all these frames as ‘asleep’ and continue until the larva woke up, i.e. until the next positive Δ pixel.
+
+#### We can calculate more behavioural parameters on the frame-by-frame data
+Zebrafish larvae make swimming bouts that last ~ 0.2 second. Using the 1-min binned data (the _middur_ parameter) is a bit like recording at 1 frame-per-minute: one cannot detect single swimming bouts at such slow recording speed. Accordingly, studying the frame-by-frame data allows to describe the structure of single swimming bouts (see DOCUMENTATION, Behavioural parameters, Active bout parameters).
+
+The _middur_ analysis is also blind to the actual number of pixels that changed intensity at each frame transition. For the _middur_ algorithm, a vigorous swimming bout which reached a whooping 100 Δ pixel is the same as a subdued movement which reached 9 Δ pixel, assuming both lasted the same duration. Therefore, using the _middur_ parameter, one can only describe activity in terms of time spent active but cannot describe the _intensity_ of this activity (i.e. how many pixels were moved). Accordingly, a larva which moved constantly but very calmly can, in theory, have the same _middur_ values as a larva which moved constantly and very ‘violently’ (e.g. had seizures). The _middur_ analysis cannot differentiate these two situations even though they are completely different. Using FramebyFrame, we can simply sum the Δ pixels to differentiation these two cases. We expect the first larva to spend all of its time active but have a low Δ pixel total, while the other larva would also spend all of its time active but its Δ pixel total would also be very high.
+
+#### One slight point of caution
+I can think of one potential drawback of using the frame-by-frame data: as it actually takes the Δ pixels into account, I would expect it to be more biased in situations where there is a difference in pigmentation or size between larvae. For example, say the mutant larvae are less pigmented than their wild-type siblings. In this case, you would expect the mutant larva to trigger fewer pixels when doing the exact same movement as the wild-type larva, i.e. you may underestimate the activity of the mutant larva. If you think this is the case in your experiment, give more weight to parameters which do not take the Δ pixel values into account, i.e. are given in a different unit than pixels. Those should be fairly robust to differences in size or pigmentation.
 
 ___
 
