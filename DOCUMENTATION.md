@@ -1,7 +1,10 @@
-# FramebyFrame R package: Documentation
-> in construction
+# Documentation
 
 Francois Kroll, 2022 @Rihel lab, UCL.
+
+Full guide to the FramebyFrame R package.
+
+Make sure to follow first the Minimal tutorial (in README) for a smoother introduction to the package.  
 
 [![alt text][1.2]][1] [@francois_kroll](https://twitter.com/francois_kroll)
 
@@ -16,10 +19,21 @@ Francois Kroll, 2022 @Rihel lab, UCL.
 <!-- links to your social media accounts -->
 [1]: https://twitter.com/francois_kroll
 
-Full guide to the FramebyFrame R package.
+## General
 
-Make sure to follow first the Minimal tutorial (in README.md) for a smooth introduction to the package.  
+FramebyFrame assumes that your experiment started during a day.  
 
+It also assumes that the total day + night duration is 24 hours, but it is flexible as to how long the day and night phase lasted.
+
+In the description of settings for each function below, _Default is …_ means this is what the value will be if you do not mention this setting in your call.
+
+For p-values,
+*	\> 0.05 is ns
+*	<= 0.05 is *
+*	<= 0.01 is **
+*	<= 0.001 is ***
+
+Plotting functions start with _gg_, e.g. ggFramerate. This is because it uses a R package called `ggplot2` under the hood.
 
 ___
 
@@ -822,10 +836,10 @@ ggPairwiseHeat(...)
 
 LMEreport
 
-
 "manifesto" – in README
 
 genotypeGenerator
+Genotype file: please do not use special characters such as µ in the group names.
 
 check all arguments. may be differences with last updates etc.
 
