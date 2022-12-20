@@ -804,18 +804,24 @@ About **mergeExp1–3** settings: this can be useful if you tracked a single clu
 
 **avgDayNight**: whether or not (TRUE or FALSE) to average, for each parameter and each larva, its days datapoints together and its nights datapoints together prior to calculating the fingerprint. This will affect what each unique parameter is in the fingerprint: if TRUE, parameters are e.g. day_sleepHours and night_sleepHours; if FALSE, parameters are e.g. day1_sleepHours, day2_sleepHours, night1_sleepHours, night2_sleepHours. In other words, do you want to keep individual day/night resolution or not?
 
+# Troubleshooting
+
+Here are leads for troubleshooting. If this does not help in your case, let me know where you are stuck by raising an issue (`Issues` at the top > `New issue`) or get in touch with me.
+
+> Error in grDevices::pdf(file = filename, ..., version = version) :   
+  cannot open file '...pdf'
+
+Are you on Windows? Do you have the plot you are trying to overwrite open? On Windows, it seems like R cannot overwrite a pdf that is already open. Close Acrobat Reader (or else) and run the command again.  
+If that was not the solution, check carefully that the `exportPath` is correct. Does the folder you are trying to write into exist?
+
 # TODO
 
 fingerprintSimilarity(...)
 
 ggPairwiseHeat(...)
 
-
 LMEreport
 
-___
-
-error in windows when pdf of plot is open
 
 "manifesto" – in README
 
@@ -824,6 +830,15 @@ genotypeGenerator
 check all arguments. may be differences with last updates etc.
 
 examples of each function
+
+rationale of no correction for multiple hypothesis testing across different parameters
+
+ideas for other parameters
+* latency to peak
+* some inactive bouts stuff?
+
+should leave startle sunset flexible (i.e. parameter to change the 3 secs). mostly to allow sunset/sunrise gradients
+
 
 
 ##### scrap

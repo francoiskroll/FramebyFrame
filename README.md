@@ -2,6 +2,9 @@
 
 Francois Kroll, 2022 @Rihel lab, UCL.
 
+FramebyFrame is an R package to analyse behavioural trackings of zebrafish larvae, mainly using the Zebrabox (Viewpoint) in "Quantization" mode.  
+Already using the Zebrabox? Read below (**Frame-by-frame manifesto**) why you should consider doing your analysis on the frame-by-frame data.
+
 [![alt text][1.2]][1] [@francois_kroll](https://twitter.com/francois_kroll)
 
 :email: francois@kroll.be
@@ -80,11 +83,38 @@ But I recommend that you run the installation again once in a while so I can upd
 
 ___
 
+## Frame-by-frame manifesto
+
+Already using the Zebrabox or similar? Here is why you should consider doing the analysis on the frame-by-frame data.
+
+#### How Zebralab actually works
+At its core, the Zebrabox in "Quantization" mode records, at each frame transition and for each well, the number of pixels that changed grey pixel value above the Sensitivity threshold set by the user. The Sensitivity threshold is in grey pixel value (0 for black to 255 for white). On the new generation of Zebraboxes, we typically use Sensitivity = 20 when tracking 5–8 dpf larvae in 96-well plates.
+
+Precisely, my understanding of how Zebrabox works is: at frame $f, it asks: “in this well, how many pixels changed intensity between frame ${f−1} and frame $f”. And to decide whether one pixel changed intensity it asks “did that pixel’s grey value change by more than Sensitivity”. For example, say that the larva swam over pixel X at frame f, so the grey value of pixel X was 220 (almost white) at frame f−1 and became 11 (almost black) at frame f because the larva was covering it. So pixel X changed intensity by 220−11 = 209 grey values, which is above the Sensitivity threshold, so that pixel is counted as having changed intensity at frame f. On the other hand, say pixel X had changed from 220 to 218 because of some noise in the camera, the difference is 220−218 = 2, which is below the Sensitivity threshold, so that pixel is not counted as having changed intensity at frame f. The number of pixels that changed intensity between two successive frames is called Δ pixel.
+
+Therefore, a higher Sensitivity threshold makes the camera less sensitive, as each pixel has to change more to be detected. Conversely, a lower Sensitivity threshold sets the bar lower for each pixel, so it makes the camera more sensitive, i.e. a pixel does not have to change as much to be detected. The threshold is a sensitivity vs specificity balance: a low threshold will catch even small movements that the larva makes (i.e. be more sensitive) but will also detect ‘false positive’ pixel changes (i.e. be less specific), for example counting pixels in empty wells. A high threshold will miss some small movements (i.e. be less sensitive) but will not generate false positive pixel counts (i.e. be more specific). We detect sleep as a continuous (at least) 1 min of inactivity (more about this below), so I think it is best to prioritise specificity, i.e. using a threshold that does not generate false positive pixel counts. Indeed, if these false positive pixel counts are frequent they could (incorrectly) interrupt a genuine sleep bout.
+
+The raw data is, for each well, a long list of number of pixels changing intensity between successive frames, something like:
+frame1 – 0 px
+frame2 – 0 px
+frame3 – 12 px
+frame4 – 8 px
+frame6 – 0 px
+…
+
+Looking at the larval behaviour in this way, zebrafish larvae are inactive the great majority of the time (i.e. most of the pixel counts are 0) interrupted frequently by swimming bouts which appear as a ‘peak’ in the pixel counts, e.g. 0 0 0 0 0 0 2 4 11 18 20 5 0 0 0 0 0…
+
+The 1-min binned parameter we use in the standard analysis is called middur by Viewpoint, for duration in mid-activity. How does Zebralab calculate middur?
+Assume the frame rate is 25 frames-per-second. Zebralab takes the first 1-min of frame-by-frame data, i.e. 25 frames-per-second * 60 seconds = 1500 frames or Δ pixels. Of these 1500 Δ pixels, it counts the number which are above or equal to Freezing (usually set to 3 Δ pixel) but below or equal to Burst (usually set at 200 Δ pixel). For example, say that of the first 1500 frames, 400 were below Freezing (i.e. they were 0 or 1 or 2 Δ pixel) and 100 were above Burst (i.e. they were 201 or 202 or … Δ pixel), so we are left with 1000 frames, i.e. ⅔ of the 1500 frames. So, during the first minute, the larva spent middur = 0.66 minute active. You can also think about it as: each frame represents 1 second / 25 frames-per-second = 0.04 second, so 1000 frames represent 40 seconds or 0.66 minute.
+
+
+___
+
 ## Minimal tutorial
 
 Ready? Here is the shortest possible tutorial of a FramebyFrame analysis. The package can do more than what is presented here, so make sure to check the full documentation once you got the gist of it.
 
-I will assume you have R and RStudio installed. If not, have a look at section **R basics**.
+I will assume you have R and RStudio installed. If not, have a look at section **R basics** below.
 
 ### 1– Get your frame-by-frame data from Zebralab
 
