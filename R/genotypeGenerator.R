@@ -36,6 +36,7 @@
 #' @examples
 #' @importFrom dplyr %>%
 #' @importFrom dplyr filter
+
 genotypeGenerator <- function(plateMap) {
 
 

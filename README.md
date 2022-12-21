@@ -5,6 +5,8 @@ Francois Kroll, 2022 @Rihel lab, UCL.
 FramebyFrame is an R package to analyse behavioural trackings of zebrafish larvae, mainly using the Zebrabox (Viewpoint) in "Quantization" mode.  
 Already using the Zebrabox? Read below (**Frame-by-frame manifesto**) why you should consider doing your analysis on the frame-by-frame data.
 
+Not yet did your experiment? Make sure to read the section **Experimental design commandments** for some advice.  
+
 [![alt text][1.2]][1] [@francois_kroll](https://twitter.com/francois_kroll)
 
 :email: francois@kroll.be
@@ -726,7 +728,6 @@ Yes, this happens when running a Replay on Zebralab, for example. The software (
 ___
 
 ## Experimental design commandments
-> section under construction, this is a draft
 
 Or "recommendations"...
 

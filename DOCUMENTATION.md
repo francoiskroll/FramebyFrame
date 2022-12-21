@@ -76,6 +76,18 @@ Plots instantaneous frame rates over the course of the experiment.
 
 ___
 
+## Genotype file
+
+### genotypeGenerator(...)
+
+Generates a genotype file from a .xlsx plate map. We say "genotype" here as Rihel lab experiments often look at larvae of different genotypes, but groups can represent anything, e.g. different concentrations of a drug.  
+
+To prepare the genotype map, download one of the templates in directory _genotypeMap_templates_ and follow the instructions there. Please do not use special characters such as µ in the group names.
+
+**plateMap**: full path to .xlsx plate map (genotype map).  
+
+___
+
 ## Timecourse plots
 
 ### ggActivityTraceGrid(...)
@@ -751,6 +763,10 @@ Finally, I am not certain what to recommend regarding p-values when excluding gr
 **detailsOrNo**: whether or not (TRUE or FALSE) to print in Console the details of each LME model.
 
 
+### LMEreport
+
+
+
 ### calculateFingerprint(...)
 Calculates a behavioural fingerprint for a larva or clutch.
 
@@ -835,11 +851,6 @@ fingerprintSimilarity(...)
 ggPairwiseHeat(...)
 
 LMEreport
-
-"manifesto" – in README
-
-genotypeGenerator
-Genotype file: please do not use special characters such as µ in the group names.
 
 check all arguments. may be differences with last updates etc.
 
