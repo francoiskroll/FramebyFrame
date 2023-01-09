@@ -343,15 +343,8 @@ vpSorter <- function(ffDir,
   xlsnames <- naturalsort::naturalsort(xlsnames)
 
   # quick check: we should not have anything else than .xls or .XLS files in there -- check this
-  print(substrEnding(xlsnames, 4)[1:10])
-  print( all(substrEnding(xlsnames, 4)!='.XLS') )
-
   if( !all(substrEnding(xlsnames, 4)=='.xls') & !all(substrEnding(xlsnames, 4)=='.XLS') )
     stop('\t \t \t \t >>> Error: there is something else than just .xls files in this folder, check and run again \n')
-
-#
-#   if(all(substrEnding(xlsnames, 4)!='.xls') & all(substrEnding(xlsnames, 4)!='.XLS'))
-#     stop('\t \t \t \t >>> Error: there is something else than just .xls files in this folder, check and run again \n')
 
   # import the first xls file
   fi1 <- read.table(paste0(ffDir, xlsnames[1]), fill=TRUE, header=TRUE)
@@ -397,7 +390,11 @@ vpSorter <- function(ffDir,
 
 
   ### how is location column formatted? ###
-  # I have seen C001--C192 (option1) or c1--c192 (option2)
+  # options I have seen:
+  # option1: C001--C192
+  # option2: c1--c192
+  # option3: w001--w192
+
   # what is the first character?
   locfirstchar <- strsplit(fi1$location[1], '')[[1]][1]
 
@@ -423,7 +420,8 @@ vpSorter <- function(ffDir,
   # additionally, note Zebralab starts second box at well 97 regardless of number of wells
 
   # differentiate between option1 and option2:
-  if (locfirstchar=='C' & locnchar==4) { # if option1
+
+  if (locfirstchar=='C' & locnchar==4) { # OPTION 1
 
     SpeaknRecord('Locations are written CXXX, e.g. C096')
 
@@ -438,7 +436,7 @@ vpSorter <- function(ffDir,
       stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
     }
 
-  } else if (locfirstchar=='c' & locnchar==2) {
+  } else if (locfirstchar=='c' & locnchar==2) { # OPTION 2
 
     SpeaknRecord('Locations are written c..., e.g. c96')
 
@@ -453,11 +451,26 @@ vpSorter <- function(ffDir,
       stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
     }
 
+  } else if (locfirstchar=='w' & locnchar==4) { # OPTION 3
+
+    SpeaknRecord('Locations are written w..., e.g. w096')
+
+    # set the locations accordingly
+    if (boxnum==1){
+      SpeaknRecord('Running BOX1 so expecting w001, w002, ...')
+      locs=sprintf('w%0.3d', 1:nwells) # Box1 locations = w001 >> w096
+    } else if (boxnum==2) {
+      SpeaknRecord('Running BOX2 so expecting w097, w098, ...')
+      locs=sprintf('w%0.3d', 97:(97+nwells-1)) # Box2 locations = w097 >> w192
+    } else {
+      stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
+    }
+
   } else {
 
     stop('\t \t \t \t >>> Error: in the xls files, expecting location column to be formatted as C001, C002, ... or c1, c2, ... \n')
 
-  }
+    }
 
   # note, in comments below will usually assume 96 wells but now locs created above actually represents number of wells
   # i.e. not always 96
