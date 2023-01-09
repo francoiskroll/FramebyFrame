@@ -345,8 +345,13 @@ vpSorter <- function(ffDir,
   # quick check: we should not have anything else than .xls or .XLS files in there -- check this
   print(substrEnding(xlsnames, 4)[1:10])
   print( all(substrEnding(xlsnames, 4)!='.XLS') )
-  if(all(substrEnding(xlsnames, 4)!='.xls') & all(substrEnding(xlsnames, 4)!='.XLS'))
+
+  if( !all(substrEnding(xlsnames, 4)=='.xls') & !all(substrEnding(xlsnames, 4)=='.XLS') )
     stop('\t \t \t \t >>> Error: there is something else than just .xls files in this folder, check and run again \n')
+
+#
+#   if(all(substrEnding(xlsnames, 4)!='.xls') & all(substrEnding(xlsnames, 4)!='.XLS'))
+#     stop('\t \t \t \t >>> Error: there is something else than just .xls files in this folder, check and run again \n')
 
   # import the first xls file
   fi1 <- read.table(paste0(ffDir, xlsnames[1]), fill=TRUE, header=TRUE)
