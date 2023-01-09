@@ -705,7 +705,7 @@ vpSorter <- function(ffDir,
   # then well 85 to 96: 466523503 / time 80017 (which looks like same frame as 80557?)
   # but abstime 466523503 is also shared with well 1 to 84 with time 120433
   # i.e. trusting abstime or trusting time would not pool the same datapoints in a single frame; which one to believe?
-  # from what I understand, the goal of abstime to sync timepoints, so will trust this
+  # from what I understand, the goal of abstime is to sync timepoints, so will trust this
   # from the cases I have seen (example above) abstime is consistent, while time is not; which is another argument to use abstime to sync
 
   # Note: at the end of the day, if the 'video' of some fish is shifted by 1 frame compared to the 'video' of the other fish, it will not affect the results
@@ -750,8 +750,28 @@ vpSorter <- function(ffDir,
 
   # 3- replace it by synced times of well 96 found above
   # (abstime only used to sync, will not use it again)
-  if(nrow(bxt) != nrow(bx)) stop('\t \t \t \t >>> Error: Number of common times is not equal to the number of rows after joining the data \n')
-  bx$abstime <- bxt
+  if(nrow(bxt) > nrow(bx)) {
+    SpeaknRecord('Warning: number of common times is not equal to the number of rows after joining the data. Discrepancy is', abs(nrow(bxt)-nrow(bx)),' rows \n')
+    # see ***
+    # if superfluous rows in bxt, we drop a few frames at the end of bxt
+    bx$abstime <- bxt[1:nrow(bx),]
+  } if (nrow(bxt) < nrow(bx)) {
+    SpeaknRecord('Warning: number of common times is not equal to the number of rows after joining the data. Discrepancy is', abs(nrow(bxt)-nrow(bx)),' rows \n')
+    # see ***
+    # if superfluous rows in bxt, we drop a few frames at the end of bx
+    bx <- bx[1:nrow(bxt),]
+    bx$abstime <- bxt[1:nrow(bx),]
+  } else {
+    # if no problem (most of the time)
+    bx$abstime <- bxt
+  }
+
+  # ***
+  # despite all the precautions taken above, this can occur with first-gen boxes (rarely) for reasons I do not understand
+  # example I found was 7969354 rows in bx and 7969357 rows in bxt
+  # first row and last row matched in .xls files, i.e. same time matching same abstime
+  # as long as discrepancy is a few frames I do not see how it would affect any result
+
   colnames(bx)[1] <- 'exsecs' # note, previously this column was called 'time' but this is vague
   # exsecs is number of seconds since start of the experiment
 
@@ -764,7 +784,7 @@ vpSorter <- function(ffDir,
   rm(pw)
   rm(bxt)
 
-  ## Note when reading this in the future: abstime is only used to sync things together then thrown away
+  ## Note when reading this in the future: abstime is only used to sync wells then thrown away
   # the exsecs column in the final RAWs.csv is the Viewpoint time column (seconds or microseconds after experiment started), not the abstime column
 
 
