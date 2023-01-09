@@ -419,7 +419,7 @@ vpSorter <- function(ffDir,
 
   # additionally, note Zebralab starts second box at well 97 regardless of number of wells
 
-  # differentiate between option1 and option2:
+  # differentiate between various options:
 
   if (locfirstchar=='C' & locnchar==4) { # OPTION 1
 
@@ -602,7 +602,7 @@ vpSorter <- function(ffDir,
       # error 1: correct ones as zeros
       # will assume that correct way of dealing with this is to minus 1 all the data
       SpeaknRecord('\t older Zebralab gives 0s as 1s, correct this...')
-      wed$data1 <- wed$data1 - 1
+      wed[, data1 := (data1-1)] # using change-in-place from data.table to go faster
 
       # error 2 = duplicated datapoints
       # i.e. same abstime and time
@@ -634,6 +634,7 @@ vpSorter <- function(ffDir,
     })
 
   }
+  # note, I tried on 09/01/2023 to use a for loop instead of lapply above and it made no difference in performance
 
 
   #### quality checks ####
@@ -656,7 +657,6 @@ vpSorter <- function(ffDir,
   if (isTRUE(all.equal(min(fpspw), max(fpspw), 0.02))) { # if all wells have same fps (if around 25fps, then it is 25 fps +- 0.5 fps)
     SpeaknRecord('Frame rate is ***', round(fpspw[1],2), '*** frames-per-second')
     fps <- fpspw[1]
-    1
   } else {
     message('\t \t \t \t >>> Problem with frame rate. It appears to be different between wells, \n
           Frame rate for each well = \n')
