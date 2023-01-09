@@ -342,8 +342,8 @@ vpSorter <- function(ffDir,
   # edit 12/04/2022 -- used to be okay without naturalsort but now does not import in the right order (it goes file 1, 10, ... instead of file 1, 2, ...), so
   xlsnames <- naturalsort::naturalsort(xlsnames)
 
-  # quick check: we should not have anything else than .xls files in there -- check this
-  if(all(substrEnding(xlsnames, 4)!='.xls'))
+  # quick check: we should not have anything else than .xls or .XLS files in there -- check this
+  if(all(substrEnding(xlsnames, 4)!='.xls') | all(substrEnding(xlsnames, 4)!='.XLS'))
     stop('\t \t \t \t >>> Error: there is something else than just .xls files in this folder, check and run again \n')
 
   # import the first xls file
