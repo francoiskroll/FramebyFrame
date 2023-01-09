@@ -755,7 +755,7 @@ vpSorter <- function(ffDir,
     # see ***
     # if superfluous rows in bxt, we drop a few frames at the end of bxt
     bx$abstime <- bxt[1:nrow(bx),]
-  } if(nrow(bxt) < nrow(bx)) {
+  } else if(nrow(bxt) < nrow(bx)) {
     SpeaknRecord('Warning: number of common times is not equal to the number of rows after joining the data. Discrepancy is', abs(nrow(bxt)-nrow(bx)),' rows \n')
     # see ***
     # if superfluous rows in bxt, we drop a few frames at the end of bx
