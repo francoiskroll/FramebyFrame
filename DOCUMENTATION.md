@@ -841,8 +841,13 @@ Here are leads for troubleshooting. If this does not help in your case, let me k
 > Error in grDevices::pdf(file = filename, ..., version = version) :   
   cannot open file '...pdf'
 
-Are you on Windows? Do you have the plot you are trying to overwrite open? On Windows, it seems like R cannot overwrite a pdf that is already open. Close Acrobat Reader (or else) and run the command again.  
+Are you on Windows? Do you have the plot you are trying to overwrite open? On Windows, it seems like R cannot overwrite a PDF that is already open. Close Acrobat Reader (or else) and run the command again.  
 If that was not the solution, check carefully that the `exportPath` is correct. Does the folder you are trying to write into exist?
+
+> Error in data.table::fwrite(paL[[i]], file = paste0(beforeLastSlash(ffpath[1]),  :
+  Permission denied: 'D:/.../.csv'. Failed to open existing file for writing. Do you have write permission to it? Is this Windows and does another process such as Excel have it open?  
+
+Error is self-explanatory here. On Windows, R cannot overwrite a CSV that is open, for example in Excel. Close Excel (or else) and run the command again.
 
 # TODO
 
