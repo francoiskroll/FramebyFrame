@@ -231,8 +231,12 @@ activityFractalDim_onefish <- function(ffc,
   # for a 10-hour night at 25 fps, this corresponds to 450 frames or 18 seconds
   # note, from looking at a few experiments, minimum % of active frames of an actual larva during night seems to be ~ 0.1 %
   thrac <- round(length(ffc) * 0.0005) # threshold in number of active frames
-  print(length(which(ffc>0)))
-  if(length(which(ffc>0)) < thrac) { return(NA) }
+  cat('\t \t \t \t number of active frames: ', length(which(ffc>0)), '\n')
+  cat('\t \t \t \t threshold: ', thrac, '\n')
+
+  if(length(which(ffc>0)) < 20) {
+    cat('\t \t \t below thr, returning NA')
+    return(NA) }
 
   # now normal run:
 
