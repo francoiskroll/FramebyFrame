@@ -227,16 +227,15 @@ activityFractalDim_onefish <- function(ffc,
   # it seems to throw an error when calculating the fractal dimension on only a few positive values
   # in that case, return NA (in theory it is 1.0 if all same value, but not interesting to calculate on empty wells anyways)
   # here, if fewer than 0.05 % (i.e. 0.0005) of frames in that window are positive, assume empty well and return NA
-  # for a 14-hour day at 25 fps, this corresponds to 630 frames or 25 seconds, which should be enough in case hands covered an empty well during water top-up
+  # for a 14-hour day at 25 fps, this corresponds to 126 frames or 25 seconds, which should be enough in case hands covered an empty well during water top-up
   # for a 10-hour night at 25 fps, this corresponds to 450 frames or 18 seconds
   # note, from looking at a few experiments, minimum % of active frames of an actual larva during night seems to be ~ 0.1 %
+  # and the maximum number of active frames I have seen while still throwing an error was 41 during a night
+  # note, this "empty-well detector" does not need to be perfect:
+  # calculating fractal dimension on an empty well is fine as long as it does not throw an error (it will be excluded later)
+  # skipping one day or night for a well with an actual larva in it because there is too few active frames is not ideal but reasonable/not a big issue
   thrac <- round(length(ffc) * 0.0005) # threshold in number of active frames
-  cat('\t \t \t \t number of active frames: ', length(which(ffc>0)), '\n')
-  cat('\t \t \t \t threshold: ', thrac, '\n')
-
-  if(length(which(ffc>0)) < 20) {
-    cat('\t \t \t below thr, returning NA')
-    return(NA) }
+  if(length(which(ffc>0)) < thrac) { return(NA) }
 
   # now normal run:
 
