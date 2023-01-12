@@ -67,8 +67,10 @@ genotypeGenerator <- function(plateMap) {
   # actual wells should be genotypeX or empty or excluded
   frmts <- frmts[-which(frmts=='Normal')]
 
-  # in contents, remove all NA and cells which are a single uppercase letters (they are the row names)
+  # in contents,
+  # remove all NA
   cnts <- cnts[!is.na(cnts)]
+  # remove all single uppercase letters
   cnts <- cnts[! cnts %in% LETTERS]
 
   # we can now detect number of wells in the plate

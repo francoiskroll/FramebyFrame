@@ -304,6 +304,20 @@ vpSorter <- function(ffDir,
   # exportXlsOrNo is logical
   if (!is.logical(exportXlsOrNo)) stop('\t \t \t \t Error vpSorter: exportXlsOrNo can only be TRUE or FALSE, e.g. exportXlsOrNo=FALSE \n')
 
+  # ffDir: on Windows, pressing Tab key automatically writes the directory as ".../" but we need it to finish by "\\" or "\\\\"
+  # function whatSlash in pathUtilities was written for this situation
+  # if the last character is / and we are on Windows, replace by \\\\:
+  if(substrEnding(ffDir, 1)=='/') {
+    paste0( paste0(strsplit(ffDir, '')[[1]][1:(nchar(ffDir)-1)], collapse='') , whatSlash(ffDir))
+    # if on Mac: will replace by / by /, i.e. no change
+    # if on Windows: will replace by / by \\\\
+
+  # also, if there is no slash at the end, add one. That will avoid another error
+  } else if(! substrEnding(ffDir, 1) %in% c('/', '\\')) { # \\ is actually \, first \ is escape
+    paste0( paste0(strsplit(ffDir, '')[[1]][1:nchar(ffDir)], collapse='') , whatSlash(ffDir))
+    # if on Mac: will add /
+    # if on Windows: will add \\\\
+  }
 
   #### folder with xls files ####
 
