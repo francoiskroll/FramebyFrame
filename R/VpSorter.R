@@ -268,7 +268,6 @@ vpSorter <- function(ffDir,
                      dayduration=14,
                      exportXlsOrNo=FALSE) {
 
-
   #### check settings make sense ####
   # vpSorter takes a while to run so need to be thorough so we do not throw an error after the user waited for an hour
 
@@ -480,9 +479,28 @@ vpSorter <- function(ffDir,
       stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
     }
 
+  } else if (locfirstchar=='L' & locnchar==6) { # OPTION 4
+
+    SpeaknRecord('Locations are written LocA/B..., e.g. LocA96')
+
+    # set the locations accordingly
+    if (boxnum==1){
+      SpeaknRecord('Running BOX1 so expecting LocA01, LocA02, ...')
+      locs=sprintf('LocA%0.2d', 1:nwells) # Box1 locations = LocA01 >> LocA96
+    } else if (boxnum==2) {
+      SpeaknRecord('Running BOX2 so expecting LocB01, LocB02...')
+      # note 12/01/2023, I am guessing this, only time I have seen the Loc version of the column it was for a single box and it was LocA01, ..., LocA96
+      # so probably second box would be LocB01?
+      locs=sprintf('LocB%0.2d', 1:nwells) # Box2 locations = LocB01 >> LocB96
+    } else {
+      stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
+    }
+
   } else {
 
-    stop('\t \t \t \t >>> Error: in the xls files, expecting location column to be formatted as C001, C002, ... or c1, c2, ... \n')
+    stop('\t \t \t \t >>> Error: in the xls files, expecting the location column to be formatted as: C001 or c1 or w001.
+         \t \t \t Open one of the xls files, is your location column written differently? Viewpoint always finds new ways to name the wells!
+         \t \t \t Send me a sample xls file on francois@kroll.be and I will update the package. \n')
 
     }
 
@@ -599,12 +617,13 @@ vpSorter <- function(ffDir,
 
 
   #### remove errors ####
-  # this only applies to earlier model of Zebrabox
+
+  SpeaknRecord('ERROR REMOVAL', header=3)
 
   if (boxGen==1) {
+    # below only applies to earlier model of Zebrabox
 
-    SpeaknRecord('ERROR REMOVAL', header=3)
-    SpeaknRecord('Zebrabox generation 1, removing some errors...')
+    SpeaknRecord('Zebrabox generation 1, removing some extra errors...')
 
     pw <- lapply(1:length(pw), function(w) {
 
@@ -650,12 +669,38 @@ vpSorter <- function(ffDir,
   }
   # note, I tried on 09/01/2023 to use a for loop instead of lapply above and it made no difference in performance
 
+  ### remove duplicate frames ###
+  # sometimes the same frame is written twice, e.g.
+  #       abstime     time data1
+  # 1: 1377502064 13.59999     0
+  # 2: 1377542221 13.64014     0
+  # 3: 1377542221 13.64014     0
+  # 4: 1377582160 13.68008     0
+
+  SpeaknRecord('Removing duplicated frames, if any')
+
+  pw <- lapply(1:length(pw), function(w) {
+
+    dups <- which(duplicated(pw[[w]]$time))
+    # not checking that abstime is also duplicated
+    # if there was a case where time is duplicated but not abstime, we would probably delete that row anyways
+
+    if(length(dups) > 0) {
+      SpeaknRecord('Well', w, ': removing', length(dups), 'duplicated frames')
+      return( pw[[w]][-dups,] )
+    } else if (length(dups)==0) {
+      return(pw[[w]])
+    }
+
+  })
+
 
   #### quality checks ####
 
   SpeaknRecord('QUALITY CHECK', header=3)
 
   # check that all timestamps are chronological for every well
+  # important to do this afer we removed duplicates, as they appear as non-chronological frames (i.e. time does not go up from one frame to the next)
   if (!all(sapply(pw, function(wed){all(diff(wed$time)>0)})))
     stop('\t \t \t \t >>> For at least one well, the timestamps are not all chronological \n')
   # wed for well data
@@ -756,8 +801,9 @@ vpSorter <- function(ffDir,
                function(wed){wed[,c(1,3)]}) %>%
     purrr::reduce(inner_join, by='abstime')
 
-  colnames(bx) <- c('abstime', sprintf('f%i', as.integer(substr(locs, 2, 99))))
-  # as.integer(substr(locs...): from C001, C002, ... >> 1, 2, ...
+  locnum <- readr::parse_number(locs)
+  colnames(bx) <- c('abstime', sprintf('f%i', locnum))
+  # parse_number: from C001, C002, ... (or other formats) >> 1, 2, ...
   # then sprintf to add f for fish, so >> f1, f2, f3, ...
 
   # gives abstime + 1 column per well of its data; all synced by abstime
@@ -892,30 +938,64 @@ vpSorter <- function(ffDir,
   # a better solution to avoid bothering the user is simply to try one import command, and switch to the other if it does not work:
 
   if (!is.na(zebpath)) {
-    usefRead <- TRUE # by default use fread
-    # except if fread does not work
-    tryCatch( { result <- data.table::fread(zebpath) },
-              error = function(e) {usefRead <<- FALSE},
-              silent=TRUE)
+  # which approach should we use to import the Zebralab file?
 
-    # read first row of Zebralab's XLS file
-    if (usefRead) {
-      zebfi <- data.table::fread(zebpath)[1,]
+    # if the zebpath is .xlsx, we should use read_excel from readxl
+    if (endsWith(zebpath, '.xlsx')) {
+      importMethod <- 'readxl'
     } else {
+      # if not .xlsx, should be .xls
+      # in which case we either use fread or readdelim, depends on the Zebralab version
+      importMethod <- 'fread' # by default use fread
+      # except if fread does not work, then we use readdelim
+      tryCatch( { result <- data.table::fread(zebpath) },
+                error = function(e) {importMethod <<- 'readdelim'},
+                silent=TRUE)
+    }
+
+    # now read the first row of the Zebralab XLS/XLSX file
+    # and get the start date & time
+    if (importMethod=='fread') {
+
+      zebfi <- data.table::fread(zebpath)[1,]
+      dt0 <- zebfi$stdate
+      tm0 <- zebfi$sttime
+      startts <- paste(dt0, tm0) # start timestamp, e.g. 28/01/2021 10:27:35
+      startts <- lubridate::dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+
+    } else if (importMethod=='readdelim') {
+
       zebfi <- read.delim(zebpath, fileEncoding='UCS-2LE', header=TRUE, nrow=1)
+      dt0 <- zebfi$stdate
+      tm0 <- zebfi$sttime
+      startts <- paste(dt0, tm0) # start timestamp, e.g. 28/01/2021 10:27:35
+      startts <- lubridate::dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+
+    } else if (importMethod=='readxl') {
+
+      zebfi <- readxl::read_excel(zebpath)[1,]
+      dt0 <- zebfi$stdate
+      tm0 <- strNthSplit(zebfi$sttime, split=' ', nth=2)
+      startts <- paste(dt0, tm0) # start timestamp, e.g. 28/01/2021 10:27:35
+      startts <- lubridate::ymd_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+      # note here ymd_ (instead of dmy_), in my experience read_excel imports date as e.g. "2023-01-06 UTC"
+      # tm0: this might not be the most flexible solution
+      # in my experience, read_excel gives sttime column as e.g. "1899-12-31 10:25:18 UTC"
+      # so this keeps only the time component
+
     }
     # zebfi = ZebraLab XLS file's first row
 
-    # get t0 full timestamp
-    startts <- paste(zebfi$stdate, zebfi$sttime) # start timestamp, e.g. 28/01/2021 10:27:35
-
+  # if instead of a Zebralab file user gave date0 and time0 manually...
   } else if (is.na(zebpath) & !is.na(date0) & !is.na(time0)) {
     startts <- paste(date0, time0)
+    startts <- lubridate::dmy_hms(startts)
   }
+
+  SpeaknRecord('Full t0 timestamp is', startts)
 
   # ! we assume here that first timestamp is correct. ViewPoint have made serious errors about this; carefully check
   # especially if Replay; first timestamp is (stupidly) taken from the computer clock when you start the Replay, not from the raw file
-  startts <- lubridate::dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
 
 
   #### add full clock timestamps to frame-by-frame data
