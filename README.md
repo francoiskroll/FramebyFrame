@@ -261,6 +261,7 @@ Each row is one frame. Each column is one well (f for fish), plus a few timestam
 * `f2`: data for well #2.  
 etc.  
 
+> Getting stuck here? Viewpoint changes the format of the output files all the time, so it is much more likely I have not seen your particular format yet, rather than you doing anything stupid. Just send me one of your raw .xls/xlsx files on francois@kroll.be and I will update the package.
 
 ### 2– Prepare your genotype map
 This will assign each well to a group. We say 'genotype' as our experiments often look at larvae of different genotypes (e.g. wild-type vs knockout), but your groups can be anything, e.g. different concentrations of a drug.  
