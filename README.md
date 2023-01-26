@@ -6,7 +6,7 @@ FramebyFrame is an R package to analyse behavioural trackings of zebrafish larva
 
 Already using the Zebrabox? Read below (**Frame-by-frame manifesto**) why you should consider doing your analysis on the frame-by-frame data.
 
-Not yet did your experiment? Make sure to read the section **Experimental design commandments** for some advice.  
+Not did your experiment yet? Make sure to read the section **Experimental design commandments** for some advice.  
 
 [![alt text][1.2]][1] [@francois_kroll](https://twitter.com/francois_kroll)
 
@@ -367,7 +367,7 @@ You can check the activity trace of each larva and exclude any that look particu
 
 If you want to exclude a larva, edit the genotypeMap and re-run the `genotypeGenerator` command to update the genotype file.  
 
-### 7– Activity trace by group
+### 6– Activity trace by group
 We are ready to draw our first nice plot! Let's start with activity:
 
 ```r
@@ -423,7 +423,7 @@ As you may notice, `xstart` and `xstop` are not strictly respected, it leaves a 
 Important: the `bin_nsecs` setting determines the unit of the Y axis. In example above: `bin_nsecs=1*60` means that each datapoint is the sum of Δ px in each 10-min bin, therefore the unit on the Y axis is sum of Δ px/10 min.  
 
 
-### 8– Sleep trace by group
+### 7– Sleep trace by group
 Now let's plot the sleep traces.  
 
 ```r
@@ -464,7 +464,7 @@ Important: the `epo_min` setting determines the unit of the Y axis. In example a
 
 As before, not all possible settings are mentioned here. Read the full documentation to learn about those.  
 
-### 9– Calculate behaviour parameters
+### 8– Calculate behaviour parameters
 FramebyFrame can currently calculate 17 parameters on both day and night, for a total of 32 unique parameters (two parameters are not defined for the day).
 
 A few examples:  
@@ -523,7 +523,7 @@ The name of each behaviour table is _parameter_YYMMDD_BX.csv_, e.g. _sleepHours_
 
 The values depend on the parameter. In the example above, the parameter is sleepHours, so the values (8.01, 0.55, ...) represent total number of hours spent asleep during night0, day1, etc.  
 
-### 10– Plot every behaviour parameter
+### 9– Plot every behaviour parameter
 
 We can plot a grid of parameter scatterplots using:  
 
@@ -560,7 +560,7 @@ Some of the settings we have not encountered yet:
 
 The parameter grid will not display in RStudio, do not be alarmed. It is relatively big so it slows things down. Instead, look directly at the pdf it generates.  
 
-### 11– Statistics on behaviour parameter
+### 10– Statistics on behaviour parameter
 > Any feedback on this section is welcome, especially if you think I got something wrong!
 
 As promised, here are the statistics. It uses linear mixed effects (LME) modelling. Here is a very brief summary of the approach. For more details, please refer to the full documentation.
