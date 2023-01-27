@@ -625,7 +625,7 @@ ggSleepLatencySurvival <- function(pa,
 
     # ready to plot
     ggLatency <- ggplot(sw, aes(x=dthrs, y=perleft, colour=grp)) + # sleep latency survival curve
-      geom_step(size=0.8) +
+      geom_step(linewidth=0.8) +
       {if(!is.na(colours[1])) scale_colour_manual(values=colours) } + # if user gave colours, follow them; if not ggplot will do default colours
       theme_minimal() +
       theme(
@@ -713,8 +713,7 @@ ggSleepLatencyGrid <- function(pa,
                                xnameOrNo=TRUE,
                                ynameOrNo=TRUE,
                                nightBgOrNo=TRUE,
-                               xmaxDay=NA,
-                               xmaxNight=NA,
+                               xmaxh=NA,
                                detailsOrNo=TRUE,
                                exportDir,
                                width=150,
@@ -725,89 +724,66 @@ ggSleepLatencyGrid <- function(pa,
   if(!dir.exists(exportDir))
     stop('\n \t \t \t \t >>> Error exportDir: output folder does not exist. \n')
 
-  # if user did not give xmaxhDay or xmaxhNight, set to full duration
-  if(is.na(xmaxDay)) {
-    xmaxDay <- dayduration
-  } else if(is.na(xmaxNight)) {
-    xmaxNight <- 24 - dayduration
+  # if user did not give xmax, set to full duration
+  if(is.na(xmaxh)) {
+    xmaxh <- 24 - dayduration
   }
 
-  # for loop simply repeats the entire operation, once for day, one for night
-  # concluding each time with exporting the grid
-  for(dorn in c('day', 'night')) {
+  # make an horizontal grid for each experiment we were given
+  # typically: night1 plot / night2 plot
 
-    # first make DAY grid
-    # (will assume day in the comments so they are not too vague, but day or night is simply controlled by the for loop)
-    # we first make an horizontal grid for each experiment we were given
+  # outer lapply goes through experiments one by one
+  # we get back list latL, one element per experiment, and each element is an horizontal grid, where each plot is one window
+  latL <- lapply(1:length(pa), function(p) {
 
-    # outer lapply goes through experiments one by one
-    # we get back list dayL, one element per experiment, and each element is an horizontal grid, where each plot is one window
-    dayL <- lapply(1:length(pa), function(p) {
+    pe <- paramReadPivot(pa[p],
+                         grporder=grporder,
+                         skipNight0=skipNight0) # pa for one experiment
+    # note, only reason we need to import is to look at the window names
+    # otherwise ggSleepLatencySurvival() takes care of the importing etc.
 
-      pe <- paramReadPivot(pa[p],
-                           grporder=grporder,
-                           skipNight0=skipNight0) # pa for one experiment
-      # note, only reason we need to import is to look at the window names
-      # otherwise ggSleepLatencySurvival() takes care of the importing etc.
+    # windows to plot:
+    wnps <- as.character(unique(pe$win)[which(startsWith(unique(pe$win), 'night'))])
+    # will give names of night windows, e.g. night1, night2
 
-      # windows to plot:
-      wnps <- as.character(unique(pe$win)[which(startsWith(unique(pe$win), dorn))])
-      # will give names of day windows, e.g. day1, day2
+    # no plot the day windows one by one
+    # we get back list expdayL, i.e. day plots for one experiment
+    expniL <- lapply(1:length(wnps), function(w) {
 
-      # no plot the day windows one by one
-      # we get back list expdayL, i.e. day plots for one experiment
-      expdayL <- lapply(1:length(wnps), function(w) {
-
-        # which xmaxh to use?
-        if(dorn=='day') {
-          xmaxh <- xmaxDay
-        } else if(dorn=='night') {
-          xmaxh <- xmaxNight
-        }
-
-        ggSleepLatencySurvival(pa=pa[p], # *** here, goes through one experiment a a time, controlled by outer lapply
-                               grporder=grporder,
-                               skipNight0=skipNight0,
-                               onlyWin=wnps[w], # *** here, goes one window at a time, controlled by inner lapply
-                               colours=colours,
-                               legendOrNo=legendOrNo,
-                               xtextOrNo=xtextOrNo,
-                               xnameOrNo=xnameOrNo,
-                               ynameOrNo=ynameOrNo,
-                               nightBgOrNo=nightBgOrNo,
-                               xmaxh=xmaxh,
-                               detailsOrNo=detailsOrNo,
-                               exportOrNo=FALSE,
-                               exportDir=exportDir,
-                               width=NA,
-                               height=NA,
-                               dayduration=dayduration)
-
-
-      })
-
-      # we put the day plots in a grid
-      expdayg <- ggpubr::ggarrange(plotlist=expdayL, ncol=length(wnps), nrow=1)
-
-      # and we are done with this experiment
-      return(expdayg)
-      # outer lapply will now go to next experiment
-
-
+      ggSleepLatencySurvival(pa=pa[p], # *** here, goes through one experiment a a time, controlled by outer lapply
+                             grporder=grporder,
+                             skipNight0=skipNight0,
+                             onlyWin=wnps[w], # *** here, goes one window at a time, controlled by inner lapply
+                             colours=colours,
+                             legendOrNo=legendOrNo,
+                             xtextOrNo=xtextOrNo,
+                             xnameOrNo=xnameOrNo,
+                             ynameOrNo=ynameOrNo,
+                             nightBgOrNo=nightBgOrNo,
+                             xmaxh=xmaxh,
+                             detailsOrNo=detailsOrNo,
+                             exportOrNo=FALSE,
+                             exportDir=exportDir,
+                             width=NA,
+                             height=NA,
+                             dayduration=dayduration)
     })
 
-    # we stack each experiment's horizontal grids in a bigger grid
-    dayg <- ggpubr::ggarrange(plotlist=dayL, ncol=1, nrow=length(pa))
-    # ncol=1 because we are stacking the grids now, not each plot
+    # we put the night plots in a grid
+    expdayg <- ggpubr::ggarrange(plotlist=expniL, ncol=length(wnps), nrow=1)
 
-    # we are done for the DAY grid
-    # build the filename we will export to
-    ggsave(paste0(exportDir, 'sleepLatency_', dorn, '.pdf'), plot=dayg, width=width, height=height, units='mm')
+    # and we are done with this experiment
+    return(expdayg)
+    # outer lapply will now go to next experiment
+  })
 
-    # now for loop will repeat for the NIGHT grid
+  # we stack each experiment's horizontal grids in a bigger grid
+  latgrid <- ggpubr::ggarrange(plotlist=latL, ncol=1, nrow=length(pa))
+  # ncol=1 because we are stacking the grids now, not each plot
 
-
-  }
+  # we are done for the DAY grid
+  # build the filename we will export to
+  ggsave(paste0(exportDir, 'sleepLatency', '.pdf'), plot=latgrid, width=width, height=height, units='mm')
 
 }
 

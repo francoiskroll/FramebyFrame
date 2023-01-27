@@ -849,42 +849,33 @@ If that was not the solution, check carefully that the `exportPath` is correct. 
 
 Error is self-explanatory here. On Windows, R cannot overwrite a CSV that is open, for example in Excel. Close Excel (or else) and run the command again.
 
-# TODO
+> Error: vector memory exhausted (limit reached?)  
 
-fingerprintSimilarity(...)
+Are you on a Mac? Please follow [this answer on StackOverflow](https://stackoverflow.com/questions/51295402/r-on-macos-error-vector-memory-exhausted-limit-reached).
 
-ggPairwiseHeat(...)
+Are you on a Windows? Please try the following:
 
-LMEreport
+1- Increase memory in R settings file
 
-check all arguments. may be differences with last updates etc.
+* Open Notepad as administrator
+* File > Open..., file C: / Program Files / R / R-xxx / etc / Rprofile.site (click _All files_ on bottom right if you cannot see it)
+* Add line:
+`invisible(utils::memory.limit(128000))`
+* Close RStudio and start again. 
+* Once started again, you can run `memory.limit()` in Console to check it got the setting correctly.
+* Note, if multiple versions of R co-exist on your computer, make sure you change the `Rprofile.site` file of the correct one (folder name xxx above should be different). If you do not know which R version you are using in RStudio, run in Console `version`.
 
-examples of each function
+2- Increase allowed size of page file
 
-rationale of no correction for multiple hypothesis testing across different parameters
+From what I understand this is to allow more "virtual" RAM, i.e. data actually being written on the disk but treated as RAM by computer.
 
-ideas for other parameters
-* latency to peak
-* some inactive bouts stuff?
+* Control Panel > System and Security > System > Change Settings (right) > Advanced tab > Performance: Settings... > Virtual Memory: Change...
+* Untick _Automatically[...]_
+* For both D: drive & C: drive (or whichever you have), tick Custom size, Initial size = 16 / Maximum size = 64000
+* Click _Set_, then restart computer
 
-should leave startle sunset flexible (i.e. parameter to change the 3 secs). mostly to allow sunset/sunrise gradients
+Please let me know if those instructions do not help.
 
+> Warnings related to "cairo", such as _failed to load cairo DLL_
 
-
-##### scrap
-
-It can also write the results of the linear mixed effects (LME) model (read LMEdaynight(...) below) as a .csv file which looks like:
-
-●	exps: the experiments (as YYMMDD_BX) given to the linear mixed effects model.
-●	parameter: which parameter the results are for.
-●	daynight: day or night results (LMEdaynight(...) does two separate models, one for day and one for night).
-●	beingGroup: which group are the results given for, i.e. ‘being in this group has such effect’.
-●	LMEslope: slope of the linear mixed effects model, i.e. the effect.
-●	LMEerror: error for the slope.
-●	pval: p-value.
-●	pvalsymbol: symbol for the p-value (read at the top of the document for the thresholds).
-For example, second row of example above: “being group scr decreases percentage of time spent active by 0.147% ± 0.066%; * p = 0.028”.
-You can reverse the group the results are given for by simply switching the direction of the effect, e.g. (assuming there were two groups: scr and ko)
-“being group ko increases percentage of time spent active by 0.147% ± 0.066%; * p = 0.028”.
-
-Always check on the plots that the direction and magnitude of the effects seem consistent with what you see.
+I think these warnings do not impact the output, but if you want to get rid of them, installing `xquartz` on your computer seems to work. On Mac: `brew install --cask xquartz` in Terminal.

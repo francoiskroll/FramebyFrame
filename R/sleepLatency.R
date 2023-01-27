@@ -86,7 +86,7 @@ timestampsToSurvival <- function(dts,
   # at first timestamp, proportion left is 1.0 - 1/total N (because at first timestamp, one larva 'died')
   # at last timestamp, proportion left calculated above
   # at every timestamp in-between, proportion drops successively by 1/total N (i.e. at each timestamp, one larva 'dies')
-  surv <- seq(1.0 - 1/totn, lastpro, -1/totn)
+  surv <- seq( (1.0 - 1/totn), lastpro, -1/totn)
 
   # now we have one 'proportion left' per larva which slept at least once
   # add NAs at the end for the larvae which never slept
@@ -196,7 +196,18 @@ survivalStats <- function(svd,
   # get the pvalues
   pvals <- coxt['Pr(>|z|)', startsWith(colnames(coxt), 'grp') ]
 
-  # currently columns written as grpwt, grphet, etc. Remove 'grp' so only wt, het, etc.
+  # note, when statistics given for one group only (this is the case if experiment only had two groups)
+  # then coes, hazs, etc do not get names
+  # but if statistics given for 2 or more groups, they get names
+  # so to make it predictable, add names if only one group
+  if(ncol(coxt)==1){
+    names(coes) <- colnames(coxt)[1]
+    names(hazs) <- colnames(coxt)[1]
+    names(errs) <- colnames(coxt)[1]
+    names(pvals) <- colnames(coxt)[1]
+  }
+
+  # currently group (column name in coxt) written as grpwt, grphet, etc. Remove 'grp' so only wt, het, etc.
   names(coes) <- gsub('grp', '', names(coes))
   names(hazs) <- gsub('grp', '', names(hazs))
   names(errs) <- gsub('grp', '', names(errs))
@@ -209,6 +220,7 @@ survivalStats <- function(svd,
 
   # which group are we comparing to? It is simply any group that is not given here
   refgrp <- grporder[which(!grporder %in% names(hazs))] # reference group
+
   # check we have 1 and only 1 reference group
   if (length(refgrp) != 1)
     stop('\t \t \t \t Error survivalStats: 0 or more than 1 reference groups, which does not make sense. \n')

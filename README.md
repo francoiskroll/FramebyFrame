@@ -243,7 +243,10 @@ vpSorter(ffDir="~/.../220531_14_15_rawoutput/",
 * `zt0`: Zeitgeber 0 (ZT0). What is the time of your sunrise?  
 * `dayduration`: how long does the day last in your experiment? By day, we mean lights ON.  
 
-These are only brief notes on the settings, please refer to the documentation for the full explanations, especially if you get stuck.  
+These are only brief notes on the settings, please refer to the documentation for the full explanations, especially if you get stuck. 
+
+> Are you getting _Error: vector memory exhausted (limit reached?)_ (or similar)? Please check Troubleshooting section in DOCUMENTATION.md.
+
 
 `vpSorter` should write _220531_14_RAWs.csv_ in your experiment folder. The format is fairly simple:  
 
@@ -560,7 +563,43 @@ Some of the settings we have not encountered yet:
 
 The parameter grid will not display in RStudio, do not be alarmed. It is relatively big so it slows things down. Instead, look directly at the pdf it generates.  
 
-### 10– Statistics on behaviour parameter
+### 10– Sleep latency survival plot
+
+Sleep latency is, for each larva, the amount of time before first sleep bout once lights switched off, i.e. how long each larva took to fall asleep.
+
+In addition to its scatterplot drawn above, the sleep latency parameter can also be represented as a survival curve. The idea is: when lights just switched off (start of the night), 100% of the larvae did not sleep yet. As the night goes by, larvae start falling asleep one after the other. Each time a larva falls asleep for the first time, we say it "died" (not actually, but in survival statistics terms), so it is removed from the curve. The result is a survival curve when the proportion of larvae that did not sleep yet (Y axis) decreases in a step-wise fashion as the night goes by (X axis).
+
+```R
+## sleep latency survival plot
+ggSleepLatencyGrid(pa="~/.../bhvparams/sleepLatency_220531_15.csv",
+                   grporder=c('sorl1', 'scr'),
+                   skipNight0=TRUE,
+                   colours=c('#417dcd', '#697a87'),
+                   xmaxh=3,
+                   exportDir="~/.../plots/",
+                   width=150,
+                   height=70)
+```
+
+* `pa`: path to the sleep latency parameter table(s). Please give the path(s) to the .csv file(s) itself, not the _bhvparams_ directory. You can give multiple parameter tables here, e.g. `c("~/.../bhvparams/sleepLatency_220531_14.csv", "~/.../bhvparams/sleepLatency_220531_15.csv")`.
+* `xmaxh`: where to stop the X axis, in number of hours after lights turn off. Best to decide this by trial and error.
+
+For one experiment, `ggSleepLatencyGrid` will draw a horizontal grid, where each plot is one night.
+
+It will also calculate survival statistics using a Cox Proportional-Hazards model. The output should look like:
+
+> \>\>\> Cox Proportional-Hazards Model  
+> 
+> compared to reference group * sorl1 *,  
+> 
+> group scr is associated with...  
+> Hazard Ratio =  1.802116  
+> Hazard Ratio 95% confidence interval =  0.2107428  
+> p-value =  0.005194907 **  
+> i.e. at any time point, members of group scr were 80.21 % ± 21.07 % *more* likely to 'die' than members of group sorl1 ; pvalue = 0.005194907 ** 
+
+
+### 11– Statistics on behaviour parameter
 > Any feedback on this section is welcome, especially if you think I got something wrong!
 
 As promised, here are the statistics. It uses linear mixed effects (LME) modelling. Here is a very brief summary of the approach. For more details, please refer to the full documentation.
