@@ -595,7 +595,7 @@ ggSleepLatencySurvival <- function(pa,
     }
 
     # now fine to put everything in one long dataframe
-    sw <- as.data.frame(rbindlist(swbg)) # sw for survival, one window
+    sw <- as.data.frame(data.table::rbindlist(swbg)) # sw for survival, one window
     # convert to dataframe for ggplot
 
     # operations above loses grporder, set it back

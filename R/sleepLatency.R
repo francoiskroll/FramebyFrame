@@ -172,7 +172,7 @@ survivalStats <- function(svd,
   # print(survdiff(Surv(dt, status) ~ grp, data=svd))
 
   # here, will use Cox Proportional-Hazards Model
-  cox <- summary(survival::coxph(formula = Surv(dt, status) ~ grp, data = svd))
+  cox <- summary(survival::coxph(formula = survival::Surv(dt, status) ~ grp, data = svd))
 
   if(detailsOrNo) {
     cat('\t \t \t \t #### \n')
