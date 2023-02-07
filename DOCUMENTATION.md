@@ -68,6 +68,7 @@ Plots instantaneous frame rates over the course of the experiment.
 **yname**: name of the Y axis.  
 
 **exportOrNo**: whether or not (TRUE or FALSE) to export the plot to pdf. Default is FALSE.  
+
 **width**: width of pdf in mm. Default is 75.  
 
 **height**: height of pdf in mm. Default is 55.  
@@ -222,10 +223,11 @@ Note, xstart/xstop & trimstart/trimstop are especially useful to align plots fro
 
 **sunlinesOrNo**: whether or not (TRUE or FALSE) to draw vertical dashed lines representing the light transitions. You probably do not need these light transition lines if you are happy with the night backgrounds (when nightBgOrNo=TRUE, see above). However, if for whatever reason you want to add the night backgrounds yourself in Illustrator or else, I recommend exporting the plot once with sunlinesOrNo=TRUE so you can place your grey rectangles correctly, then return to R, export the plot without the sunlines (sunlinesOrNo=FALSE) and replace the file in your graphics software. Default is FALSE.
 
-**markTimes**: specific time(s) to mark as vertical dashed lines. Give them in the format YYYY-MM-DD HH:MM:SS. For example, markTimes=c('2022-01-25 11:40:00', '2022-01-26 12:40:00'). Lines will be in the same style as the sunlines (see setting sunlinesOrNo). To not mark any times, simply skip this setting or give NA. Default is NA.
-legendOrNo: Whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
+**markTimes**: specific time(s) to mark as vertical dashed lines. Give them in the format YYYY-MM-DD HH:MM:SS. For example, markTimes=c('2022-01-25 11:40:00', '2022-01-26 12:40:00'). Lines will be in the same style as the sunlines (see setting sunlinesOrNo). To not mark any times, simply skip this setting or give NA. Default is NA.  
 
-**exportOrNo**: Whether or not (TRUE or FALSE) to export the plot. Default is TRUE.
+**legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
+
+**exportOrNo**: whether or not (TRUE or FALSE) to export the plot. Default is TRUE.
 
 **exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf.
 
@@ -802,7 +804,7 @@ The process is the same for nights and for each behavioural parameter.
 
 **paDir**: directory that stores the parameter tables, typically called bhvparams. For example, paDir=here('bhvparams/'). You can have as many experiments/parameters as you want in this directory. There is some flexibility later to exclude experiments or parameters, but broadly I would recommend having in the directory the experiments and parameters you want plotted together in one fingerprint plot.
 
-**controlGrp**: name of control group, e.g. ‘wt’. Does the name cof the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').
+**controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').
 
 **mergeExp1**: a set of experiments to merge, each written as YYMMDD_BX. For example, mergeExp1=c('220906_14', '220906_15'). Important note: this pools Z-scores normalised to controls, not raw datapoints. Steps 1–6 (see process above) are executed for each experiment, then the Z-scores for the experiments to merge are pooled to make them look as if they were generated during a single experiment. Step 7 is then executed on the pool of Z-scores. Experiments will be merged into one experiment called “mergeExp_1'' in the results. Default is NA.
 
@@ -824,7 +826,7 @@ About **mergeExp1–3** settings: this can be useful if you tracked a single clu
 
 **paDir**: directory that stores the parameter tables, typically called bhvparams. For example, paDir=here('bhvparams/'). You can have as many experiments/parameters as you want in this directory. There is some flexibility later to exclude experiments or parameters, but broadly I would recommend having in the directory the experiments and parameters you want plotted together in one fingerprint plot.
 
-**metric**: XXX
+**metric**: `mean` or `median`. I briefly experimented with defining the fingerprint as median ± MAD of all *Z*-scores instead of mean ± SEM (see step 6 above). This caused several issues, for example the median of all *Z*-scores is not 0 so the controls' fingerprint was not at 0 anymore. Overall I do not think this was a good idea, but it is left here if ever useful. Default is `mean`.
 
 **controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').
 
@@ -833,6 +835,40 @@ About **mergeExp1–3** settings: this can be useful if you tracked a single clu
 **skipNight0**: whether or not (TRUE or FALSE) to remove the night0’s datapoints prior to calculating the fingerprint. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
 
 **avgDayNight**: whether or not (TRUE or FALSE) to average, for each parameter and each larva, its days datapoints together and its nights datapoints together prior to calculating the fingerprint. This will affect what each unique parameter is in the fingerprint: if TRUE, parameters are e.g. day_sleepHours and night_sleepHours; if FALSE, parameters are e.g. day1_sleepHours, day2_sleepHours, night1_sleepHours, night2_sleepHours. In other words, do you want to keep individual day/night resolution or not?
+
+### ggPairwiseHeat(...)
+
+Calculates the similarity between pairwise behavioural fingerprint and represent the results as a heatmap.
+
+* **fgp**: object or full path to _fingerprint.csv_, created by calculateFingerprint(...).  
+
+* **metric**: `mean` or `median`. I briefly experimented with defining the fingerprint as median ± MAD of all *Z*-scores instead of mean ± SEM (see step 6 above). This caused several issues, for example the median of all *Z*-scores is not 0 so the controls' fingerprint was not at 0 anymore. Overall I do not think this was a good idea, but it is left here if ever useful. Default is `mean`.  
+
+* **simScore**: one of three possible "similarity scores": `correlation` (Pearson correlation), `cosine` (cosine similarity), or `euclidean` (Euclidean distance).  
+
+* **grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.  
+
+* **removeControl**: whether (TRUE) or not (FALSE) to remove the controls' fingerprints. I think you should always use TRUE here as the controls' fingerprints are always 0 by definition. Default is TRUE.  
+
+* **controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').  
+
+* **minCol**: colour for the start of the colour gradient, i.e. colour assigned to –1 when `correlation` or `cosine` is used or to 0 when `euclidean` is used.  
+
+* **maxCol**: colour for the end of the colour gradient, i.e. colour assigned to +1 when `correlation` or `cosine` is used or to the maximum value when `euclidean` is used.  
+
+* **onlyHalf**: as we are plotting a pairwise matrix, the heatmap is symmetrical across the diagonal, i.e. the similarity scores repeat each other on each side of the diagonal. If that is okay for you, you can omit this setting or give `NA`. If you prefer to plot only one side of the diagonal, you can choose between `upper` or `lower`, which will respectively plot the upper or lower half only.  
+
+* **scoreSize**: font size for the similarity scores.  
+
+* **legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.  
+
+* **labelsOrNo**: whether or not (TRUE or FALSE) to write the X and Y axis labels.  
+
+* **width**: width of pdf in mm. Default is 250.  
+
+* **height**: width of pdf in mm. Default is 200.  
+
+* **exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf.  
 
 # Troubleshooting
 

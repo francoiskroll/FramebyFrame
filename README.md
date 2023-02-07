@@ -719,7 +719,7 @@ There are other ways to calculate/plot behavioural fingerprints, please refer to
 
 ### 14– Compare behavioural fingerprints
 
-Do you have multiple experiments you want to compare? For example replicate experiments of the same genotype. We can calculate the similarity between pairwise behavioural fingerprints and plot the results as a heatmap.
+Do you have multiple experiments you want to compare? For example replicate experiments of the same genotype. We can calculate the similarity between pairwise behavioural fingerprints and represent the results as a heatmap.
 
 ```r
 ggPairwiseHeat(fgp="~/.../fingerprint.csv",
