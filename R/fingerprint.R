@@ -34,7 +34,7 @@ calculateFingerprint <- function(paDir,
                                  mergeExp4=NA,
                                  singleFish=FALSE,
                                  grporder=NA,
-                                 skipNight0,
+                                 skipNight0=FALSE,
                                  avgDayNight=TRUE) {
 
 
@@ -279,6 +279,13 @@ calculateFingerprint <- function(paDir,
 
 
 
+  # save fingerprint to drive -----------------------------------------------
+  # will write in folder where bhvparams directory is
+  expdir <- parentFolder(paDir, 1, whatSlash(paDir))
+  write.csv(fgp, paste0(expdir, whatSlash(paDir), 'fingerprint.csv'), row.names=FALSE)
+
+
+
   # return ------------------------------------------------------------------
   return(fgp)
 
@@ -326,6 +333,18 @@ fingerprintSimilarity <- function(fgp,
   if(! metric %in% c('mean', 'median'))
     stop('\t \t \t \t >>> Error fingerprintSimilarity: does not support this metric. Metrics currently supported are: mean and median \n')
 
+  # import fgp, if needed ---------------------------------------------------
+
+  # if we are given a string, assume it is a path
+  # if not, assume we are given fgp object directly
+  if(is.character(fgp)) {
+
+    if(!file.exists(fgp)) stop('\t \t \t \t >>> Could not find file', fgp, ': please check the path. \n')
+    if(!endsWith(fgp, '.csv')) stop('\t \t \t \t >>> Path does not end with .csv, please check. \n')
+
+    fgp <- read.csv(fgp)
+  }
+
 
   # if removing controls, do it now
   if(removeControl) {
@@ -359,7 +378,7 @@ fingerprintSimilarity <- function(fgp,
   if('fish' %in% colnames(fgp)) {
     fgw <- fgp %>%
       group_by(date_box_grp) %>%
-      pivot_wider( uparam,
+      pivot_wider( id_cols=uparam,
                    names_from=date_box_grp_fish,
                    values_from=pazm)
 
@@ -373,13 +392,13 @@ fingerprintSimilarity <- function(fgp,
     if (metric=='mean') {
       fgw <- fgp %>%
         group_by(date_box_grp) %>%
-        pivot_wider( uparam,
+        pivot_wider( id_cols=uparam,
                      names_from=date_box_grp,
                      values_from=mean)
     } else if (metric=='median') {
       fgw <- fgp %>%
         group_by(date_box_grp) %>%
-        pivot_wider( uparam,
+        pivot_wider( id_cols=uparam,
                      names_from=date_box_grp,
                      values_from=median)
     }
@@ -394,7 +413,7 @@ fingerprintSimilarity <- function(fgp,
   # now calculations depend on the score chosen
   if(simScore=='cosine') {
     # calculate pairwise cosine similarities between fingerprints (columns)
-    fsim <- as.data.frame(cosine(as.matrix(fgw[2:ncol(fgw)])))
+    fsim <- as.data.frame(lsa::cosine(as.matrix(fgw[2:ncol(fgw)])))
   } else if (simScore=='correlation') {
     fsim <- as.data.frame(cor(as.matrix(fgw[2:ncol(fgw)]), method='pearson'))
   } else if (simScore=='euclidean') {
@@ -424,7 +443,13 @@ fingerprintSimilarity <- function(fgp,
     row.names(fsim) <- NULL
   }
 
+
+  ### export the pairwise similarity scores ###
+  # will write in folder where bhvparams directory is
+  expdir <- parentFolder(paDir, 1, whatSlash(paDir))
+  write.csv(fgp, paste0(expdir, whatSlash(paDir), 'fingerprint.csv'), row.names=FALSE)
+
   # return cosine similarity matrix
-  return(fsim)
+  invisible(fsim) # same as return() but without printing to Console
 
 }

@@ -5,9 +5,12 @@
 \title{Title}
 \usage{
 ggPairwiseHeat(
-  pwm,
+  fgp,
+  metric = "mean",
   simScore,
   grporder = NA,
+  removeControl = TRUE,
+  controlGrp,
   medianMid = FALSE,
   minCol = NA,
   maxCol = NA,

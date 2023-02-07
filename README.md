@@ -665,9 +665,85 @@ All this information is recorded in the statistics reports (_LMEreport.csv_ in o
 * `posthocpval` is the p-value of the post-hoc test. This p-value is specific to each comparison, i.e. there is one p-value for wt vs het and one p-value for wt vs hom.
 * `posthocpvalsymbol`, same logic as `pvalsymbol` but for the post-hoc p-value.  
 
-When we plotted the behaviour parameters (see **10– Plot every behaviour parameter**), the asterisks that get added when `statsOrNo=TRUE` are the `pvalsymbol`, i.e. they represent the p-value of the null hypothesis "group assignment has no effect on this behaviour parameter".  
+When we plotted the behaviour parameters (see **9– Plot every behaviour parameter**), the asterisks that get added when `statsOrNo=TRUE` are the `pvalsymbol`, i.e. they represent the p-value of the null hypothesis "group assignment has no effect on this behaviour parameter".  
 
 And that is all for the minimal tutorial! The FramebyFrame package can do other things, such as analyse different experimental designs, calculate and plot behavioural fingerprints and more. Make sure to check the documentation to make full use of it.  
+
+### 12– Calculate a behavioural fingerprint
+
+The "behavioural fingerprint" is a synthesised way of looking at the changes across all the behavioural parameters. For each unique parameter (e.g. number of sleep bouts at night), it is simply the *Z*-score of knockout larvae (or any other genotype/treatment group) from the controls' mean. Please refer to DOCUMENTATION for how exactly this is calculated.
+
+We calculate the behavioural fingerprint with:
+
+```r
+## calculate behavioural fingerprint
+calculateFingerprint(paDir="~/.../bhvparams/",
+                     controlGrp='scr',
+                     grporder=c('sorl1', 'scr'),
+                     skipNight0=TRUE)
+```
+
+* `controlGrp`: whichever group you want to use as reference/baseline in your experiment. The fingerprint will represent the *Z*-scores from this reference. 
+
+`calculateFingerprint(...)` will write _fingerprint.csv_ in the experiment folder.
+
+You can give multiple *bhvparams/* directories to `calculateFingerprint(...)` in the format: `paDir=c("~/exp1/bhvparams/", "~/exp2/bhvparams/")`. The calculations will always use the controls within the same experiment (i.e. same YYMMDD_BX) for normalisation so this is equivalent to calculating fingerprints for each experiment separately, but it has the advantage to write a common _fingerprint.csv_ file.
+
+### 13– Plot a behavioural fingerprint
+
+We can give the _fingerprint.csv_ file to ggFingerprint(...) to plot:
+
+```r
+## plot behavioural fingerprint
+ggFingerprint(fgp="~/.../fingerprint.csv",
+              grporder=c('sorl1', 'scr'),
+              controlGrp='scr',
+              removeControl=TRUE,
+              colours=c('#417dcd', '#a3bbdb'),
+              legendOrNo=TRUE,
+              xtextOrNo=TRUE,
+              xParamNum=TRUE,
+              ymin=-3,
+              ymax=3,
+              exportOrNo=TRUE,
+              exportPath="~/Dropbox/FbyFdemo/plots/finger.pdf",
+              width=200,
+              height=100)
+```
+
+* `removeControl`: whether (TRUE) or not (FALSE) to plot the controls. Controls have all datapoints at *Z*-score = 0, as expected from calculating the mean of *Z*-scores.
+* `xtextOrNo`: whether (TRUE) or not (FALSE) to write the names of the behavioural parameters as X axis labels.
+* `xParamNum`: whether (TRUE) or not (FALSE) to write numbers instead of parameter names.
+
+There are other ways to calculate/plot behavioural fingerprints, please refer to DOCUMENTATION for more details.
+
+### 14– Compare behavioural fingerprints
+
+Do you have multiple experiments you want to compare? For example replicate experiments of the same genotype. We can calculate the similarity between pairwise behavioural fingerprints and plot the results as a heatmap.
+
+```r
+ggPairwiseHeat(fgp="~/.../fingerprint.csv",
+               simScore='cosine',
+               grporder=c('sorl1', 'scr'),
+               controlGrp='scr',
+               minCol=NA,
+               maxCol=NA,
+               onlyHalf='upper',
+               scoreSize=5,
+               legendOrNo=TRUE,
+               labelsOrNo=TRUE,
+               width=100,
+               height=100,
+               exportPath="~/Dropbox/FbyFdemo/heat.pdf")
+```
+
+* `simScore`: choose one of three possible "similarity scores": `correlation` (Pearson correlation), `cosine` (cosine similarity), `euclidean` (Euclidean distance).
+* `minCol`: colour for the start of the colour gradient, i.e. colour assigned to –1 when `correlation` or `cosine` is used or to 0 when `euclidean` is used.
+* `maxCol`: colour for the end of the colour gradient, i.e. colour assigned to +1 when `correlation` or `cosine` is used or to the maximum value when `euclidean` is used.
+* `onlyHalf`: as we are plotting a pairwise matrix, the heatmap is symmetrical across the diagonal, i.e. the similarity scores repeat each other on each side of the diagonal. If that is okay, you can omit this setting or give `NA`. If you prefer to plot only one side of the diagonal, you can choose between `upper` or `lower`, which will respectively plot the upper or lower half.
+* `scoreSize`: font size for the similarity scores.
+
+`ggPairwiseHeat(...)` will also return in Console the similarity score between fingerprints.
 
 ___
 

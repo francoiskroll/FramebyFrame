@@ -845,7 +845,8 @@ ggFingerprint <- function(fgp,
                           width=150,
                           height=100) {
 
-  ### check export settings ###
+
+  # check export settings ---------------------------------------------------
 
   if (exportOrNo) {
     if(substrEnding(exportPath, 4) != '.pdf') stop('\n \t \t \t \t >>> Error: exportPath does not end with .pdf.')
@@ -854,6 +855,19 @@ ggFingerprint <- function(fgp,
     if(!dir.exists(parentFolder(exportPath)))
       stop('\n \t \t \t \t >>> Error exportPath: output folder does not exist. \n')
 
+  }
+
+
+  # import fgp, if needed ---------------------------------------------------
+
+  # if we are given a string, assume it is a path
+  # if not, assume we are given fgp object directly
+  if(is.character(fgp)) {
+
+    if(!file.exists(fgp)) stop('\t \t \t \t >>> Could not find file', fgp, ': please check the path. \n')
+    if(!endsWith(fgp, '.csv')) stop('\t \t \t \t >>> Path does not end with .csv, please check. \n')
+
+    fgp <- read.csv(fgp)
   }
 
 
@@ -1003,7 +1017,7 @@ ggFingerprint <- function(fgp,
       ggFgp <- ggplot(fgp, aes(x=uparam, y=median, colour=date_box_grp)) +
         {if(nightBgOrNo) annotate(geom='rect', xmin=xmid, xmax=Inf, ymin=-Inf, ymax=Inf, colour=NA, fill='#1d1d1b', alpha=0.2)} + # ***
         geom_hline(yintercept=0, linetype=1, colour='#a7a7a7', linewidth=0.5) +
-        geom_pointrange(aes(ymin=median-mad, ymax=median+mad), size=0.3) +
+        geom_pointrange(aes(ymin=median-mad, ymax=median+mad), size=0.3) + # note here using MAD
         {if(connectOrNo) geom_line(aes(group=date_box_period_grp), linewidth=0.2)} +
         scale_colour_manual(values=colours)
     }
@@ -1203,9 +1217,12 @@ ggFingerprintGrid <- function(fgp,
 #' @importFrom tidyr pivot_longer
 #' @import ggplot2
 
-ggPairwiseHeat <- function(pwm,
+ggPairwiseHeat <- function(fgp,
+                           metric='mean',
                            simScore,
                            grporder=NA,
+                           removeControl=TRUE,
+                           controlGrp,
                            medianMid=FALSE,
                            minCol=NA,
                            maxCol=NA,
@@ -1234,7 +1251,33 @@ ggPairwiseHeat <- function(pwm,
   colurs <- colurs[!is.na(colurs)]
   if(length(colurs)==1) stop('\t \t \t \t Error: please give both minCol and maxCol or none \n')
 
-  # only upper or lower triangle, if required -------------------------------
+
+  ### import fgp, if needed ###
+
+  # if we are given a string, assume it is a path
+  # if not, assume we are given fgp object directly
+  if(is.character(fgp)) {
+
+    if(!file.exists(fgp)) stop('\t \t \t \t >>> Could not find file', fgp, ': please check the path. \n')
+    if(!endsWith(fgp, '.csv')) stop('\t \t \t \t >>> Path does not end with .csv, please check. \n')
+
+    fgp <- read.csv(fgp)
+  }
+
+
+  ### calculate similarity scores ###
+  # using fingerprintSimilarity(...)
+  pwm <- fingerprintSimilarity(fgp=fgp,
+                               metric=metric,
+                               simScore,
+                               grporder=grporder,
+                               removeControl=removeControl,
+                               controlGrp=controlGrp)
+
+  # fingerprintSimilarity will print the similarity matrix to Console
+
+
+  ### only upper or lower triangle, if required ###
 
   if (is.na(onlyHalf)) {
     # do nothing
@@ -1248,8 +1291,6 @@ ggPairwiseHeat <- function(pwm,
   # ** counter-intuitive that when upper we keep lower and vice-versa
   # but it works and it is horribly complicated to get these tiles in the right order
 
-  print(pwm)
-
 
   # pivot longer ------------------------------------------------------------
 
@@ -1258,7 +1299,6 @@ ggPairwiseHeat <- function(pwm,
                  names_to='vs_date_box_grp',
                  values_to='score')
   # using score here to stay agnostic whether we mean correlation or cosine similarity or ...
-  print(pwl)
 
   # order the fingerprints, following the order pwm (which was set based on grporder in fingerprintSimilarity())
   pwl$date_box_grp <- factor(pwl$date_box_grp, levels=rev(pwm$date_box_grp))

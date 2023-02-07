@@ -13,7 +13,7 @@ calculateFingerprint(
   mergeExp4 = NA,
   singleFish = FALSE,
   grporder = NA,
-  skipNight0,
+  skipNight0 = FALSE,
   avgDayNight = TRUE
 )
 }
