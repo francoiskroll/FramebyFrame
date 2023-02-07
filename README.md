@@ -667,8 +667,6 @@ All this information is recorded in the statistics reports (_LMEreport.csv_ in o
 
 When we plotted the behaviour parameters (see **9– Plot every behaviour parameter**), the asterisks that get added when `statsOrNo=TRUE` are the `pvalsymbol`, i.e. they represent the p-value of the null hypothesis "group assignment has no effect on this behaviour parameter".  
 
-And that is all for the minimal tutorial! The FramebyFrame package can do other things, such as analyse different experimental designs, calculate and plot behavioural fingerprints and more. Make sure to check the documentation to make full use of it.  
-
 ### 12– Calculate a behavioural fingerprint
 
 The "behavioural fingerprint" is a synthesised way of looking at the changes across all the behavioural parameters. For each unique parameter (e.g. number of sleep bouts at night), it is simply the *Z*-score of knockout larvae (or any other genotype/treatment group) from the controls' mean. Please refer to DOCUMENTATION for how exactly this is calculated.
@@ -743,7 +741,9 @@ ggPairwiseHeat(fgp="~/.../fingerprint.csv",
 * `onlyHalf`: as we are plotting a pairwise matrix, the heatmap is symmetrical across the diagonal, i.e. the similarity scores repeat each other on each side of the diagonal. If that is okay, you can omit this setting or give `NA`. If you prefer to plot only one side of the diagonal, you can choose between `upper` or `lower`, which will respectively plot the upper or lower half.
 * `scoreSize`: font size for the similarity scores.
 
-`ggPairwiseHeat(...)` will also return in Console the similarity score between fingerprints.
+`ggPairwiseHeat(...)` will also return in Console the similarity score between fingerprints.  
+
+> And that is all for the minimal tutorial! The FramebyFrame package can do other things, such as analyse different experimental designs, calculate and plot behavioural fingerprints and more. Make sure to check the documentation to make full use of it.  
 
 ___
 
