@@ -765,8 +765,35 @@ Finally, I am not certain what to recommend regarding p-values when excluding gr
 **detailsOrNo**: whether or not (TRUE or FALSE) to print in Console the details of each LME model.
 
 
-### LMEreport
+### LMEreport(...)
 
+Calculates linear-mixed effects (LME) statistics and write results in a statistics report.
+
+Please refer to the documentation of LMEdaynight(...) above for explanations about the LME model.
+
+**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, `paDir=here('bhvparams/')`. You can have as many experiments/parameters as you want in this directory. There is some flexibility later to exclude experiments or parameters, but broadly I would recommend having in the directory the experiments and parameters you want plotted together in one fingerprint plot.
+
+**poolExp1**: a set of experiments to pool together. Give them as YYMMDD_BX, e.g. `poolExp1=c('220706_16', '220706_17')` will pool datapoints into one experiment called pool_1. Note, there is no normalisation of any kind happening. It will effectively behave as if the datapoints from the different experiments were from a single experiment, including when calculating the statistics. Use at your own risk. Default is NA.
+
+**poolExp2**: another set of experiments to pool together in experiment pool_2. See comment above. Default is NA.  
+
+**poolExp3**: another set of experiments to pool together in experiment pool_3. See comment above. Default is NA.  
+
+**sameClutch1**: a set of experiments which tracked the same clutch. Please read above _If you tracked the same clutch in two separate boxes [...]_.  
+
+**sameClutch2**: another set of experiments which tracked the same clutch.  
+
+**sameClutch3**: another set of experiments which tracked the same clutch.  
+
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA. Please read more details under LMEdaynight(...).  
+
+**skipNight0**: whether or not (TRUE or FALSE) to remove the night0 datapoints before making the model. Default is FALSE. Mostly applies to standard Rihel lab experiment night0 / day1 / night1 / day2 / night2. In this case, note that keeping night0 datapoints would make the day results and the night results less readily comparable. Indeed, the night model would be calculated on three windows while the day model would be calculated on two windows. I am not certain what the precise effect of this would be but the statistical power would almost certainly be different.  
+
+**silent**: you can skip, it is used internally to make it not print anything to Console, i.e. TRUE makes it silent, FALSE lets it print the summaries.  
+
+**detailsOrNo**: whether or not (TRUE or FALSE) to print in Console the details of each LME model.  
+
+**exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf.  
 
 
 ### calculateFingerprint(...)
