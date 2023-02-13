@@ -99,6 +99,11 @@
 # v16
 # converted VpSorter to a function within the FramebyFrame package
 
+# missed some versions here...
+
+# v17
+# now accepts .xlsx (data format from Leah)
+
 
 
 # -------------------------------------------------------------------------
@@ -355,12 +360,20 @@ vpSorter <- function(ffDir,
   # edit 12/04/2022 -- used to be okay without naturalsort but now does not import in the right order (it goes file 1, 10, ... instead of file 1, 2, ...), so
   xlsnames <- naturalsort::naturalsort(xlsnames)
 
-  # quick check: we should not have anything else than .xls or .XLS files in there -- check this
-  if( !all(substrEnding(xlsnames, 4)=='.xls') & !all(substrEnding(xlsnames, 4)=='.XLS') )
-    stop('\t \t \t \t >>> Error: there is something else than just .xls files in this folder, check and run again \n')
+  if( !all(endsWith(xlsnames, '.xls')) & !all(endsWith(xlsnames, '.XLS')) &  !all(endsWith(xlsnames, '.xlsx')) )
+    stop('\t \t \t \t >>> Error: there is something else than just .xls/.XLS/.xlsx files in this folder, check and run again \n')
+
+  # if a file is opened in Excel, there might be some hidden files like ~$230106_....xlsx
+  # make sure we do not try to import those
+  xlsnames <- xlsnames[!startsWith(xlsnames, '~$')]
 
   # import the first xls file
-  fi1 <- read.table(paste0(ffDir, xlsnames[1]), fill=TRUE, header=TRUE)
+  if(endsWith(xlsnames[1], '.xlsx')) {
+    fi1 <- readxl::read_xlsx(paste0(ffDir, xlsnames[1]), progress=FALSE)
+  } else {
+    fi1 <- read.table(paste0(ffDir, xlsnames[1]), fill=TRUE, header=TRUE)
+  }
+
 
   ### which are the columns we need? ###
 
@@ -568,29 +581,68 @@ vpSorter <- function(ffDir,
 
   lapply(1:length(xlsnames), function(fi) { # fi for file index; xli for list of xls
     SpeaknRecord('Importing file #', fi, 'of', length(xlsnames))
-    fif <- data.table::setkey( data.table::fread(paste0(ffDir, xlsnames[fi]), select=cols2take, fill=TRUE, integer64='numeric', colClasses=c(type='character')),
-                  location, type) [.(locs, '101')]
-    # might be ok to change to integer64='integer64' here, but seems to make only a very slight different in memory
-    # fread(fi) = read that xls file and add it to the xli list
-    # setkey = set column 'location' as key (key is data.table concept, works a bit like row names so you can filter rows based on it)
-    # setkey = set column 'type' as second key
-    # [.(locs = filters on 'location' key, takes only location that are in locs (if box1: C001 >> C096; if box2: C097 >> C192)
-    # 101)] = filters on 'type' key, only takes = 101
-    # (v1: was excluding anything != 101, but subset by negation does not work as well)
+
+    # there are two options to import each file:
+    ### OPTION 1: if we have a .xls or .XLS we can use fread, which will speed things up
+    if(endsWith(xlsnames[fi], '.xls') | endsWith(xlsnames[fi], '.XLS')) {
+
+      fif <- data.table::setkey( data.table::fread(paste0(ffDir, xlsnames[fi]), select=cols2take, fill=TRUE, integer64='numeric', colClasses=c(type='character')),
+                                 location, type) [.(locs, '101')]
+      # might be ok to change to integer64='integer64' here, but seems to make only a very slight different in memory
+      # fread(fi) = read that xls file and add it to the xli list
+      # setkey = set column 'location' as key (key is data.table concept, works a bit like row names so you can filter rows based on it)
+      # setkey = set column 'type' as second key
+      # [.(locs = filters on 'location' key, takes only location that are in locs (if box1: C001 >> C096; if box2: C097 >> C192)
+      # 101)] = filters on 'type' key, only takes = 101
+      # (v1: was excluding anything != 101, but subset by negation does not work as well)
+
+      # v11: found some rows where data1 says 'BACK_LIGHT' and location A01-1, A02-1, etc.
+      # this also shifts columns and type column stores well number
+      # which in consequence changes format of type column as character (as not only 71/101 anymore)
+      # (usual miserable Viewpoint formatting)
+      # i.e. indexing on the location column, [., (locs)] above, works ok; it takes only expected well numbers so will exclude rows A01-1
+      # the problem is indexing on the type column, it needs to know whether it looks through numbers (101, 71) or strings ('101', 'c1', ...)
+      # (clever) solution is to convert type column into character by default when important (see colClasses=c('location'))
+      # then filter to keep only '101', so whenever it is 'c1' (when BACK_LIGHT rows appear), it will get thrown out
+
+    ### OPTION 2: if we have a .xlsx, we need to use read_xlsx (fread does not like .xlsx)
+    # note it is faster than openxlsx's read.xlsx (source: StackOverflow)
+    } else if (endsWith(xlsnames[fi], '.xlsx')) {
+      # import the file, only columns we need
+      fif <- data.table::data.table( readxl::read_xlsx(paste0(ffDir, xlsnames[fi]),
+                                                       range=readxl::cell_cols(cols2take), # **
+                                                       col_types='text', # ***
+                                                       progress=FALSE) )
+      # ** ideally we only want to import the few columns we need, but readxl only imports the range of columns (e.g. if given 1, 3; it will import 1, *2*, 3)
+      # at least we skip all the empty data columns, which saves time vs importing the entire file
+      # but we need to select again
+      fif <- fif %>%
+        select(all_of(cols2take)) %>%
+        subset(type=='101')
+
+      # *** why do we set every column to character?
+      # it is delete any row that is not type 101
+      # there are some BACK_LIGHT rows, which we want to throw away
+      # in these rows, the columns get shifted so type now has location info, e.g. c1 or LocA22
+      # subset for type = 101 does not work because it expects all numeric but sees e.g. "LocA22"
+      # so convert the whole column to character, and keep only "101" (see subset above)
+      # unfortunately, it means we now have to convert back some columns
+      fif$abstime <- as.numeric(fif$abstime)
+      fif$time <- as.numeric(fif$time)
+      fif$data1 <- as.numeric(fif$data1)
+
+    ### if anything else than xlsx or xls or XLS: ERROR!
+    } else {
+      stop('\t \t \t \t >>> Error vpSorter: file', xlsnames[fi], 'does not end with .xls or .XLS or .xlsx. \n')
+    }
+
+
     fif$time <- fif$time/timeconv
     # times used to be in seconds (old VP system), now in microseconds
     # convert back in seconds, easier to read and Vp_Extract.m expects it to calculate frame rate (fps)
     # v1: was dividing all columns on big dataframe with all of data, which was hard on memory
     # v2: now doing it file by file
 
-    # v11: found some rows where data1 says 'BACK_LIGHT' and location A01-1, A02-1, etc.
-    # this also shifts columns and type column stores well number
-    # which in consequence changes format of type column as character (as not only 71/101 anymore)
-    # (usual miserable Viewpoint formatting)
-    # i.e. indexing on the location column, [., (locs)] above, works ok; it takes only expected well numbers so will exclude rows A01-1
-    # the problem is indexing on the type column, it needs to know whether it looks through numbers (101, 71) or strings ('101', 'c1', ...)
-    # (clever) solution is to convert type column into character by default when important (see colClasses=c('location'))
-    # then filter to keep only '101', so whenever it is 'c1' (when BACK_LIGHT rows appear), it will get thrown out
 
     # take from this file all the data of well w and put the values in slot w of the list
     lapply(1:length(locs), function(w) {  # pw = per well
@@ -991,8 +1043,6 @@ vpSorter <- function(ffDir,
     startts <- paste(date0, time0)
     startts <- lubridate::dmy_hms(startts)
   }
-
-  SpeaknRecord('Full t0 timestamp is', startts)
 
   # ! we assume here that first timestamp is correct. ViewPoint have made serious errors about this; carefully check
   # especially if Replay; first timestamp is (stupidly) taken from the computer clock when you start the Replay, not from the raw file
