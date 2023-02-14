@@ -293,8 +293,6 @@ ggParameter <- function(pa,
 #' @param onlyDayorNight
 #' @param onlyWin
 #' @param colours
-#' @param ymin
-#' @param ymax
 #' @param legendOrNo
 #' @param ynameOrNo
 #' @param yunitOrNo
@@ -326,8 +324,6 @@ ggParameterGrid <- function(paDir,
                             onlyDayorNight=NA,
                             onlyWin=NA,
                             colours=NA,
-                            ymin=NA,
-                            ymax=NA,
                             legendOrNo=TRUE,
                             ynameOrNo=TRUE,
                             yunitOrNo=FALSE,
@@ -377,8 +373,8 @@ ggParameterGrid <- function(paDir,
                            onlyDayorNight='day',
                            onlyWin=onlyWin,
                            colours=colours,
-                           ymin=ymin,
-                           ymax=ymax,
+                           ymin=NA,
+                           ymax=NA,
                            legendOrNo=legendOrNo,
                            xtextOrNo=xtextOrNo,
                            ynameOrNo=ynameOrNo,
@@ -427,8 +423,8 @@ ggParameterGrid <- function(paDir,
                            onlyDayorNight='night',
                            onlyWin=onlyWin,
                            colours=colours,
-                           ymin=ymin,
-                           ymax=ymax,
+                           ymin=NA,
+                           ymax=NA,
                            legendOrNo=legendOrNo,
                            xtextOrNo=xtextOrNo,
                            ynameOrNo=nightyname, # set above, only need to put it if plotting activitySunsetStartle

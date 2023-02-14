@@ -223,22 +223,6 @@ activityFractalDim_onefish <- function(ffc,
                                        bin_nsecs,
                                        fps) {
 
-  # ! exception: in empty wells, frame-by-frame data might be all 0 or only a few positive values
-  # it seems to throw an error when calculating the fractal dimension on only a few positive values
-  # in that case, return NA (in theory it is 1.0 if all same value, but not interesting to calculate on empty wells anyways)
-  # here, if fewer than 0.05 % (i.e. 0.0005) of frames in that window are positive, assume empty well and return NA
-  # for a 14-hour day at 25 fps, this corresponds to 126 frames or 25 seconds, which should be enough in case hands covered an empty well during water top-up
-  # for a 10-hour night at 25 fps, this corresponds to 450 frames or 18 seconds
-  # note, from looking at a few experiments, minimum % of active frames of an actual larva during night seems to be ~ 0.1 %
-  # and the maximum number of active frames I have seen while still throwing an error was 41 during a night
-  # note, this "empty-well detector" does not need to be perfect:
-  # calculating fractal dimension on an empty well is fine as long as it does not throw an error (it will be excluded later)
-  # skipping one day or night for a well with an actual larva in it because there is too few active frames is not ideal but reasonable/not a big issue
-  thrac <- round(length(ffc) * 0.0005) # threshold in number of active frames
-  if(length(which(ffc>0)) < thrac) { return(NA) }
-
-  # now normal run:
-
   fps <- round(fps) # as will use to count number of rows here
 
   ### step0: trim first 10 min of data ###
@@ -265,10 +249,27 @@ activityFractalDim_onefish <- function(ffc,
   fs <- fs[-(1:120)]
 
   ### step3: measure fractal dimension ###
-  return(as.numeric(fractaldim::fd.estimate(fs, methods='boxcount')$fd)) # *** method boxcount to measure fractal dimension ***
-  # https://www.mssanz.org.au/MODSIM97/Vol%201/Breslin.pdf (really nice paper to read)
+
+  # do this within a tryCatch because fd.estimate may return Error in 1:qv : NA/NaN argument
+  # this happens when number of active frames is low but not 0
+  # previous version of activityFractalDim_onefish had a "minimum number of active frames" threshold to return NA when below threshold
+  # but it was difficult to find a threshold which was working for every situation
+  # alternative solution is to simply return NA if fd.estimate could not run
+  tryCatch(
+    {
+      # try to calculate & return fractal dim
+      fdim <- as.numeric(fractaldim::fd.estimate(fs, methods='boxcount')$fd) # ***
+      return(fdim)
+    },
+    # if an error occurs, return NA
+    error=function(e) {
+      cat('\t \t \t \t \t could not calculate fractal dimension, returning NA \n')
+      return(NA)
+    }
+  )
+
+  # *** method boxcount to measure fractal dimension
+  # https://www.mssanz.org.au/MODSIM97/Vol%201/Breslin.pdf (nice paper to read)
   # recommended 'variation' but made no sense when testing it; it was not reacting to binning or smoothing
   # boxcount was behaving as expecting, e.g. decreasing with increasing smoothing
 }
-
-

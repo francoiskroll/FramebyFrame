@@ -844,6 +844,12 @@ Ideally, you should be precise at the second as FramebyFrame will use this to de
 
 Yes, this happens when running a Replay on Zebralab, for example. The software (stupidly) takes the computer clock time when you started the Replay, not the original start of the experiment. Follow instructions above to give the start date/time manually to `vpSorter()`.
 
+> _I do short experiments without any light transitions. Can I still use the package to analyse my data?_  
+
+You can use some of it. When calculating behaviour parameters (`multiBehaviourParameter(...)`), please make use of the `woi` setting to define one or more time window(s) within your experiment (see DOCUMENTATION.md).
+
+Currently `ggParameterGrid(...)` and the LME statistics unfortunately expect full days/nights, but it is certainly possible to make them work for short experiments. Get in touch with me so I have some motivation to work on this!
+
 ___
 
 ## Experimental design commandments
@@ -879,3 +885,15 @@ Again, the variability between clutches can be _very_ important, so making compa
 
 * _**I shall randomise the well positions as best as possible**_  
 When you place the larvae in the wells, do you know which group each larva belongs to (e.g. injected vs uninjected or drug-treated vs DMSO)? If yes, then alternate the rows or columns to avoid edge effects (e.g. water from the well evaporates faster from the outer rows/columns). If you are tracking the offspring of a cross (e.g. heterozygous in-cross) and will genotype the larvae _after_ the experiment, then the wells are already randomised. Problem solved!  
+
+___
+
+## Version history
+
+To see which version of FramebyFrame you have, run:
+```r
+packageVersion("FramebyFrame")
+```
+
+### v0.1.0
+14/02/2023. First real version (arbitrary).

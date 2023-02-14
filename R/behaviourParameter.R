@@ -7,7 +7,7 @@
 # function splitFramesbyDayNight(...) -------------------------------------
 
 # path = path to any file in the experiment folder that is YYMMDD_...
-# ! assumes importAddTimetoRAWs(...) was run at some point, so wrote YYMMDD_BX_lights.csv with information about light transitions
+# ! assumes vpSorter(...) was run and wrote YYMMDD_BX_lights.csv with information about light transitions
 
 #' Title
 #'
@@ -23,6 +23,14 @@ splitFramesbyDayNight <- function(tc,
   # guess path to light transitions info and import file
   folderpath <- beforeLastSlash(path)
   filename <- paste0(substr(afterLastSlash(path), 1, 9), '_lights.csv')
+
+  # check that lights.csv exists
+  if(!file.exists(filename))
+    stop('\t \t \t \t >>> Looked for lights transition file', filename, ', but could not find it.\
+    Did you delete this file? Then please re-run vpSorter(...).\
+    Did you move this file outside of the experiment folder? It should stay in the same folder as the ...RAWs.csv file.\
+    Or perhaps you meant to define a time window using the `woi` setting? \n')
+
   suns <- read.csv(paste0(folderpath, filename)) # suns for sunrises/sunsets
   # Note; transitions are meant to be 'frame just before'
 
@@ -37,10 +45,11 @@ splitFramesbyDayNight <- function(tc,
   # so we can simply go day0, night0, day1, night1, etc.
   dn_nms <- c(rbind(sprintf('night%i', 0:30), sprintf('day%i', 1:31))) # names for a one-month long experiment
   # ! assumes starts during day; finishes during day
-  # goes night0, day1, night1, day2, etc.; so easy to exclude night0
-  # typically gives day1 / day2 + night1 / night2 as experimental design
+  # and therefore that day at the start is incomplete and day at the end is incomplete
+  # dn_nms above goes night0, day1, night1, day2, etc.; so easy to exclude night0
+  # typically gives day1 / day2 + night1 / night2 for the standard Rihel lab experimental design
 
-  # just take the first few according to how many we need
+  # take the first few according to how many we need
   names(dn) <- dn_nms[1:length(dn)]
 
   # find light transitions in row index of timecourse
@@ -88,7 +97,7 @@ splitFramesbyWoi <- function(tc,
 
   # convert woi timestamps to zth, i.e. number of hours since 9AM on day0
   woiz <- as.numeric(unlist(sapply(woi, function(ti) {
-    lubridate::difftime( lubridate::ymd_hms(ti), lubridate::ymd_hms(paste(lubridate::date(tc$fullts[1]), '09:00:00')), units='hours')
+    difftime( lubridate::ymd_hms(ti), lubridate::ymd_hms(paste(lubridate::date(tc$fullts[1]), '09:00:00')), units='hours')
   })))
 
   # check that woi timestamps are actually within the experiment

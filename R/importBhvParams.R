@@ -77,7 +77,7 @@ importBhvParams <- function(paDir,
 
     ps %>%
       mutate(pid=paste(parameter, date, box, fish, grp, sep='@'), .before=1) %>%
-      pivot_wider(pid,
+      pivot_wider(id_cols=pid,
                   names_from=win,
                   values_from=param) %>%
       mutate(grp=strNthSplit(pid, split='@', nth=5), .before=1) %>%
