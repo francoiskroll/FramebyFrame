@@ -25,8 +25,8 @@ splitFramesbyDayNight <- function(tc,
   filename <- paste0(substr(afterLastSlash(path), 1, 9), '_lights.csv')
 
   # check that lights.csv exists
-  if(!file.exists(filename))
-    stop('\t \t \t \t >>> Looked for lights transition file', filename, ', but could not find it.\
+  if(!file.exists( paste0(folderpath, filename) ))
+    stop('\t \t \t \t >>> Looked for lights transition file ', filename, ' in experiment folder but could not find it.\
     Did you delete this file? Then please re-run vpSorter(...).\
     Did you move this file outside of the experiment folder? It should stay in the same folder as the ...RAWs.csv file.\
     Or perhaps you meant to define a time window using the `woi` setting? \n')
