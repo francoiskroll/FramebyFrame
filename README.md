@@ -896,4 +896,9 @@ packageVersion("FramebyFrame")
 ```
 
 ### v0.1.0
-14/02/2023. First real version (arbitrary).
+14/02/2023
+First real version (arbitrary).
+
+### v0.2.0
+20/02/2023
+* ggFingerprint now allows multiple paths as input (`fgp`).
