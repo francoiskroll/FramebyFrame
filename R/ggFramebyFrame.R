@@ -866,7 +866,7 @@ ggFingerprint <- function(fgp,
   if(is.character(fgp[1])) {
     fgl <- lapply(fgp, function(fgpath){
 
-      if(!file.exists(fgpath)) stop('\t \t \t \t >>> Could not find file', fgp, ': please check the path. \n')
+      if(!file.exists(fgpath)) stop('\t \t \t \t >>> Could not find file', fgpath, ': please check the path. \n')
       if(!endsWith(fgpath, '.csv')) stop('\t \t \t \t >>> Path does not end with .csv, please check. \n')
 
       return( read.csv(fgpath) )
