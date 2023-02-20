@@ -847,13 +847,13 @@ About **mergeExp1–3** settings: this can be useful if you tracked a single clu
 
 ### ggFingerprint(...)
 
-**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, paDir=here('bhvparams/'). You can have as many experiments/parameters as you want in this directory. There is some flexibility later to exclude experiments or parameters, but broadly I would recommend having in the directory the experiments and parameters you want plotted together in one fingerprint plot.
+**fgp**: object or full path to _fingerprint.csv_, created by calculateFingerprint(...). You can overlay multiple fingerprints by giving multiple paths here, e.g. `fgp=c("'~/.../fingerprintExp1.csv", "fingerprintExp2.csv")`.
 
 **metric**: `mean` or `median`. I briefly experimented with defining the fingerprint as median ± MAD of all *Z*-scores instead of mean ± SEM (see step 6 above). This caused several issues, for example the median of all *Z*-scores is not 0 so the controls' fingerprint was not at 0 anymore. Overall I do not think this was a good idea, but it is left here if ever useful. Default is `mean`.
 
-**controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').
+**controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example `controlGrp=c('control', 'wt')`.
 
-**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.
 
 **skipNight0**: whether or not (TRUE or FALSE) to remove the night0’s datapoints prior to calculating the fingerprint. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
 
