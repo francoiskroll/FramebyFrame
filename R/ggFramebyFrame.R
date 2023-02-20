@@ -862,13 +862,20 @@ ggFingerprint <- function(fgp,
 
   # if we are given a string, assume it is a path
   # if not, assume we are given fgp object directly
-  if(is.character(fgp)) {
 
-    if(!file.exists(fgp)) stop('\t \t \t \t >>> Could not find file', fgp, ': please check the path. \n')
-    if(!endsWith(fgp, '.csv')) stop('\t \t \t \t >>> Path does not end with .csv, please check. \n')
+  if(is.character(fgp[1])) {
+    fgl <- lapply(fgp, function(fgpath){
 
-    fgp <- read.csv(fgp)
+      if(!file.exists(fgpath)) stop('\t \t \t \t >>> Could not find file', fgp, ': please check the path. \n')
+      if(!endsWith(fgpath, '.csv')) stop('\t \t \t \t >>> Path does not end with .csv, please check. \n')
+
+      return( read.csv(fgpath) )
+
+    })
+    fgp <- data.table::rbindlist(fgl)
   }
+  # note, currently no option to give multiple fingerprints as objects
+  # or in other words, if you want to give multiple fingerprints, give them as paths
 
 
   # check what to plot ------------------------------------------------------
