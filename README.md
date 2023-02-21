@@ -901,4 +901,5 @@ First real version (arbitrary).
 
 ### v0.2.0
 20/02/2023
-* ggFingerprint now allows multiple paths as input (`fgp`).
+* ggFingerprint() now allows multiple paths as input (`fgp`).
+* Can give multiple bhvparams directories to calculateFingerprint().

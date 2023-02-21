@@ -44,6 +44,8 @@ calculateFingerprint <- function(paDir,
   # but to be safe, will take only .csv files which start with activity or activebout or sleep
   # (as user may have put other stuff in the folder like plots)
 
+  # (list.files can take multiple directories as input, no need for a lapply or else here)
+
   flis <- which(substrEnding(list.files(paDir), 4) == '.csv') # indices of files we will probably want to import from paDir
 
   # from those, keep only those which start with activity or activebout or sleep
@@ -281,8 +283,9 @@ calculateFingerprint <- function(paDir,
 
   # save fingerprint to drive -----------------------------------------------
   # will write in folder where bhvparams directory is
-  expdir <- parentFolder(paDir, 1, whatSlash(paDir))
-  write.csv(fgp, paste0(expdir, whatSlash(paDir), 'fingerprint.csv'), row.names=FALSE)
+  # paDir may be multiple directories; we fingerprint.csv in the parent folder of the first bhvparams given
+  expdir <- parentFolder(paDir[1], 1, whatSlash(paDir[1]))
+  write.csv(fgp, paste0(expdir, whatSlash(paDir[1]), 'fingerprint.csv'), row.names=FALSE)
 
 
 
