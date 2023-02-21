@@ -447,10 +447,8 @@ fingerprintSimilarity <- function(fgp,
   }
 
 
-  ### export the pairwise similarity scores ###
-  # will write in folder where bhvparams directory is
-  expdir <- parentFolder(paDir, 1, whatSlash(paDir))
-  write.csv(fgp, paste0(expdir, whatSlash(paDir), 'fingerprint.csv'), row.names=FALSE)
+  ### export/return the pairwise similarity scores ###
+  # should probably code export to drive as .csv here
 
   # return cosine similarity matrix
   invisible(fsim) # same as return() but without printing to Console
