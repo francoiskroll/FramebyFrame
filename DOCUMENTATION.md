@@ -535,7 +535,7 @@ Plots a grid of scatter plots, one per behavioural parameter. Whatever the setti
 
 ggParameterGrid() does not currently support parameters calculated on specific window(s) of interest. Let me know if needed.
 
-**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, paDir=here('bhvparams/'). You can have as many experiments/parameters as you want in this directory. You can also give multiple bhvparams directories, e.g. `paDir=c(here('220906_exp1/bhvparams/')`, `here('220906_exp2/bhvparams/'))`. It will import all the parameter tables it finds in these directories.
+**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, `paDir=here('bhvparams/')`. You can have as many experiments/parameters as you want in this directory. You can also give multiple bhvparams directories, e.g. `paDir=c(here('220906_exp1/bhvparams/'), here('220906_exp2/bhvparams/'))`. It will import all the parameter tables it finds in these directories.
 
 **statsReport**: whether or not (TRUE or FALSE) to write the report (.csv file) listing all the linear mixed effect models. If TRUE, it will be written as LMEreport.csv in the same folder as exportPath (below).
 
@@ -543,7 +543,7 @@ ggParameterGrid() does not currently support parameters calculated on specific w
 
 **skipNight0**: whether or not (TRUE or FALSE) to plot night0’s datapoints. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Please read how this setting also affects the LME calculations under LMEdaynight(...) below.. Default is FALSE.
 
-**poolExp1**: a set of experiments to pool together. Give them as YYMMDD_BX, e.g. poolExp1=c('220706_16', '220706_17') will pool datapoints into one experiment called pool_1. Note, there is no normalisation of any kind happening. It will effectively behave as if the datapoints from the different experiments were from a single experiment, including when calculating the statistics. Use at your own risk. Default is NA.
+**poolExp1**: a set of experiments to pool together. Give them as YYMMDD_BX, e.g. `poolExp1=c('220706_16', '220706_17')` will pool datapoints into one experiment called pool_1. Note, there is no normalisation of any kind happening. It will effectively behave as if the datapoints from the different experiments were from a single experiment, including when calculating the statistics. Use at your own risk. Default is NA.
 
 **poolExp2**: another set of experiments to pool together in experiment pool_2. See comment above. Default is NA.
 
@@ -750,7 +750,7 @@ Overall, I think the only situation where you could justify using directly the p
 
 Giving all groups present in the parameter table(s) but in a different order will only modify the direction of the effect, i.e. the sign of the slope. For example, grporder=c('ko', 'wt') will give the effect of ‘being KO’, compared to WT (reference). Alternatively, grporder=c('wt', 'ko') will just change the sign of the slope because the results will represent the effect of ‘being WT’ compared to KO (reference), the error and the p-value will remain the same. If you have any doubt about the interpretation, just take the scatter plot of a parameter which has a fairly obvious difference between groups and look at which group is higher or lower.
 
-Excluding groups may modify the slopes and errors, even for the same group-vs-group comparison. For example, say you first run LMEdaynight(...) on a parameter table that has three groups: wt, het, hom. You will get estimates for wt vs het and for het vs hom. Now you decide to exclude the het group by giving grporder=c('wt', 'hom'). The wt vs hom comparison is likely different than the one you first obtained when giving all three groups, which may be counterintuitive. This is because you are ‘hiding’ datapoints from the LME model when it models how the different random effects affect the data. Say there were N=25 wt, N=50 het, and N=25 hom. In the first case (all three groups), the LME model estimates how the random effects (e.g. each larva’s age) affect the data on N=100 larvae, while in the second case (only wt and het) it does so on N=50 larvae. Except if you have a good reason to completely exclude a group, I think it is preferable to give the largest possible sample size to the LME model so it models the random effects the best it can. Then you can decide to only report the comparison you/the readers care about. So, in the example: keep all three groups (grporder=NA or grporder=c('wt', 'het', 'hom')), but report only the wt vs hom estimates.
+Excluding groups may modify the slopes and errors, even for the same group-vs-group comparison. For example, say you first run LMEdaynight(...) on a parameter table that has three groups: wt, het, hom. You will get estimates for wt vs het and for het vs hom. Now you decide to exclude the het group by giving `grporder=c('wt', 'hom')`. The wt vs hom comparison is likely different than the one you first obtained when giving all three groups, which may be counterintuitive. This is because you are ‘hiding’ datapoints from the LME model when it models how the different random effects affect the data. Say there were N=25 wt, N=50 het, and N=25 hom. In the first case (all three groups), the LME model estimates how the random effects (e.g. each larva’s age) affect the data on N=100 larvae, while in the second case (only wt and het) it does so on N=50 larvae. Except if you have a good reason to completely exclude a group, I think it is preferable to give the largest possible sample size to the LME model so it models the random effects the best it can. Then you can decide to only report the comparison you/the readers care about. So, in the example: keep all three groups (`grporder=NA` or `grporder=c('wt', 'het', 'hom')`), but report only the wt vs hom estimates.
 
 Finally, I am not certain what to recommend regarding p-values when excluding groups. Remember each p-value here answers the question “does the genotype (group) affect parameter X”, more precisely it is the probability of being wrong when excluding the null hypothesis which is “the genotype (group) has no effect on parameter X”. When there are two groups, the p-value necessarily represents the comparison between the two groups. However, when there are more than two groups, it is more akin to the interpretation of an ANOVA, i.e. “do genotypes have an effect?”. So it will depend on what your claim is. In the example, you could also try with and without the het group and see if you reach the same conclusion(s) regarding significance.
 
@@ -767,7 +767,7 @@ Calculates linear-mixed effects (LME) statistics and write results in a statisti
 
 Please refer to the documentation of LMEdaynight(...) above for explanations about the LME model.
 
-**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, `paDir=here('bhvparams/')`. You can have as many experiments/parameters as you want in this directory. There is some flexibility later to exclude experiments or parameters, but broadly I would recommend having in the directory the experiments and parameters you want plotted together in one fingerprint plot.
+**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, `paDir=here('bhvparams/')`. You can have as many experiments/parameters as you want in this directory. You can also give multiple bhvparams directories, e.g. `paDir=c(here('220906_exp1/bhvparams/'), here('220906_exp2/bhvparams/'))`. It will import all the parameter tables it finds in these directories.
 
 **poolExp1**: a set of experiments to pool together. Give them as YYMMDD_BX, e.g. `poolExp1=c('220706_16', '220706_17')` will pool datapoints into one experiment called pool_1. Note, there is no normalisation of any kind happening. It will effectively behave as if the datapoints from the different experiments were from a single experiment, including when calculating the statistics. Use at your own risk. Default is NA.
 
@@ -781,15 +781,15 @@ Please refer to the documentation of LMEdaynight(...) above for explanations abo
 
 **sameClutch3**: another set of experiments which tracked the same clutch.  
 
-**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA. Please read more details under LMEdaynight(...).  
+**grporder**: please give the reference/control group first, then the other groups in your preferred order. For example, `grporder=c('wt', 'het', 'hom')` or `grporder=c('DMSO', 'dose1uM', 'dose100uM')`. Try _not_ to exclude groups here. Please read more details about the rationale under LMEdaynight(...).  
 
 **skipNight0**: whether or not (TRUE or FALSE) to remove the night0 datapoints before making the model. Default is FALSE. Mostly applies to standard Rihel lab experiment night0 / day1 / night1 / day2 / night2. In this case, note that keeping night0 datapoints would make the day results and the night results less readily comparable. Indeed, the night model would be calculated on three windows while the day model would be calculated on two windows. I am not certain what the precise effect of this would be but the statistical power would almost certainly be different.  
 
-**silent**: you can skip, it is used internally to make it not print anything to Console, i.e. TRUE makes it silent, FALSE lets it print the summaries.  
+**silent**: you can skip, it is used internally to make it not print anything to Console, i.e. TRUE makes it silent, FALSE lets it print the summaries. Default is FALSE.  
 
-**detailsOrNo**: whether or not (TRUE or FALSE) to print in Console the details of each LME model.  
+**detailsOrNo**: whether or not (TRUE or FALSE) to print in Console the details of each LME model. Default is FALSE.  
 
-**exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf.  
+**exportPath**: full path to export file. It will create a csv. Accordingly, exportPath must finish with .csv.  
 
 
 ### calculateFingerprint(...)
@@ -825,7 +825,7 @@ Z_{day} = { 2 + 3 \over 2} = 2.5
 
 The process is the same for nights and for each behavioural parameter.
 
-**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, paDir=here('bhvparams/'). You can have as many experiments/parameters as you want in this directory. There is some flexibility later to exclude experiments or parameters, but broadly I would recommend having in the directory the experiments and parameters you want plotted together in one fingerprint plot.
+**paDir**: directory that stores the parameter tables, typically called bhvparams. For example, `paDir=here('bhvparams/')`. You can have as many experiments/parameters as you want in this directory. You can also give multiple bhvparams directories, e.g. `paDir=c(here('220906_exp1/bhvparams/'), here('220906_exp2/bhvparams/'))`. It will import all the parameter tables it finds in these directories.
 
 **controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').
 
