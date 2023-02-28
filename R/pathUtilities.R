@@ -54,15 +54,26 @@ substrEnding <- function(x, n){ # x = string (or vector of strings); n = last n 
 #' @examples
 afterLastSlash <- function(stri) {
 
+  # will assume stri is a path
+  # slash character is different if Windows or Mac, so look now which one we have
+  # (small variant of whatSlash())
+  if (length(which(strsplit(stri, '')[[1]] == '/')) > 0) {
+    # then we are on a Mac, and the slash character is:
+    slash <- '/'
+  } else if (length(which(strsplit(stri, '')[[1]] == '\\')) > 0) {
+    # then we are on a Windows, and the slash character is:
+    slash <- '\\'
+  }
+
   as.character(sapply(stri, function(st){
 
     # is there at least one slash in this string?
     # if not, just return the string as it is
-    if(length(which(strsplit(st, split='')[[1]]=='/'))==0) return(st)
+    if(length(which(strsplit(st, split='')[[1]]==slash))==0) return(st)
 
     substr(st,
-           which(strsplit(st, '')[[1]] == '/') [length(which(strsplit(st, '')[[1]] == '/'))] + 1,
-           which(strsplit(st, '')[[1]] == '/') [length(which(strsplit(st, '')[[1]] == '/'))] + 999)
+           which(strsplit(st, '')[[1]] == slash) [length(which(strsplit(st, '')[[1]] == slash))] + 1,
+           which(strsplit(st, '')[[1]] == slash) [length(which(strsplit(st, '')[[1]] == slash))] + 999)
   }))
 }
 
@@ -79,8 +90,25 @@ afterLastSlash <- function(stri) {
 #'
 #' @examples
 beforeLastSlash <- function(stri) {
+
+  # will assume stri is a path
+  # slash character is different if Windows or Mac, so look now which one we have
+  # (small variant of whatSlash())
+  if (length(which(strsplit(stri, '')[[1]] == '/')) > 0) {
+    # then we are on a Mac, and the slash character is:
+    slash <- '/'
+  } else if (length(which(strsplit(stri, '')[[1]] == '\\')) > 0) {
+    # then we are on a Windows, and the slash character is:
+    slash <- '\\'
+  }
+
   as.character(sapply(stri, function(st){
-    substr(st, 1, which(strsplit(st, '')[[1]] == '/') [length(which(strsplit(st, '')[[1]] == '/'))])
+
+    # is there at least one slash in this string?
+    # if not, just return the string as it is
+    if(length(which(strsplit(st, split='')[[1]]==slash))==0) return(st)
+
+    substr(st, 1, which(strsplit(st, '')[[1]] == slash) [length(which(strsplit(st, '')[[1]] == slash))])
   }))
 }
 
@@ -181,7 +209,8 @@ afterFirstUnderscore <- function(stri) {
 
 
 
-# splitStrTakeNth ---------------------------------------------------------
+
+# strNthSplit -------------------------------------------------------------
 # split string(s) and take the nth element of each
 # e.g. strNthSplit on day1_sunny_23C and day2_rainy_20C
 # with split = '_' and nth = 2
@@ -194,6 +223,7 @@ afterFirstUnderscore <- function(stri) {
 #' @param nth
 #'
 #' @return
+#' @export
 #'
 #' @examples
 strNthSplit <- function(stri,

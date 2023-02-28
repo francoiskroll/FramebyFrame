@@ -420,7 +420,7 @@ fingerprintSimilarity <- function(fgp,
   } else if (simScore=='correlation') {
     fsim <- as.data.frame(cor(as.matrix(fgw[2:ncol(fgw)]), method='pearson'))
   } else if (simScore=='euclidean') {
-    fsim <- as.matrix(dist( t(fgw[2:ncol(fgw)]) , 'euclidean'))
+    fsim <- as.matrix(dist( t(fgw[2:ncol(fgw)]) , method='euclidean'))
   }
 
   # print the similarity matrix
