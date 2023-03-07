@@ -573,8 +573,7 @@ behaviourParameter <- function(parameter,
           substr(afterLastSlash(ffpath[i]), 1, 9), '\n')
 
       dnL[[i]] <- splitFramesbyDayNight(tc=ffL[[i]],
-                                        path=ffpath[i],
-                                        skipNight0=skipNight0)
+                                        path=ffpath[i])
 
     }
 
@@ -737,7 +736,7 @@ behaviourParameter <- function(parameter,
 
   # run paramSummary() to print summary statistics --------------------------
   paramSummary(pa=panms,
-               skipNight0=TRUE,
+               skipNight0=skipNight0,
                poolExps=FALSE,
                poolWins=FALSE)
 
