@@ -486,6 +486,7 @@ behaviourParameter <- function(parameter,
                                ffpath,
                                genopath,
                                woi=NA,
+                               skipNight0=FALSE,
                                zthr_min=1,
                                inaThr=0,
                                dayduration=14) {
@@ -572,7 +573,8 @@ behaviourParameter <- function(parameter,
           substr(afterLastSlash(ffpath[i]), 1, 9), '\n')
 
       dnL[[i]] <- splitFramesbyDayNight(tc=ffL[[i]],
-                                        path=ffpath[i])
+                                        path=ffpath[i],
+                                        skipNight0=skipNight0)
 
     }
 
@@ -773,6 +775,7 @@ multiBehaviourParameter <- function(parameters,
                                     ffpath,
                                     genopath,
                                     woi=NA,
+                                    skipNight0=FALSE,
                                     zthr_min=1,
                                     inaThr=0,
                                     dayduration=14) {
@@ -839,6 +842,7 @@ multiBehaviourParameter <- function(parameters,
                        ffpath=ffpath,
                        genopath=genopath,
                        woi=woi,
+                       skipNight0=skipNight0,
                        zthr_min=zthr_min,
                        inaThr=inaThr,
                        dayduration=dayduration)

@@ -273,3 +273,44 @@ activityFractalDim_onefish <- function(ffc,
   # recommended 'variation' but made no sense when testing it; it was not reacting to binning or smoothing
   # boxcount was behaving as expecting, e.g. decreasing with increasing smoothing
 }
+
+
+# function activityCompressibility ----------------------------------------
+
+#' Title
+#'
+#' @param ffc
+#' @param zhc
+#' @param bin_nsecs
+#' @param fps
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+activityCompressibility_onefish <- function(ffc,
+                                            zhc,
+                                            bin_nsecs,
+                                            fps) {
+
+  # turn ffc into a character vector
+  # e.g. 0 0 5 into "0" "0" "5"
+  # (easier to perform the compression on characters)
+  ffch <- as.character(as.vector(ffc))
+
+  # compress the vector using gzip
+  fzip <- memCompress(from=ffch, type='gzip')
+
+  # by how much did we compress it?
+  # we can calculate how much smaller the compressed sequence is compared to the original sequence
+  # e.g. 0.25 would mean the compressed sequence is only 25% the length of the original sequence (i.e. we compressed it 4x)
+  # but this would mean a low number is more compressive, which may be counterintuitive?
+  # calling this parameter "repetitiveness" does not change in the direction
+  # alternative is to calculate 1 - this ratio, e.g. 0.75 would mean we reduced the length of the sequence by 75%
+  # we will use this, I think makes more sense
+  return ( 1 - (length(fzip) / length(ffch)) )
+  # e.g. sequence is 100,000 frames and its length becomes 500 after compression
+  # so compressed sequence is 0.005 (0.5%) of original
+  # i.e. we reduced the sequence length by 99.5%
+}
