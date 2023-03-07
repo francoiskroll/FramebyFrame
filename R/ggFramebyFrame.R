@@ -22,11 +22,6 @@
 #' @examples
 param2Title <- function(param) {
 
-  if (! param %in% allparameters) {
-    cat('\t \t \t \t >>> No Y axis text written for this parameter, should add one in function param2Ytext() \n')
-    return(NA)
-  }
-
   if (param=='activityPercentageTimeActive') {
     return('percentage time active')
 
@@ -44,6 +39,9 @@ param2Title <- function(param) {
 
   } else if(param=='activityFractalDim') {
     return('fractal dimension')
+
+  } else if(param=='activityCompressibility') {
+    return('compressibility')
 
 
 
@@ -101,11 +99,6 @@ param2Title <- function(param) {
 #' @examples
 param2Ytext <- function(param) {
 
-  if (! param %in% allparameters) {
-    cat('\t \t \t \t >>> No Y axis text written for this parameter, should add one in function param2Ytext() \n')
-    return(NA)
-  }
-
   if (param=='activityPercentageTimeActive') {
     return('% time active')
 
@@ -124,9 +117,12 @@ param2Ytext <- function(param) {
   } else if(param=='activityFractalDim') {
     return('fractal dimension')
 
+  } else if(param=='activityCompressibility') {
+    return('compressibility')
 
 
-  } else if (param=='activeboutLength') {
+
+  }else if (param=='activeboutLength') {
     return('active bout duration (sec)')
 
   } else if (param=='activeboutMean') {
@@ -180,11 +176,6 @@ param2Ytext <- function(param) {
 #' @examples
 param2Yunit <- function(param) {
 
-  if (! param %in% allparameters) {
-    cat('\t \t \t \t >>> No Y axis unit recorded for this parameter, should add one in function param2Yunit() \n')
-    return(NA)
-  }
-
   if (param=='activityPercentageTimeActive') {
     return('%')
 
@@ -202,6 +193,9 @@ param2Yunit <- function(param) {
 
   } else if(param=='activityFractalDim') {
     return('dimension')
+
+  } else if(param=='activityCompressibility') {
+    return('compression ratio')
 
 
 
