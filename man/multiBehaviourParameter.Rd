@@ -9,6 +9,7 @@ multiBehaviourParameter(
   ffpath,
   genopath,
   woi = NA,
+  skipNight0 = FALSE,
   zthr_min = 1,
   inaThr = 0,
   dayduration = 14

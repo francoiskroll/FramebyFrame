@@ -19,8 +19,6 @@ ggParameterGrid(
   onlyDayorNight = NA,
   onlyWin = NA,
   colours = NA,
-  ymin = NA,
-  ymax = NA,
   legendOrNo = TRUE,
   ynameOrNo = TRUE,
   yunitOrNo = FALSE,
