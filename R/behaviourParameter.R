@@ -624,6 +624,13 @@ behaviourParameter <- function(parameter,
 
   # category1
   if(substr(parameter, 1, 8) == 'activity') {
+
+    # !! exception: we cannot calculate activityTransitionDelta if there is only one time window (day/night or window of interest)
+    if(parameter=='activityTransitionDelta' & length(dnL)==1) {
+      cat('\t \t \t \t >>> Cannot calculate activityTransitionDelta as there is only one time window. \n')
+      return(NULL)
+    }
+
     cat('\n \t \t \t \t >>> ACTIVITY parameter \n')
     paL <- lapply(dnL, activityParameter, parameter=parameter, dayduration=dayduration)
   }
@@ -788,7 +795,7 @@ multiBehaviourParameter <- function(parameters,
 
     parameters <- allparameters
 
-    # ! if analysing by woi, should skip activityTransitionDelta
+    # !! if analysing by woi, should skip activityTransitionDelta
     if(!is.na(woi[1])) {
       cat('\t \t \t \t >>> multiBehaviourParameter: analysing by window(s) of interest so skipping activityTransitionDelta \n')
       parameters <- parameters[-which(parameters=='activityTransitionDelta')]
@@ -799,7 +806,7 @@ multiBehaviourParameter <- function(parameters,
 
     parameters <- allparameters[which(substr(allparameters, 1, nchar('activity'))=='activity')]
 
-    # ! if analysing by woi, should skip activityTransitionDelta
+    # !! if analysing by woi, should skip activityTransitionDelta
     if(!is.na(woi[1])) {
       cat('\t \t \t \t >>> multiBehaviourParameter: analysing by window(s) of interest so skipping activityTransitionDelta \n')
       parameters <- parameters[-which(parameters=='activityTransitionDelta')]
