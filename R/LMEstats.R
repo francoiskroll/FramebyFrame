@@ -372,18 +372,35 @@ LMEsummary <- function(lmemodel,
                        grporder,
                        silent=FALSE) {
 
+  ### rest of function assumes we lmemodel is a LME model created by LMEmodel(...)
+  # but there is an exception: if there was no random effects
+  # which happens when user gives a single experiment with a single clutch with a single day or night
+  # then what we calculate a linear regression, not an LME model
+  # we will make the output match as best as possible, but the format is slightly different, so take care of this situation first
+
+  # if we calculated a linear regression (not an LME model)...
+  if(class(lmemodel)=='lm') {
+    estt <- t(summary(lmemodel)$coefficients)
+
+  # standard case: we calculated an LME model
+  } else {
+    # easier if we flip it (t()) so we have groups are columns
+    estt <- t(as.data.frame(summary(lmemodel)[10][[1]]))
+  }
+
+  # now the formats match and we can proceed as usual...
+
   # get the slope estimates
-  ests <- as.data.frame(summary(lmemodel)[10][[1]])
-  # easier if we flip it so we have groups are columns
-  estt <- t(ests)
-  # get the estimates
   est <- estt['Estimate', startsWith(colnames(estt), 'grp') ]
+
   # get the errors
   std <- estt['Std. Error', startsWith(colnames(estt), 'grp') ]
+
   # recover the group as columns
   colgrps <- colnames(estt)[startsWith(colnames(estt), 'grp')]
   # currently given as grpwt, grphet, etc. Remove 'grp' so only wt, het, etc.
   colgrps <- gsub('grp', '', colgrps)
+
   # put the grps as names on vector of estimates & errors
   names(est) <- colgrps
   names(std) <- colgrps
@@ -403,17 +420,44 @@ LMEsummary <- function(lmemodel,
   lml <- vector(mode='list', length(est)) # i.e. number of elements is number of treatment groups, or total number of groups minus 1
 
   # get the pval now
-  pval <- as.data.frame(anov[8]) # get the p-value table
-  pval <- pval$`Pr(>Chisq)`
-  pval <- as.numeric(pval[!is.na(pval)])
+
+  ## slightly different if we calculated a linear regression (not an LME model)...
+  if(class(lmemodel)=='lm') {
+    pval <- as.numeric(pf(summary(lmemodel)$fstatistic[1],
+                          summary(lmemodel)$fstatistic[2],
+                          summary(lmemodel)$fstatistic[3],
+                          lower.tail = FALSE))
+    # this seems to be the only way to extract the p-value of the F statistic, even though it is printed in summary(lmmodel)!
+    # note, this p-value is the *same* as the p-value from an ANOVA parameter ~ group
+    # can read about this here https://faculty.nps.edu/rbassett/_book/regression-with-categorical-variables.html
+    # this can also be shown empirically, e.g. both commands give the same p-value 0.00606:
+    # summary(aov(qsec ~ factor(carb), data=mtcars))
+    # summary(lm(qsec ~ factor(carb), data=mtcars))
+
+  ## standard case: we calculated an LME model
+  } else {
+    # easier if we flip it (t()) so we have groups are columns
+    pval <- as.data.frame(anov[8]) # get the p-value table
+    pval <- pval$`Pr(>Chisq)`
+    pval <- as.numeric(pval[!is.na(pval)])
+  }
+
   # there should only be one pvalue at this stage
   if (length(pval) != 1)
     stop('\t \t \t \t Error LMEsummary: 0 or more than 1 p-values, which is unexpected. \n')
 
-  ### if pval is significant, run posthoc tests ###
+  ### run posthoc tests ###
+  ## linear regression:
+  # somehow LMEposthoc(...) returns exactly the coefficient p-values of the linear regression model already, so will not modify
+  # however, keep in mind those p-values are exactly the p-values in the Pr(>|t|) column of summary(LMmodel)
+  # note, these p-values are the *same* as p-values from a t-test group vs reference group
+  # can read about this here https://faculty.nps.edu/rbassett/_book/regression-with-categorical-variables.html
+  # this can also be shown empirically, e.g. assume 'setosa' is reference group, both commands give the same p-value 4.5e-10:
+  # summary(lm(Sepal.Width ~ Species, data=iris))
+  # pairwise.t.test(iris$Sepal.Width, iris$Species, p.adjust.method='none')
+
+  ## LME model:
   # with package emmeans
-  # in practice, easier to always run LMEposthoc
-  # and replace by NA if model p-value was not significant
   lmepo <- LMEposthoc(lmemodel=lmemodel)
 
   # keep only comparisons to reference group
@@ -508,19 +552,55 @@ LMEmodel <- function(pdn,
 
     ### IF ONLY ONE EXP:
     if(length(unique(pdn$date_box))==1) {
-      # full model
-      lmfull <- lme4::lmer(param ~ grp + (1|fish) + (1|dpf), data=pdn, REML=FALSE)
-      # null model
-      lmnull <- lme4::lmer(param ~ 1 + (1|fish) + (1|dpf), data=pdn, REML=FALSE)
+
+      # if only one day/night, we cannot have dpf as random effect (as only one level)
+      # it is also meaningless to have fish (ID) as random effect as it is does not group the datapoints in any ways
+      # (there is only one datapoint per fish)
+      if(length(unique(pdn$win))==1) {
+        # full model
+        cat('\n \t \t \t \t NOTE: there is only one experiment and only one day or night, so there is no random effects.
+            \t \t \t In this case, the statistics are based on a simple LINEAR REGRESSION, *not* a linear mixed-effects model.\
+            \t \t \t The main p-value is exactly equal to an ANOVA parameter ~ group. The added benefit of the linear regression step is to give a measure of effect size.\
+            \t \t \t The posthoc p-values are t-tests beingGroup vs referenceGroup. \n \n')
+        cat('\t \t \t \t >>> LINEAR REGRESSION formula:', unique(pdn$parameter), '~ group \n')
+
+        # full model
+        lmfull <- lm(param ~ grp, data=pdn)
+        # null model
+        lmnull <- lm(param ~ 1, data=pdn)
+
+      } else {
+        # full model
+        cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|larva ID) + (1|larva age) \n')
+        lmfull <- lme4::lmer(param ~ grp + (1|fish) + (1|dpf), data=pdn, REML=FALSE)
+        # null model
+        lmnull <- lme4::lmer(param ~ 1 + (1|fish) + (1|dpf), data=pdn, REML=FALSE)
+      }
 
       return(list(full=lmfull, null=lmnull))
 
-      ### IF MORE THAN ONE EXP:
+    ### IF MORE THAN ONE EXP:
     } else {
-      # full model
-      lmfull <- lme4::lmer(param ~ grp + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
-      # null model
-      lmnull <- lme4::lmer(param ~ 1 + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+
+      # if only one day/night, we cannot have dpf as random effect (as only one level)
+      # it is also meaningless to have fish (ID) as random effect as it is does not group the datapoints in any ways
+      # (there is only one datapoint per fish)
+      if(length(unique(pdn$win))==1) {
+        # full model
+        cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|experiment) \n')
+        lmfull <- lme4::lmer(param ~ grp + (1|date_box), data=pdn, REML=FALSE)
+        # null model
+        lmnull <- lme4::lmer(param ~ 1 + (1|date_box), data=pdn, REML=FALSE)
+
+      } else {
+        # full model
+        cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|experiment/larva ID) + (1|larva age) \n')
+        lmfull <- lme4::lmer(param ~ grp + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+        # null model
+        lmnull <- lme4::lmer(param ~ 1 + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+
+      }
+
 
       return(list(full=lmfull, null=lmnull))
     }
@@ -531,12 +611,27 @@ LMEmodel <- function(pdn,
   else if (sameClutchMode) {
 
     ### IF ONLY ONE CLUTCH
-    # note this is the same as "if more than one exp" above, but maybe better to be explicit
+    # note this is the same as "if more than one exp" above, but better to be explicit
     if (length(unique(pdn$clutch))==1) {
-      # full model
-      lmfull <- lme4::lmer(param ~ grp + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
-      # null model
-      lmnull <- lme4::lmer(param ~ 1 + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+
+      # if only one day/night, we cannot have dpf as random effect (as only one level)
+      # it is also meaningless to have fish (ID) as random effect as it is does not group the datapoints in any ways
+      # (there is only one datapoint per fish)
+      if(length(unique(pdn$win))==1) {
+        # full model
+        cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|experiment) \n')
+        lmfull <- lme4::lmer(param ~ grp + (1|date_box), data=pdn, REML=FALSE)
+        # null model
+        lmnull <- lme4::lmer(param ~ 1 + (1|date_box), data=pdn, REML=FALSE)
+
+      } else {
+        # full model
+        cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|experiment/larva ID) + (1|dpf) \n')
+        lmfull <- lme4::lmer(param ~ grp + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+        # null model
+        lmnull <- lme4::lmer(param ~ 1 + (1|date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+      }
+
 
       return(list(full=lmfull, null=lmnull))
     }
@@ -547,10 +642,24 @@ LMEmodel <- function(pdn,
       # https://ourcodingclub.github.io/tutorials/mixed-models/
       # indeed, fish (leaf) is a subset of date_box (plant) which is a subset of clutch (bed)
 
-      # full model
-      lmfull <- lme4::lmer(param ~ grp + (1|clutch/date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
-      # null model
-      lmnull <- lme4::lmer(param ~ 1 + (1|clutch/date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+      # if only one day/night, we cannot have dpf as random effect (as only one level)
+      # it is also meaningless to have fish (ID) as random effect as it is does not group the datapoints in any ways
+      # (there is only one datapoint per fish)
+      if(length(unique(pdn$win))==1) {
+        # full model
+        cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|clutch/experiment) \n')
+        lmfull <- lme4::lmer(param ~ grp + (1|clutch/date_box), data=pdn, REML=FALSE)
+        # null model
+        lmnull <- lme4::lmer(param ~ 1 + (1|clutch/date_box), data=pdn, REML=FALSE)
+
+      } else {
+        # full model
+        cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|clutch/experiment/larva ID) + (1|larva age) \n')
+        lmfull <- lme4::lmer(param ~ grp + (1|clutch/date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+        # null model
+        lmnull <- lme4::lmer(param ~ 1 + (1|clutch/date_box/fish) + (1|dpf), data=pdn, REML=FALSE)
+
+      }
 
       return(list(full=lmfull, null=lmnull))
     }

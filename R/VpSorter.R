@@ -292,6 +292,14 @@ vpSorter <- function(ffDir,
     }
   }
 
+  # check zebpath is correct
+  if(!file.exists(zebpath))
+    stop('\t \t \t \t >>> Error vpSorter: cannot find a file at zebpath, please check carefully the path given.\n
+    \t \t \t \t Maybe the path is correct but the formatting is not:\
+         \t \t \t -- on Windows, a correct path would look like: C:\\\\Desktop\\\\myExperiment\\\\210907_12_myExp.xls (the double \\\\ is an unfortunate R quirk)\
+         \t \t \t -- on Mac, a correct path would look like: ~/Desktop/myExperiment/210907_12_myExp.xls\
+         \t \t \t Using the package here() to write the paths would simplify your life. Please find instructions in the FramebyFrame README. \n')
+
   # boxGen is 1 or 2
   if (! boxGen %in% c(1, 2)) stop('\t \t \t \t Error vpSorter: boxGen can only be 1 or 2, e.g. boxGen=2 \n')
 

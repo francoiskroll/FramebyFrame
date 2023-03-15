@@ -149,6 +149,7 @@ ggParameter <- function(pa,
                        detailsOrNo=FALSE)
 
     # we should have ONE p-value for day and ONE p-value for night, regardless of number of groups
+
     # check DAY
     if(onlyDayorNight=='day') {
       if(length(unique(lme$day['pval'])) != 1)
@@ -350,7 +351,7 @@ ggParameterGrid <- function(paDir,
   ### is there only one night or only one day?
   # take first parameter table as example
   # first column with actual datapoints is:
-  firstcol <- which(startsWith(colnames(psL[[1]]), 'day') | startsWith(colnames(psL[[1]]), 'night'))
+  firstcol <- which(startsWith(colnames(psL[[1]]), 'day') | startsWith(colnames(psL[[1]]), 'night'))[1]
   # names of the day/night columns:
   dnnames <- colnames(psL[[1]])[firstcol:ncol(psL[[1]])] # e.g. night0, day1
 
@@ -383,7 +384,9 @@ ggParameterGrid <- function(paDir,
 
     # ! exceptions: activitySunsetStartle & sleepLatency are not defined for day, so need to skip in that case
     # we also skip if user asked for onlyDayorNight='night', obviously
-    if (! unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency') & onlyDayorNight!='night') {
+    # i.e. we go ahead if onlyDayorNight is NA or 'day'
+    # AND if parameter is *not* activitySunsetStartle & sleepLatency
+    if ( (is.na(onlyDayorNight) | onlyDayorNight=='day') & ! unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
       ggday <- ggParameter(pa=pa,
                            grporder=grporder,
                            sameClutch1=sameClutch1,
@@ -412,40 +415,31 @@ ggParameterGrid <- function(paDir,
 
     #### NIGHT ####
 
-    # ! exceptions
-    # for activitySunsetStartle and sleepLatency
-    # or if onlyDayorNight='night'
-    # only plots we have is night
-    # so if user wants titles, need to add it here
-    # and if user wants ynames, need to add it here
-    # (for the other parameters, night plot is right next to the day plot so only write Y axis name on the day plot)
-
-    if(onlyDayorNight=='night' | unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
-
-      if(ynameOrNo) {
-        nightyname <- TRUE
-      } else {
-        nightyname <- FALSE
-      }
-
-      if(yunitOrNo) {
-        nightyunit <- TRUE
-      } else {
-        nightyunit <- FALSE
-      }
-
-      if(titleOrNo) {
-        nighttitle <- TRUE
-        nightblank <- FALSE
-      } else {
-        nighttitle <- FALSE
-        nightblank <- TRUE
-      }
-
+    # in general, when any title is present, we want blankTitle ON for the night plot so the plots align
+    if(titleOrNo) {
+      blankTitle <- TRUE
+    } else {
+      blankTitle <- FALSE
     }
 
-    # now draw the night plot, unless user asked for onlyDayorNight='day'
-    if(onlyDayorNight!='day') {
+    # ! unless user wants titles AND night plot is only we have (e.g for parameter like sunsetStartle),
+    # then we should put the title now (i.e. so blankTitle OFF)
+    if(titleOrNo & !exists('ggday')) {
+      blankTitle <- FALSE
+    }
+
+    # ! if we already made a day plot for this parameter,
+    # there is no need to repeat the title, Y axis name, etc.
+    # so, if day plot exists, turn off a few settings
+    if(exists('ggday')) {
+      ynameOrNo <- FALSE
+      yunitOrNo <- FALSE
+      titleOrNo <- FALSE
+    }
+
+    # now draw the night plot, except if user explicitly asked for day only
+    # i.e. we can go ahead if onlyDayorNight is NA or is =='night'
+    if(is.na(onlyDayorNight) | onlyDayorNight=='night') {
       ggnight <- ggParameter(pa=pa,
                              grporder=grporder,
                              sameClutch1=sameClutch1,
@@ -461,10 +455,10 @@ ggParameterGrid <- function(paDir,
                              ymax=NA,
                              legendOrNo=legendOrNo,
                              xtextOrNo=xtextOrNo,
-                             ynameOrNo=nightyname, # set above, only need to put it if plotting activitySunsetStartle
-                             yunitOrNo=nightyunit,
-                             titleOrNo=nighttitle,
-                             blankTitle=nightblank,
+                             ynameOrNo=ynameOrNo,
+                             yunitOrNo=yunitOrNo,
+                             titleOrNo=titleOrNo,
+                             blankTitle=blankTitle,
                              nightBgOrNo=nightBgOrNo,
                              statsOrNo=statsOrNo,
                              silent=FALSE) # note here, we do print the LME summary,
@@ -473,8 +467,14 @@ ggParameterGrid <- function(paDir,
 
     # for this parameter, return a small grid: day plot next to night plot
     # ! except if onlyDayorNight='night' or activitySunsetStartle or sleepLatency, then we only have the night plot
-    if(onlyDayorNight=='night' | unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
+    if( (!is.na(onlyDayorNight) & onlyDayorNight=='night') | unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
       return(ggpubr::ggarrange(plotlist=list(ggnight), ncol=1, nrow=1))
+    } else if(!is.na(onlyDayorNight) & onlyDayorNight=='day') {
+
+    # ! except if onlyDayorNight='night', then we only have the day plot
+      return(ggpubr::ggarrange(plotlist=list(ggday), ncol=1, nrow=1))
+
+    # standard case: we have both the day and the night plot
     } else {
       return(ggpubr::ggarrange(plotlist=list(ggday, ggnight), ncol=2, nrow=1))
     }

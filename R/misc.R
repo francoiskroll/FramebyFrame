@@ -23,7 +23,7 @@ appendRAWs <- function(ffpaths,
 
   ffs <- lapply(1:length(ffpaths), function(r) {
 
-    addTimetoRAWs(ffpath=ffpaths[r])
+    importRAWs(ffpath=ffpaths[r])
 
   })
 
@@ -36,7 +36,7 @@ appendRAWs <- function(ffpaths,
   # part1 and part2 may not use the same 9AM as reference
   # they would only use the same 9AM as reference if the experiment was interrupted on day0
   # how many days difference between their 9AM references?
-  ndays <- day(ffs[[2]]$fullts[1]) - day(ffs[[1]]$fullts[1])
+  ndays <- lubridate::day(ffs[[2]]$fullts[1]) - lubridate::day(ffs[[1]]$fullts[1])
 
   # we simply need to add 24 * ndays to the zhrs of part2
   ffs[[2]]$zhrs <- ffs[[2]]$zhrs + 24
@@ -44,6 +44,13 @@ appendRAWs <- function(ffpaths,
   # does it make sense
   cat('\t \t \t \t >>> Zeitgeber durations: missing', round(min(ffs[[2]]$zhrs) - max(ffs[[1]]$zhrs), 2), 'hours =',
       round(60*(min(ffs[[2]]$zhrs) - max(ffs[[1]]$zhrs)), 1), 'minutes of data \n')
+
+  # interruption needs to be a positive duration
+  # if negative, something wrong about timestamps or RAWs.csv not given in order in which they should be appended
+  if( (min(ffs[[2]]$zhrs) - max(ffs[[1]]$zhrs)) < 0)
+    stop('\t \t \t \t >>> Error appendRAWs: finding that the interruption has a negative duration, which does not make sense. Probable causes:\
+         \t \t \t \t -- the ffpaths were not given in the chronological order, i.e. earliest RAWs.csv should be given first\
+         \t \t \t \t -- when running vpSorter to generate one of the RAWs.csv files, an incorrect Zebralab file (zebpath) was given, e.g. giving the Zebralab file of part1 when running vpSorter for part2 \n')
 
   # for the exsecs, we need to get an estimate of how long the interruption was
   # which we will get from the fullts
@@ -57,15 +64,6 @@ appendRAWs <- function(ffpaths,
 
   # now can append
   ff <- data.table::rbindlist(ffs)
-
-  # now, remember _RAWs.csv out of Vp_Sorter.R only has one time column, called 'time'
-  # and it is exsecs here, so:
-  # remove fullts column
-  ff[, fullts:=NULL]
-  # remove zhrs column (it was not necessary to correct it above, but good as a check)
-  ff[, zhrs:=NULL]
-  # change name of exsecs to time
-  colnames(ff)[which(colnames(ff)=='exsecs')] <- 'time'
 
   # now ready to write, as if it was out of Vp_Sorter
   data.table::fwrite(ff, exportPath, row.names=FALSE)
