@@ -836,6 +836,11 @@ multiBehaviourParameter <- function(parameters,
 
   }
 
+  #### temporary 16/03/2023
+  # turn OFF calculation of compressibility, requires more work
+  parameters <- parameters[parameters != 'activityCompressibility']
+  ####
+
   # if all ok, tell user what we will do
   cat('\n \n \t \t \t \t >>> Will calculate the following parameter(s): ', parameters, '\n \n')
 
