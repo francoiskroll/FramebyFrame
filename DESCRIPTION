@@ -1,6 +1,6 @@
 Package: FramebyFrame
 Title: Behaviour Analysis of Zebrafish Larvae
-Version: 0.2.0
+Version: 0.3.0
 Authors@R:
     person("Francois", "Kroll", , "francois@kroll.be", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9908-2648"))
