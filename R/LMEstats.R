@@ -334,7 +334,7 @@ LMEreport <- function(paDir,
                        sameClutch2=sameClutch2,
                        sameClutch3=sameClutch3,
                        grporder=grporder,
-                       skipNight0=TRUE,
+                       skipNight0=skipNight0,
                        silent=silent,
                        detailsOrNo=detailsOrNo)
 
@@ -534,6 +534,7 @@ LMEposthoc <- function(lmemodel) {
 
 # function is essentially to avoid repeating same section of code for both day and night in LMEdaynight()
 # pdn is parameter table for just day or night, prepared by LMEdaynight
+
 #' Title
 #'
 #' @param pdn
@@ -545,7 +546,54 @@ LMEposthoc <- function(lmemodel) {
 LMEmodel <- function(pdn,
                      sameClutchMode) {
 
+  # "table of contents" for below:
+
+  # special case: if different clutches in same box (all rest assumes NOT THAT CASE)
+  # if sameClutchMode OFF, i.e. can assume one unique clutch per box
+    # if only one experiment
+      # ! exception if only one day/night: switch to linear regression
+    # if multiple replicate experiments
+  # if sameClutchMode ON, i.e. same cluch was tracked in two or more boxes
+    # if only one clutch (e.g. two boxes ran, same clutch in both)
+    # if multiple clutches (e.g. box1 has clutch1, box2 has clutch2, box3 also has clutch2)
+
   # we will return a list with full model / null model
+
+  ########
+  ### special case: if multiple clutches in same box
+  if('clutch' %in% colnames(pdn)) {
+
+    # I do not see how sameClutchMode could be ON and have multiple clutches in same box
+    if(sameClutchMode) stop('\t \t \t \t >>> Error LMEmodel: did not consider situation where you would both have the same clutch in multiple boxes AND multiple clutches in the same box. Please report the issue. \n')
+
+    # 16/03/2023: will need to improve here, almost certain a situation where box1 has multiple clutches & box2 has one clutch will fail
+    # for now, deal only with case where only one experiment
+    # if multiple, throw error
+    if(length(unique(pdn$date_box))!=1) stop('\t \t \t \t >>> Error LMEmodel: sorry, did not implement yet a situation where multiple experiments are given and one of them has multiple clutches. Please report the issue. \n')
+
+    # if only one day/night, we cannot have dpf as random effect (as only one level)
+    # it is also meaningless to have fish (ID) as random effect as it is does not group the datapoints in any ways
+    # (there is only one datapoint per fish)
+    if(length(unique(pdn$win))==1) {
+      # full model
+      cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|clutch) \n')
+      lmfull <- lme4::lmer(param ~ grp + (1|clutch), data=pdn, REML=FALSE)
+      # null model
+      lmnull <- lme4::lmer(param ~ 1 + (1|clutch), data=pdn, REML=FALSE)
+
+      # if more than one day/night
+    } else {
+      # full model
+      cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|clutch/fish) + (1|dpf) \n')
+      lmfull <- lme4::lmer(param ~ grp + (1|clutch/fish) + (1|dpf), data=pdn, REML=FALSE)
+      # null model
+      lmnull <- lme4::lmer(param ~ 1 + (1|clutch/fish) + (1|dpf), data=pdn, REML=FALSE)
+    }
+
+    return(list(full=lmfull, null=lmnull))
+  }
+  ########
+  # below: can assume we are not in case where different clutches are in the same box, otherwise we would have returned here
 
   ### if sameClutch mode *OFF* ###
   if (!sameClutchMode) {
@@ -605,7 +653,9 @@ LMEmodel <- function(pdn,
       return(list(full=lmfull, null=lmnull))
     }
 
-  }
+  } # closes if sameClutch mode OFF
+
+############
 
   ### if sameClutch mode *ON* ###
   else if (sameClutchMode) {
@@ -664,5 +714,5 @@ LMEmodel <- function(pdn,
       return(list(full=lmfull, null=lmnull))
     }
   }
-}
 
+}

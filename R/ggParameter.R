@@ -207,11 +207,33 @@ ggParameter <- function(pa,
 
   # ggplot does not want to start with if statement FALSE for some reason
   # so will start creating the plot here, then will add the rest as a second call
-  if (poolDayNight) {
-    ggParam <- ggplot(pal, aes(x=date_box_daynight_grp, y=param, colour=grp))
-  } else if (!poolDayNight) {
-    ggParam <- ggplot(pal, aes(x=date_box_win_grp, y=param, colour=grp))
+
+  # standard case: we do not want to poolDayNight
+  if (!poolDayNight) {
+    # then check whether clutch column is present or not
+    # if present, we need to also split by clutch
+    if('clutch' %in% colnames(pal)) {
+      ggParam <- ggplot(pal, aes(x=date_box_win_clutch_grp, y=param, colour=grp))
+    } else {
+      # THIS IS MOST COMMON CASE
+      ggParam <- ggplot(pal, aes(x=date_box_win_grp, y=param, colour=grp))
+    }
+
+  # if want to poolDayNight
+  } else {
+    if('clutch' %in% colnames(pal)) {
+      ggParam <- ggplot(pal, aes(x=date_box_daynight_clutch_grp, y=param, colour=grp))
+    } else {
+      ggParam <- ggplot(pal, aes(x=date_box_daynight_grp, y=param, colour=grp))
+    }
   }
+
+  # note 16/03/2023: I should probably delete poolDayNight setting
+  # I do not think it is ever a good idea to have two dots (if e.g. day1/day2) per larva
+  # readers intuitively assume one dot/one animal
+  # also, it is not a good idea not to normalise in either way
+  # a similar setting could be avgDayNight, then we average day1 & day2 datapoints together
+  # would reduce the width of the plot and achieve one dot per animal
 
   # note, not easy to add the night background when we are plotting both day and night together
   # will simply turn off for now if both are called
@@ -229,6 +251,7 @@ ggParameter <- function(pa,
     stat_summary(aes(group=grp), fun=mean, geom='point', colour='#595E60', shape=3, size=1.2, stroke=0.8, position=position_dodge(dodgeby)) +
     facet_grid(~date_box_win, scales='free_x', space='free_x') +
     {if(!is.na(colours[1])) scale_colour_manual(values=colours) } + # if user gave colours, follow them; if not ggplot will do default colours
+    scale_x_discrete(drop='FALSE') + # this forces ggplot to plot every group (i.e. not omit any group from the X axis), even if all datapoints are NA (or non-existent)
     theme_minimal() +
     theme(
       strip.text.x=element_blank(), # this removes facet titles

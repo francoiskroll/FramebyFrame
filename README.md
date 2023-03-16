@@ -854,12 +854,24 @@ ___
 
 ## Experimental design commandments
 
-Or "recommendations"...
+* _**I shall have my controls in the same Zebrabox and from the same clutch**_  
+As you are guaranteed to have variability between clutches and likely have variability between Zebraboxes (e.g. light levels or temperature not being exactly equal) or between runs. In other words, you _**never**_ want to be in a situation where you are comparing e.g. WT clutch1 vs KO clutch2, or WT Zebrabox1 vs KO Zebrabox2. In this situation, you are almost _guaranteed_ to find a difference because of clutch-to-clutch variability or box-to-box variability. Whether the animals' genotype also contributes to the difference you observe in this case is just wishful thinking. When doing experiments with stable knockout lines, this is why we track the offspring of an in-cross of heterozygous adults, i.e. the clutch is 25% homozygous (–/–), 50% heterozygous (+/–), 25% wild-type (+/+).  
+More broadly, when analysing multiple experiments simultaneously, try to have every group represented in each Zebrabox.  
 
-* _**I shall track a single clutch in each Zebrabox**_  
-Where clutch means offspring from the same parents and (ideally) mating event.  
-Or in other words: I recommend you do not mix multiple clutches in the same Zebrabox.  
-If you are lucky enough to have multiple Zebraboxes and a very large clutch, you can track the same clutch in two Zebraboxes. You should mention this when calculating the LME statistics so it can adapt the random effects accordingly (more details in Documentation). For example:
+* _**I shall refrain from drawing important conclusions from a single clutch**_  
+The variability between clutches can be _very_ important. Accordingly, drawing important conclusions from a single clutch is asking for future trouble, for example the phenotype not replicating in a more complex experiment. Try to track at least two clutches to control for biological (clutch-to-clutch) and technical (Zebrabox-to-Zebrabox or run-to-run) variability. Give all your replicates to the LME command and let it worry about it, I think this is a better solution than calculating statistics on experiments one by one.  
+
+* _**I shall refrain from comparing absolute datapoints between clutches**_  
+Again, the variability between clutches can be _very_ important, so making comparisons where both the group and the clutch/Zebrabox are different (e.g. wild-type from clutch #1 vs homozygous from clutch #2) is asking for wrong conclusions. It is still possible to do comparisons between clutches (e.g. is the effect size larger in clutch #1 vs clutch #2 ?), but you will need to normalise the datapoints to within-clutch and within-Zebrabox controls first, using for example _Z_-scores.  
+
+* _**I shall randomise the well positions as best as possible**_  
+Disclaimer: I do not know how important this is, but probably best to be safe.  
+When you place the larvae in the wells, do you know which group each larva belongs to (e.g. injected vs uninjected or drug-treated vs DMSO)? If yes, then alternate the rows or columns to avoid edge effects (e.g. water from the well evaporates faster from the outer rows/columns). If you are tracking the offspring of a cross (e.g. heterozygous in-cross) and will genotype the larvae _after_ the experiment, then the wells are already randomised. Problem solved!  
+
+* _**(optional) I shall track a single clutch in each Zebrabox**_  
+Where clutch means offspring from the same parents and (ideally) mating event. The easiest experimental design is one where you have one clutch per Zebrabox/experiment. In other words, I recommend you do not mix multiple clutches in the same Zebrabox.  
+
+**_exception 1_**: if you are lucky enough to have multiple Zebraboxes and a very large clutch, you can track the same clutch in two Zebraboxes. You should mention this when calculating the LME statistics so it can adapt the random effects accordingly (more details in DOCUMENTATION, below `LMEdaynight()`). For example:
 
 ```r
 LMEreport(paDir=c(here('220906_run1', 'bhvparams'),
@@ -870,21 +882,29 @@ LMEreport(paDir=c(here('220906_run1', 'bhvparams'),
           skipNight0=TRUE,
           exportPath=here('LMEreport.csv'))
 ```
+means that experiments _220906_01_ + _220906_02_ tracked the same clutch #1 and that experiments _220912_03_ + _220912_04_ tracked the same clutch #2.
 
-  means that experiments _220906_01_ + _220906_02_ tracked the same clutch #1 and that experiments _220912_03_ + _220912_04_ tracked the same clutch #2.
+**_exception 2_**: alternatively, if you are unlucky and only have small clutches and one Zebrabox, you can track multiple clutches in the same Zebrabox (while keeping note of which larva is from which clutch!). To analyse that experimental design, the procedure is (assuming a single Zebrabox):  
 
-* _**I shall have my controls in the same Zebrabox**_  
-As you likely have variability between Zebraboxes (e.g. light levels or temperature not being exactly equal) or between runs.  
-More broadly, when analysing multiple experiments simultaneously, try to have every group represented in each Zebrabox.  
-
-* _**I shall refrain from drawing important conclusions from a single clutch**_  
-The variability between clutches can be _very_ important. Accordingly, drawing important conclusions from a single clutch is asking for future trouble, for example the phenotype not replicating in a more complex experiment. Try to track at least two clutches to control for biological (clutch-to-clutch) and technical (Zebrabox-to-Zebrabox or run-to-run) variability. Give all your replicates to the LME command and let it worry about it, I think this is a better solution than calculating statistics on experiments one by one.  
-
-* _**I shall refrain from comparing absolute datapoints between clutches**_  
-Again, the variability between clutches can be _very_ important, so making comparisons where both the group and the clutch/Zebrabox are different (e.g. wild-type from clutch #1 vs homozygous from clutch #2) is asking for wrong conclusions. It is still possible to do comparisons between clutches (e.g. is the effect size larger in clutch #1 vs clutch #2 ?), but you will need to normalise the datapoints to within-clutch and within-Zebrabox controls first, using for example _Z_-scores.  
-
-* _**I shall randomise the well positions as best as possible**_  
-When you place the larvae in the wells, do you know which group each larva belongs to (e.g. injected vs uninjected or drug-treated vs DMSO)? If yes, then alternate the rows or columns to avoid edge effects (e.g. water from the well evaporates faster from the outer rows/columns). If you are tracking the offspring of a cross (e.g. heterozygous in-cross) and will genotype the larvae _after_ the experiment, then the wells are already randomised. Problem solved!  
+– prepare one genotypeMap.xlsx for each clutch, leaving all the other wells as 'empty', e.g. you should make 230306_01_genotypeMapclutch1.xlsx and 230306_01_genotypeMapclutch2.xlsx.  
+– run `genotypeGenerator(...)` once for each genotypeMap. You will likely need to rename the output files (especially genotype.txt) so they do not overwrite each other. For example:
+```r
+genotypeGenerator(plateMap="~/.../230306_01_genotypeMapclutch1.xlsx")
+# rename output file 230306_01genotype.txt into 230306_01genotypeclutch1.txt
+genotypeGenerator(plateMap="~/.../230306_01_genotypeMapclutch2.xlsx")
+# rename output file 230306_01genotype.txt into 230306_01genotypeclutch2.txt
+```  
+– when calculating behaviour parameters, give one `ffpath` and all the `genopath` (one per clutch), for example:
+```r
+multiBehaviourParameter(parameters='all',
+                        ffpath='~/.../230306_01_RAWs.csv',
+                        genopath=c('~/.../230302_01genotypeclutch1.txt',
+                                   '~/.../230302_14genotypeclutch2.txt'),
+                        skipNight0=FALSE,
+                        dayduration=14)
+```
+– the parameter tables (in folder _bhvparams/_) will now have a new column _clutch_. The clutch number simply corresponds to the order in which the genotype files were given (`genopath=` above), i.e. _clutch1_ are all larvae found in _230302_01genotypeclutch1.txt_, _clutch2_ are all larvae found in _230302_01genotypeclutch2.txt_.  
+– run `ggParameterGrid()` and `LMEreport()` as usual. The formula of the linear mixed effects model will be adapted automatically to control for multiple clutches within the same box (you can read about this in DOCUMENTATION below `LMEdaynight()`).
 
 ___
 

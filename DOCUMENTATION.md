@@ -727,24 +727,20 @@ I would recommend reading there if you want to learn more or check my logic. Do 
 
 Using the LME model, we compare each treatment group vs the reference group using ‘estimated marginal means’ (package `emmeans` in R), essentially performing ‘post-hoc’ tests.
 
-Here, you may think “*This is wrong! We can only do post-hoc tests if the overall ANOVA )(here: linear mixed effects model) is significant*”. Well, I was raised believing this too, but these arguments seem reasonable to me: https://stats.stackexchange.com/questions/9751/do-we-need-a-global-test-before-post-hoc-tests.
+Here, you may think “*This is wrong! We can only do post-hoc tests if the overall ANOVA (here: linear mixed effects model) is significant*”. Well, I was raised believing this too, but these arguments seem reasonable to me: https://stats.stackexchange.com/questions/9751/do-we-need-a-global-test-before-post-hoc-tests.
 
-So I decided to run the ‘post-hoc’ tests regardless of the "ANOVA" results. You can use your own judgement when deciding what to do with them.
+So I decided to run the "post-hoc" tests regardless of the "ANOVA" results. You can use your own judgement when deciding what to do with them.
 
-Note, these ‘post-hoc’ p-values are not adjusted for multiple comparisons. Adjustment for multiple comparisons is usually context-dependent so it would be difficult to predict when and how to adjust. For example, you may only care about the WT vs HOM comparison and completely ignore the WT vs HET comparison, so why should you lose statistical power adjusting your p-value for a comparison you will not look at? Again, you can use your own judgement and adjust these p-values if needed. As you notice, the comparisons between treatment groups (e.g. HET vs HOM) are not reported, which helps to keep the number of tests down.
+Note, these post-hoc p-values are not adjusted for multiple comparisons. Adjustment for multiple comparisons is usually context-dependent so it would be difficult to predict when and how to adjust. For example, you may only care about the WT vs HOM comparison and completely ignore the WT vs HET comparison, so why should you lose statistical power adjusting your p-value for a comparison you will not look at? Again, you can use your own judgement and adjust these p-values if needed. As you may notice, the comparisons between treatment groups (e.g. HET vs HOM) are not reported, which helps to keep the number of tests down.
 
-Overall, I think the only situation where you could justify using directly the post-hoc p-value (i.e. without looking first at the overall ANOVA p-value) without any adjustment is when there is only a single comparison of interest in your experiment. For example, you tracked WT, HET, HOM but only care about HOM vs WT. However, if both the HET vs WT and HOM vs WT comparisons are interesting to you, I think you should only look at the post-hoc p-values if the overall ANOVA is significant and/or (probably and) adjust the post-hoc p-values for multiple comparisons.
+Overall, I think the only situation where you could justify using directly the post-hoc p-value (i.e. without looking first at the overall ANOVA p-value) without any adjustment is when there is only one comparison of interest in your experiment. For example, you tracked WT, HET, HOM but only care about HOM vs WT. However, if both the HET vs WT and HOM vs WT comparisons are interesting to you, I think you should only look at the post-hoc p-values if the overall ANOVA is significant and/or (probably _and_) adjust the post-hoc p-values for multiple comparisons.
 
 **EXCEPTION 1**  
-If you tracked the same clutch in two separate boxes, you should mention this in the `sameClutch` settings (see below). In this case, the formula looks like<sup>6</sup>:
-
-`lmer(parameter ~ group + (1|clutch/experiment/larva ID) + (1|larva age))`
-
-This allows the LME model to control separately for clutch-to-clutch variation (i.e. variation between biological replicates) and box-to-box variation (i.e. variation between technical replicates).
-
-> <sup>6</sup> This is now exactly copying the formula: leafLength ~ treatment + (1|Bed/Plant/Leaf) + (1|Season) (see comment above). Indeed, fish (Leaf) is a subset of experiment (Plant) which is a subset of clutch (Bed).
-
-The rest of the analysis is the same.
+If there is only one day or night in the data, then there is only datapoint per larva for a given parameter. In this situation, the random effect `larva age` is meaningless (all measurements were done at the same age) and the random effect `larva ID` does not group the datapoints in any way (as there is only one datapoint per larva). These random effects get dropped from the LME formula. For example,   
+`lmer(parameter ~ 1 + (1|experiment/larva ID) + (1|larva age))`  
+becomes  
+`lmer(parameter ~ 1 + (1|experiment)`  
+(see below if you also have only one experiment).  
 
 **EXCEPTION 2**  
 If you have only one experiment, one day or night, and one clutch, there is no random effects to give to the model. In this case, `LMEdaynight()` switches automatically to a simple linear regression, whose formula looks like:
@@ -756,6 +752,25 @@ In this case, the overall p-value is the p-value of the F-statistic. Note, this 
 _WARNING_: the LME report generated by `LMEreport()` will still say LMEslope and LMEerror, but if you are in this situation, this is not correct. Those are calculated by a _linear regression_, not a linear mixed effects model. Report this correctly!
 
 In this situation, the post-hoc p-values is the p-value for each slope from the linear regression. Each p-value is _exactly_ the p-value from a t-test beingGroup vs referenceGroup so you can report it that way (you can check this for yourself or see e.g. https://faculty.nps.edu/rbassett/_book/regression-with-categorical-variables.html).
+
+**EXCEPTION 3**  
+If you tracked the same clutch in two separate boxes, you should mention this in the `sameClutch` settings (see below). In this case, the LME formula looks like<sup>6</sup>:
+
+`lmer(parameter ~ group + (1|clutch/experiment/larva ID) + (1|larva age))`
+
+This allows the LME model to control separately for clutch-to-clutch variation (i.e. variation between biological replicates) and box-to-box variation (i.e. variation between technical replicates).
+
+> <sup>6</sup> This is now exactly copying the formula: leafLength ~ treatment + (1|Bed/Plant/Leaf) + (1|Season) (see comment above). Indeed, fish (Leaf) is a subset of experiment (Plant) which is a subset of clutch (Bed).
+
+The rest of the analysis is the same.
+
+**EXCEPTION 4**
+Did you track multiple clutches in the same box? Please read in README (below Experimental design commandments) how to proceed.
+
+In that case, the LME formula looks like:  
+`lmer(parameter ~ group + (1|clutch/fish) + (1|larva age))`
+
+Currently it does not support a situation where one experiment/box has multiple clutches and another replicate experiment has only one clutch. Let me know if it is needed.
 
 **pa**: parameter table(s), either as path(s) or as Environment object(s).
 

@@ -180,7 +180,8 @@ param2Yunit <- function(param) {
     return('%')
 
   } else if (param== 'activityTotalPx') {
-    return('sum of \u0394 px')
+    #return('sum of \u0394 px')
+    return(bquote('sum of \u0394 px '(x10^6)))
 
   } else if (param=='activitySunsetStartle') {
     return('\u0394 px')

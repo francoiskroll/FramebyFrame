@@ -73,22 +73,47 @@ importBhvParams <- function(paDir,
   # however, if we want to give it to ggParameter as it is now, we need wide format (as ggParameter runs paramReadPivot again)
   # we need to reset back to how the parameter table looked in the folder, basically
 
-  psL <- lapply(psL, function(ps) {
+  # chunk below is not my proudest work...
 
-    ps %>%
-      mutate(pid=paste(parameter, date, box, fish, grp, sep='@'), .before=1) %>%
-      pivot_wider(id_cols=pid,
-                  names_from=win,
-                  values_from=param) %>%
-      mutate(grp=strNthSplit(pid, split='@', nth=5), .before=1) %>%
-      mutate(fish=strNthSplit(pid, split='@', nth=4), .before=1) %>%
-      mutate(box=strNthSplit(pid, split='@', nth=3), .before=1) %>%
-      mutate(date=strNthSplit(pid, split='@', nth=2), .before=1) %>%
-      mutate(parameter=strNthSplit(pid, split='@', nth=1), .before=1) %>%
-      select(-pid)
+  # procedure a bit different if clutch column is present or not
 
-  })
+  # if clutch column not present (standard case)
+  if(!'clutch' %in% colnames(psL[[1]])) {
+    psL <- lapply(psL, function(ps) {
 
+      ps %>%
+        mutate(pid=paste(parameter, date, box, fish, grp, sep='@'), .before=1) %>%
+        pivot_wider(id_cols=pid,
+                    names_from=win,
+                    values_from=param) %>%
+        mutate(grp=strNthSplit(pid, split='@', nth=5), .before=1) %>%
+        mutate(fish=strNthSplit(pid, split='@', nth=4), .before=1) %>%
+        mutate(box=strNthSplit(pid, split='@', nth=3), .before=1) %>%
+        mutate(date=strNthSplit(pid, split='@', nth=2), .before=1) %>%
+        mutate(parameter=strNthSplit(pid, split='@', nth=1), .before=1) %>%
+        select(-pid)
+
+    })
+
+  # if clutch column present
+  } else {
+    psL <- lapply(psL, function(ps) {
+
+      ps %>%
+        mutate(pid=paste(parameter, date, box, fish, clutch, grp, sep='@'), .before=1) %>%
+        pivot_wider(id_cols=pid,
+                    names_from=win,
+                    values_from=param) %>%
+        mutate(grp=strNthSplit(pid, split='@', nth=6), .before=1) %>%
+        mutate(clutch=strNthSplit(pid, split='@', nth=5), .before=1) %>%
+        mutate(fish=strNthSplit(pid, split='@', nth=4), .before=1) %>%
+        mutate(box=strNthSplit(pid, split='@', nth=3), .before=1) %>%
+        mutate(date=strNthSplit(pid, split='@', nth=2), .before=1) %>%
+        mutate(parameter=strNthSplit(pid, split='@', nth=1), .before=1) %>%
+        select(-pid)
+
+    })
+  }
 
   return(psL)
 

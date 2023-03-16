@@ -199,7 +199,7 @@ paramReadPivot <- function(pa,
 
   # pivot to long format
   pal <- par %>%
-    pivot_longer(cols=-c(parameter, date, box, fish, grp),
+    pivot_longer(cols=starts_with(c('day', 'night', 'woi')), # same as "minus all metadata columns"
                  names_to='win',
                  values_to='param')
 
@@ -215,7 +215,7 @@ paramReadPivot <- function(pa,
   pal <- pal %>%
     add_column(daynight=daynight, .before='win')
 
-  ### if user wants to pool clutches, do it now
+  ### if user wants to pool experiments, do it now
   if (!is.na(poolExp1[1]) | !is.na(poolExp2[1]) | !is.na(poolExp3[1])) {
 
     # put poolExps in a list
@@ -258,14 +258,23 @@ paramReadPivot <- function(pa,
     add_column(win_grp=paste(pal$win, pal$grp, sep='_'), .before='param') %>%
     # add composite column date + box + day/night + grp, e.g. 210927_12_night_scr
     add_column(date_box_daynight_grp=paste(pal$date, pal$box, pal$daynight, pal$grp, sep='_'), .before='param') %>%
-    # add composite column date + box + window + grp, e.g. 210927_12_day0_scr
+    # add composite column date + box + win + grp, e.g. 210927_12_day0_scr
     add_column(date_box_win_grp=paste(pal$date, pal$box, pal$win, pal$grp, sep='_'), .before='param')
+
+  # is clutch column present?
+  # (column is present if in situation where multiple clutches tracked in same box)
+  # if yes, add composite column date + box + win + clutch + grp
+  if('clutch' %in% colnames(pal)) {
+    # add composite column date + box + win + clutch + grp, e.g. 210927_12_day0_clutch2_scr
+    pal <- pal %>%
+      add_column(date_box_win_clutch_grp=paste(pal$date, pal$box, pal$win, pal$clutch, pal$grp, sep='_'), .before='param')
+  }
 
   # remove any excluded fish
   nexclu <- length(which(par$grp=='excluded'))
 
   if(nexclu>0) {
-    cat('\t \t \t \t >>> Removing N =', nexclu, 'excluded wells \n')
+    cat('\t \t \t \t >>> Parameter', unique(pal$parameter), ': removing N =', nexclu, 'excluded wells \n')
     pal <- pal %>%
       filter(grp!='excluded')
   }
@@ -277,11 +286,11 @@ paramReadPivot <- function(pa,
 
   if (!is.na(grporder[1])) { # this is all IF we are given a grporder, otherwise just skip
     if (length(which(duplicated(grporder)))!=0)
-      stop('\t \t \t \t >>> Error: genotype(s) more than once in grporder. Give each genotype once. \n')
+      stop('\t \t \t \t >>> Error paramReadPivot: genotype(s) more than once in grporder. Give each genotype once. \n')
 
     # check we are not given a genotype that is not in parameter
     if(length(which(! grporder %in% unique(pal$grp)!=0)))
-      stop('\t \t \t \t >>> Error: genotype *', grporder[which(! grporder %in% unique(pal$grp))],
+      stop('\t \t \t \t >>> Error paramReadPivot: genotype *', grporder[which(! grporder %in% unique(pal$grp))],
            '* is not present in parameter data. \n')
 
     # if any grp present in data is not given in grporder, assume we need to remove it
@@ -309,7 +318,7 @@ paramReadPivot <- function(pa,
   pal$box <- factor(pal$box)
 
   ### fish ###
-  # convert to fish, no need to worry about order for now
+  # convert to factor, no need to worry about order for now
   pal$fish <- factor(pal$fish)
 
   ### group ###
@@ -320,6 +329,13 @@ paramReadPivot <- function(pa,
   } else {
     # else, user told us the order
     pal$grp <- factor(pal$grp, levels=grporder)
+  }
+
+  ### clutch ###
+  # (if column is present)
+  # order alphabetically so clutch1, clutch2, etc.
+  if('clutch' %in% colnames(pal)) {
+    pal$clutch <- factor(pal$clutch)
   }
 
   ### daynight ###
@@ -376,14 +392,29 @@ paramReadPivot <- function(pa,
     factor(pal$date_box_win_grp,
            levels= as.vector(unlist(unique(pal[with(pal, order(win, box, grp)), 'date_box_win_grp']))) )
 
+  ### date_box_win_clutch_grp ###
+  # (if clutch column present)
+  # similar logic
+  # achieves something like:
+  # box1_day1_clutch1_grp1 > box1_day1_clutch1_grp2
+  # box1_day1_clutch*2*_grp1 > box1_day1_clutch*2*_grp2
+  # box1_day*2*_clutch1_grp1 > box_day*2*_clutch1_grp2
+  # ...
+  # then start again for box*2*
+  if('clutch' %in% colnames(pal)) {
+    pal$date_box_win_clutch_grp <-
+      factor(pal$date_box_win_clutch_grp,
+             levels= as.vector(unlist(unique(pal[with(pal, order(win, box, clutch, grp)), 'date_box_win_clutch_grp']))) )
+  }
+
 
   # should we skip night0?
-  # for standard experiments 2 days / 2 nights we often want to skip night0
+  # for standard Rihel lab experiments night0/day1/night1/day2/night2 we often want to skip night0
   if (skipNight0) {
     pal <- pal %>%
       filter(win != 'night0')
 
-    if (nrow(pal)==0) stop('\t \t \t \t >>> No complete day or night left after removing Night 0! \
+    if (nrow(pal)==0) stop('\t \t \t \t >>> No complete day or night left after removing night0! \
                             \t \t \t Did you have only one night? Then you should turn OFF skipNight0, as skipNight0=FALSE. \n')
   }
 
@@ -509,13 +540,18 @@ behaviourParameter <- function(parameter,
 
   # check ffpath(s) and genopath(s)
 
-  # need one geno file per ff
-  if(length(genopath) != length(ffpath))
-    stop('\t \t \t \t >>> Error: the number of ffpaths is not the same as the number of genopaths. Please correct and run again \n')
+  # case where different clutches in same box
+  if(length(ffpath)==1 & length(genopath)>1) {
+    cat('\t \t \t \t >>> Given ONE ffpath but MULTIPLE genopaths, will assume different clutches/replicates ran in the same box. \n')
+  }
+
+  # if multiple ffpath, need one genopath per ffpath
+  if(length(ffpath)>1 & length(ffpath)!=length(genopath))
+    stop('\t \t \t \t >>> Error behaviourParameter: the number of ffpaths is not the same as the number of genopaths. Please correct and run again. \n')
 
   # remind user how it works with multiple experiments
   if (length(ffpath)>1) {
-    cat('\t \t \t \t >>> Multiple experiments. Will assume that ffpaths and genopaths are in the order in which they are meant to be matched.\n')
+    cat('\t \t \t \t >>> Multiple experiments. Will assume that ffpaths and genopaths are in the order in which they are meant to be matched. \n')
   }
 
   # check the names match
@@ -528,9 +564,10 @@ behaviourParameter <- function(parameter,
     gndtbx <- substr(afterLastSlash(genopath[i]), 1, 9)
 
     # check they are the same
+    # (note: this does not check the second or third or ... genotype file in case of multiple clutches in same box)
     if (!identical(ffdtbx, gndtbx))
       stop('\t \t \t \t >>> Error: frame-by-frame file *', afterLastSlash(ffpath[i]),
-           '* and genotype file *', afterLastSlash(genopath[i]), '* do not have the same date/box number.
+           '* and genotype file *', afterLastSlash(genopath[i]), '* do not have the same date/box (not the same YYMMDD_BX).
            \t \t \t Are you sure they are meant to be matched? \n')
   }
 
@@ -666,9 +703,11 @@ behaviourParameter <- function(parameter,
 
   # add metadata columns ----------------------------------------------------
   # parameter, date, box, genotype
-  # (some of these columns are repetitive but makes it simpler when combining parameter dataframes)
+  # (some of these columns are often just one value repeated but makes it simpler when combining parameter dataframes)
 
-  for (i in 1:length(ffpath)) {
+  ## ! exception: procedure is slightly different in case where we have multiple clutches in same box
+  ################ # you probably want to skip to part below, this is a fairly rare case
+  if (length(ffpath)==1 & length(genopath)>1) {
 
     # for genotype:
     # check first fish ID in pal to tell whether looking at box1 or box2
@@ -681,8 +720,66 @@ behaviourParameter <- function(parameter,
       boxnum <- 2
     }
 
-    geno <- importGenotype(genopath[i])
-    geno <- fillGenotype(geno=geno, boxnum=boxnum)
+    # for each genotype file, we prepare the grp column as if we were only looking at this genotype file
+    grpcols <- lapply(1:length(genopath), function(i) {
+      geno <- importGenotype(genopath[i])
+      geno <- fillGenotype(geno=geno, boxnum=boxnum)
+      return ( assignGenotype(paL[[1]]$fish, geno=geno) )
+    })
+    # so now we have a list: slot1: grp column as if we only had genotype file 1 // slot2: grp column as if we only had genotype file 2 // etc.
+    # name the elements clutch1, clutch2, etc.
+    # number will simply reflect the order in which the genopath were given
+    names(grpcols) <- sprintf('clutch%i', 1:length(genopath))
+
+    # just to be safe, check each grpcol is the same length
+    # i.e. if first genotype is 96 wells, then second should be as well
+    if( length(unique(as.numeric(unlist(lapply(grpcols, length))))) > 1 ) { # counts number of unique lengths (should be 1 if all same length)
+      stop('\t \t \t \t >>> Error behaviourParameter: looks like genotype files with different plate formats were given \n')
+    }
+
+    # now we need to merge the grpcols into one column
+    # there should not be any intersection, i.e. there should not be any fish that is mentioned in two genotype files
+    # from each grpcol, take all the wells which are not excluded
+    notexclu <- lapply(1:length(grpcols), function(i) {
+      return( names(grpcols[[i]])[which(grpcols[[i]] != 'excluded')] )
+    })
+    # now check there is no intersection
+    if( length(Reduce(intersect, notexclu)) > 0 )
+      stop('\t \t \t \t >>> Error behaviourParameter: the following wells are mentioned in more than one genotype file:',
+           sprintf(' %s', Reduce(intersect, notexclu)), '\
+           \t \t \t Please check the genotype files/genotypeMaps and re-run. \n')
+
+    # if ok, we can merge in one grpcol
+    # make a small dataframe where each column is one grpcol
+    grpcoldf <- Reduce(cbind, grpcols)
+
+    # prellocate clutch column and grp column
+    clutchcol <- rep(NA, nrow(grpcoldf))
+    grpcol <- rep(NA, nrow(grpcoldf))
+
+    for(r in 1:nrow(grpcoldf)) {
+      # group values are this row:
+      ro <- grpcoldf[r,]
+
+      # if all values are 'excluded', then store 'excluded' in both clutch col and grp col
+      if( all(ro=='excluded') ) {
+        clutchcol[r] <- 'excluded'
+        grpcol[r] <- 'excluded'
+
+      # if not all values are 'excluded',
+      # we checked above that there cannot be two (or more) non-excluded values for the same well
+      # so can assume only one grp value
+
+      } else {
+        # return whichever value is not excluded
+        # ! we also need to keep track of where this value is from, i.e. which clutch that larva comes from
+        clutchcol[r] <- paste0('clutch', which(ro!='excluded')) # e.g. if value is from column2, then we return clutch2
+        grpcol[r] <- ro[which(ro!='excluded')]
+      }
+    }
+    # check no more NA in either grp col or clutch col
+    if(sum(is.na(clutchcol))>0) stop('\t \t \t \t >>> Error behaviourParameter: some NA left when preparing the clutch column. Please report the error. \n')
+    if(sum(is.na(grpcol))>0) stop('\t \t \t \t >>> Error behaviourParameter: some NA left when preparing the grp column. Please report the error. \n')
 
     # for date:
     expdate <- substr(afterLastSlash(genopath[i]), 1, 6)
@@ -692,14 +789,56 @@ behaviourParameter <- function(parameter,
 
     # now add these columns
     paL[[i]] <- paL[[i]] %>%
-      # add genotype using assignGenotype() function
-      add_column(grp=assignGenotype(paL[[i]]$fish, geno), .after='fish') %>%
+      # add genotype (grp)
+      add_column(grp=grpcol, .after='fish') %>%
+      # add clutch #
+      add_column(clutch=clutchcol, .before='grp') %>%
       # add box #
       add_column(box=expbox, .before='fish') %>%
       # add date
       add_column(date=expdate, .before='box') %>%
       # add parameter name
       add_column(parameter=parameter, .before='date')
+  ################
+    # end of exception
+
+# standard case:
+  } else {
+
+    for (i in 1:length(ffpath)) {
+
+      # for genotype:
+      # check first fish ID in pal to tell whether looking at box1 or box2
+      # (only applies when running parallel boxes)
+      # note, this remains correct when using plates with less than 96 wells
+      # Zebralab starts box2 at well 97 regardless of the plate
+      if (paL[[i]]$fish[1] == 'f1') {
+        boxnum <- 1
+      } else if (paL[[i]]$fish[1] == 'f97') {
+        boxnum <- 2
+      }
+
+      geno <- importGenotype(genopath[i])
+      geno <- fillGenotype(geno=geno, boxnum=boxnum)
+
+      # for date:
+      expdate <- substr(afterLastSlash(genopath[i]), 1, 6)
+
+      # for box:
+      expbox <- substr(afterLastSlash(genopath[i]), 8, 9)
+
+      # now add these columns
+      paL[[i]] <- paL[[i]] %>%
+        # add genotype using assignGenotype() function
+        add_column(grp=assignGenotype(paL[[i]]$fish, geno), .after='fish') %>%
+        # add box #
+        add_column(box=expbox, .before='fish') %>%
+        # add date
+        add_column(date=expdate, .before='box') %>%
+        # add parameter name
+        add_column(parameter=parameter, .before='date')
+
+    }
 
   }
 
