@@ -923,3 +923,7 @@ First real version (arbitrary).
 20/02/2023
 * ggFingerprint() now allows multiple paths as input (`fgp`).
 * Can give multiple bhvparams directories to calculateFingerprint().
+
+### v0.3.0
+16/03/2023  
+Allows analysis of an experiment where there are multiple clutches in the same Zebrabox. Read below _Experimental design commandments_ and in DOCUMENTATION below _LMEdaynight()_ for details about how to proceed.
