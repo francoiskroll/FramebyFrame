@@ -771,7 +771,15 @@ ggTrace <- function(tc,
       axis.title.x=element_text(size=9, margin = margin(t = 2, r = 0, b = 0, l = 0)),
       axis.title.y=element_text(size=9, margin = margin(t = 0, r = 2, b = 0, l = 0)),
       axis.text.x = element_text(size=7, margin = margin(t = 0, r = 0, b = 0, l = 0)),
-      axis.text.y = element_text(size=7, margin = margin(t = 0, r = 0, b = 0, l = 0))) +
+      axis.text.y = element_text(size=7, margin = margin(t = 0, r = 0, b = 0, l = 0)),
+
+      legend.title=element_blank(),
+      legend.spacing.x=unit(0.0, 'lines'), # brings legend text a little closer to the dots
+      legend.box.margin=margin(0,-8,0,-15), # reduces margin around legend to gain space
+      legend.text=element_text(size=7),) +
+
+    guides(color=guide_legend(keywidth=0.5)) + # reduces the width of the bar in legend
+
     scale_x_continuous(breaks=seq(0, max(sbg$zhrs), 24)) +
 
     {if(!legendOrNo) theme(legend.position='none')} +
