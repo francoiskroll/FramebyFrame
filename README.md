@@ -542,6 +542,7 @@ ggParameterGrid(paDir="~/.../bhvparams/",
                 xtextOrNo=FALSE,
                 titleOrNo=TRUE,
                 nightBgOrNo=TRUE,
+                keysOrNo=TRUE,
                 statsOrNo=TRUE,
                 ncol=5,
                 nrow=4,
@@ -559,6 +560,7 @@ Some of the settings we have not encountered yet:
 * `yunitOrNo`: instead, you may prefer having Y axes as just the unit, e.g. "hr".
 * `xtextOrNo`: whether to write labels on the X axis of each plot. Note; this does not work properly for the moment. Only use `xtextOrNo=TRUE` to understand the order of the groups on the X axis.  
 * `titleOrNo`: whether to have the parameter name as title of each plot.  
+* `keysOrNo`: whether to add A, B, C, ... keys to label each panel.
 * `statsOrNo`: whether to calculate the statistics and add the p-value asterisks on top of each plot. Read below about how these p-values are calculated.  
 
 The parameter grid will not display in RStudio, do not be alarmed. It is relatively big so it slows things down. Instead, look directly at the pdf it generates.  

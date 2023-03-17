@@ -201,6 +201,26 @@ ggParameter <- function(pa,
     pal <- pal[!is.na(pal$param),]
   }
 
+  # prepare the X axis labels
+  # first switch date_box_win to factor
+  pal$date_box_win <- factor(pal$date_box_win) # just following alphabetical order should usually give the order want
+  # print for the user to check
+  cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', levels(pal$date_box_win),'\n')
+  # now prepare the X axis labels
+  # we need a named vector, names = original labels (i.e. date_box_win in the data) and values = labels we want
+  # we will now assume that date_box_win is exactly YYMMDD_BX_dayX or YYMMDD_BX_nightX
+  # and we will split into YYMMDD_BX and dayX/nightX so that in two lines
+  # get YYMMDD_BX:
+  yymmdd_bx <- paste0(strNthSplit(levels(pal$date_box_win), split='_', nth=1), '_', strNthSplit(levels(pal$date_box_win), split='_', nth=2))
+  # get dayX/nightX:
+  dnx <- strNthSplit(levels(pal$date_box_win), split='_', nth=3)
+  # now we want each label to be e.g. 230214_14\nday1 so day1 is below on a new line
+  facetlabs <- sapply(1:length(yymmdd_bx), function(i) {
+    paste0(yymmdd_bx[i], '\n', dnx[i])
+  })
+  # now add names
+  names(facetlabs) <- levels(pal$date_box_win)
+  # ready to be given in ggplot call
 
   # ! need to make sure dodge.width is same for dots & mean crosses so they align
   dodgeby <- 0.7
@@ -249,21 +269,32 @@ ggParameter <- function(pa,
 
     ggbeeswarm::geom_quasirandom(groupOnX=TRUE, width=0.09, size=0.5, dodge.width=dodgeby) +
     stat_summary(aes(group=grp), fun=mean, geom='point', colour='#595E60', shape=3, size=1.2, stroke=0.8, position=position_dodge(dodgeby)) +
-    facet_grid(~date_box_win, scales='free_x', space='free_x') +
+    facet_grid(~date_box_win, scales='free_x', space='free_x', switch='both',
+               labeller=as_labeller(facetlabs)) +
     {if(!is.na(colours[1])) scale_colour_manual(values=colours) } + # if user gave colours, follow them; if not ggplot will do default colours
-    scale_x_discrete(drop='FALSE') + # this forces ggplot to plot every group (i.e. not omit any group from the X axis), even if all datapoints are NA (or non-existent)
     theme_minimal() +
     theme(
-      strip.text.x=element_blank(), # this removes facet titles
       axis.title.x=element_blank(),
+      axis.text.x=element_blank(), # we always remove X axis labels, exp_win is given by facet titles and group is given by colour in legend
       panel.grid.minor.y=element_blank(),
       axis.text.y=element_text(size=7),
-      axis.text.x=element_text(angle=45, hjust=1)
+      legend.title=element_blank(),
+      legend.spacing.x=unit(0.0, 'lines'), # brings legend text a little closer to the dots
+      legend.box.margin=margin(0,-8,0,-18), # reduces margin around legend to gain space
+      legend.text=element_text(size=7),
+      strip.text.x=element_text(size=7)
     ) +
 
+    # increase point size in legend
+    guides(colour=guide_legend(override.aes=list(size=2),
+                               keyheight=unit(0.8, 'lines')), # controls spacing between items in legend
+           fill=guide_legend(byrow=TRUE)) +
+
+    # remove legend if user does not want it
     {if(!legendOrNo) theme(legend.position='none')} +
 
-    {if(!xtextOrNo) theme(axis.text.x=element_blank())} +
+    {if(!xtextOrNo) theme(strip.text.x=element_blank())} + # strip.text.x controls facet titles,
+    # which by default are above each subplot, but switch='both' puts them below
 
     {if(!ynameOrNo & !yunitOrNo) theme(axis.title.y=element_blank())} +
     {if(ynameOrNo) ylab(label=param2Ytext(param=unique(pal$parameter)))} +
@@ -329,6 +360,7 @@ ggParameter <- function(pa,
 #' @param width
 #' @param height
 #' @param exportPath
+#' @param keysOrNo
 #'
 #' @return
 #' @export
@@ -354,6 +386,7 @@ ggParameterGrid <- function(paDir,
                             xtextOrNo=TRUE,
                             titleOrNo=TRUE,
                             nightBgOrNo=TRUE,
+                            keysOrNo=FALSE,
                             statsOrNo=FALSE,
                             ncol,
                             nrow,
@@ -488,6 +521,8 @@ ggParameterGrid <- function(paDir,
       # better to do it for night as all parameters have night (incl. sunset startle)
     }
 
+    cat('\n') # helps make messages in Console clearer
+
     # for this parameter, return a small grid: day plot next to night plot
     # ! except if onlyDayorNight='night' or activitySunsetStartle or sleepLatency, then we only have the night plot
     if( (!is.na(onlyDayorNight) & onlyDayorNight=='night') | unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
@@ -513,8 +548,14 @@ ggParameterGrid <- function(paDir,
                                        ncol, '*', nrow, ' = ', ncol*nrow, ' cells.
                                        Please increase ncol and/or nrow setting so there is enough cells in the grid. \n')
 
-  gpgrid <- ggpubr::ggarrange(plotlist=gpL, ncol=ncol, nrow=nrow,
-                      labels=toupper(letters[1:length(gpL)]))
+  # keysOrNo is whether to add A, B, C, ... like a publication figure
+  if(keysOrNo) {
+    gpgrid <- ggpubr::ggarrange(plotlist=gpL, ncol=ncol, nrow=nrow,
+                                labels=toupper(letters[1:length(gpL)]))
+  } else {
+    gpgrid <- ggpubr::ggarrange(plotlist=gpL, ncol=ncol, nrow=nrow)
+  }
+
 
   ggplot2::ggsave(filename=exportPath, plot=gpgrid, width=width, height=height, units='mm', device=cairo_pdf)
 

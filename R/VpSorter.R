@@ -292,12 +292,20 @@ vpSorter <- function(ffDir,
     }
   }
 
+  # check rawoutput folder (ffDir) is correct
+  if(!dir.exists(ffDir))
+    stop('\t \t \t \t >>> Error vpSorter: cannot find directory ', ffDir, 'please check carefully the path given.\n
+    \t \t \t \t Maybe the path is correct but the formatting is not:\
+         \t \t \t -- on Windows, a correct path would look like: C:\\\\Desktop\\\\myExperiment\\\\210907_01_myExp_rawoutput (the double \\\\ is an unfortunate R quirk)\
+         \t \t \t -- on Mac, a correct path would look like: ~/Desktop/myExperiment/210907_01_myExp_rawoutput\
+         \t \t \t Using the package here() to write the paths would simplify your life. Please find instructions in the FramebyFrame README. \n')
+
   # check zebpath is correct
   if(!file.exists(zebpath))
     stop('\t \t \t \t >>> Error vpSorter: cannot find a file at zebpath, please check carefully the path given.\n
     \t \t \t \t Maybe the path is correct but the formatting is not:\
-         \t \t \t -- on Windows, a correct path would look like: C:\\\\Desktop\\\\myExperiment\\\\210907_12_myExp.xls (the double \\\\ is an unfortunate R quirk)\
-         \t \t \t -- on Mac, a correct path would look like: ~/Desktop/myExperiment/210907_12_myExp.xls\
+         \t \t \t -- on Windows, a correct path would look like: C:\\\\Desktop\\\\myExperiment\\\\210907_01_myExp.xls (the double \\\\ is an unfortunate R quirk)\
+         \t \t \t -- on Mac, a correct path would look like: ~/Desktop/myExperiment/210907_01_myExp.xls\
          \t \t \t Using the package here() to write the paths would simplify your life. Please find instructions in the FramebyFrame README. \n')
 
   # boxGen is 1 or 2

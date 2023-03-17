@@ -651,7 +651,7 @@ ggTrace <- function(tc,
 
     # check that the grps given by the user are actually in the data:
     if(!all(grporder %in% unique(sbg$grp)))
-      stop('\n \t \t \t \t >>> Group(s): ', grporder[!grporder %in% unique(sbg$grp)],' are given in grporder but are not present in the data. \
+      stop('\n \t \t \t \t >>> Group(s): ', sprintf(' %s', grporder[!grporder %in% unique(sbg$grp)]),' are given in grporder but are not present in the data. \
            Do you want to plot every group? You can set grporder=NA. \n')
 
     if( length(which(! unique(sbg$grp) %in% grporder)) > 0 ) {

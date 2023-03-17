@@ -569,7 +569,9 @@ ggParameterGrid() does not currently support parameters calculated on specific w
 
 **titleOrNo**: whether or not (TRUE or FALSE) to write the parameter name as title of the plot. Default is TRUE.
 
-**nightBgOrNo**: whether or not (TRUE or FALSE) to add a grey background when night datapoints are plotted. Currently, it only works if onlyDayorNight='night'. Default is TRUE.
+**nightBgOrNo**: whether or not (TRUE or FALSE) to add a grey background to the night plot. Default is TRUE.
+
+**keysOrNo**: whether or not (TRUE or FALSE) to add A, B, C, ... keys to the panels. Default is FALSE.
 
 **statsOrNo**: whether or not (TRUE or FALSE) to add ns/*/**/*** on top of the plot to indicate statistical significance between groups. This is calculated by LMEdaynight(), read there for details.
 
