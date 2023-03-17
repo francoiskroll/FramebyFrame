@@ -658,15 +658,15 @@ behaviourParameter <- function(parameter,
   # result will be a list, one slot per experiment
   # each slot is a simple parameter dataframe `pa` where rows = fish, column = day/night
 
-
   # category1
   if(substr(parameter, 1, 8) == 'activity') {
 
     # !! exception: we cannot calculate activityTransitionDelta if there is only one time window (day/night or window of interest)
-    if(parameter=='activityTransitionDelta' & length(dnL)==1) {
+    if(parameter=='activityTransitionDelta' & length(dnL[[1]])==1) { # ! only looking at first experiment given***
       cat('\t \t \t \t >>> Cannot calculate activityTransitionDelta as there is only one time window. \n')
       return(NULL)
     }
+    # ***as of 17/03/2023; I am not sure what would happen if user were to give experiments with different number of days/nights
 
     cat('\n \t \t \t \t >>> ACTIVITY parameter \n')
     paL <- lapply(dnL, activityParameter, parameter=parameter, dayduration=dayduration)
