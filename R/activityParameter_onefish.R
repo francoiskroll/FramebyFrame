@@ -263,7 +263,8 @@ activityFractalDim_onefish <- function(ffc,
     },
     # if an error occurs, return NA
     error=function(e) {
-      cat('\t \t \t \t \t could not calculate fractal dimension, returning NA \n')
+       # cat('\t \t \t \t \t could not calculate fractal dimension, returning NA \n')
+      # message above interferes with fishy progress bar in activityParameter
       return(NA)
     }
   )
