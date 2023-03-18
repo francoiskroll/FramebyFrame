@@ -558,7 +558,7 @@ Some of the settings we have not encountered yet:
 * `skipNight0`: whether to skip the first night. In the Rihel lab, we typically collect data for three nights and two days but skip the first night as habituation period.  
 * `ynameOrNo`: whether to have Y axes as small sentence, e.g. "total sleep (hr)".
 * `yunitOrNo`: instead, you may prefer having Y axes as just the unit, e.g. "hr".
-* `xtextOrNo`: whether to write labels on the X axis of each plot. Note; this does not work properly for the moment. Only use `xtextOrNo=TRUE` to understand the order of the groups on the X axis.  
+* `xtextOrNo`: whether to write labels on the X axis of each plot. Make sure to at least use `xtextOrNo=TRUE` the first time so you understand the order of the groups on the X axis, then you can write them manually for the final figure if you prefer.
 * `titleOrNo`: whether to have the parameter name as title of each plot.  
 * `keysOrNo`: whether to add A, B, C, ... keys to label each panel.
 * `statsOrNo`: whether to calculate the statistics and add the p-value asterisks on top of each plot. Read below about how these p-values are calculated.  

@@ -265,9 +265,11 @@ paramReadPivot <- function(pa,
   # (column is present if in situation where multiple clutches tracked in same box)
   # if yes, add composite column date + box + win + clutch + grp
   if('clutch' %in% colnames(pal)) {
-    # add composite column date + box + win + clutch + grp, e.g. 210927_12_day0_clutch2_scr
     pal <- pal %>%
-      add_column(date_box_win_clutch_grp=paste(pal$date, pal$box, pal$win, pal$clutch, pal$grp, sep='_'), .before='param')
+      # add composite column date + box + win + clutch + grp, e.g. 210927_12_day0_clutch2_scr
+      add_column(date_box_clutch_win_grp=paste(pal$date, pal$box, pal$clutch, pal$win, pal$grp, sep='_'), .before='param') %>%
+      # add composite column date + box + win + clutch, e.g. 210927_12_day0_clutch2
+      add_column(date_box_clutch_win=paste(pal$date, pal$box, pal$clutch, pal$win, sep='_'), .before='param')
   }
 
   # remove any excluded fish
@@ -371,7 +373,7 @@ paramReadPivot <- function(pa,
   # below achieves something like:
   # day_box1_grp1 > day_box1_grp2 > day_box2_grp1 > day_box2_grp2
   # night_box1_grp1 > night_box1_grp2 > night_box2_grp1 > night_box2_grp2
-  # trick is to think about grouping levels:
+  # trick is to think about grouping levels "from outside to inside"
   # we first want to separate all day vs night, then within each box1 vs box2, etc.
   # note, below will also be correct when we were given a grporder!
   # indeed, order by grp will follow the levels we set above
@@ -380,6 +382,11 @@ paramReadPivot <- function(pa,
            levels= as.vector(unlist(unique(pal[with(pal, order(daynight, box, grp)), 'date_box_daynight_grp']))) )
   # about levels=...: we sort the rows by daynight first, box second, grp third
   # then unique of the date_box_daynight_grp column gives us the group in right order
+
+  ### date_box_win ###
+  pal$date_box_win <-
+    factor(pal$date_box_win,
+           levels= as.vector(unlist(unique(pal[with(pal, order(daynight, box, win)), 'date_box_win']))) )
 
   ### date_box_win_grp ###
   # similar logic, but now win is higher level (see e.g. plots used in PhD thesis)
@@ -390,21 +397,41 @@ paramReadPivot <- function(pa,
   # box2_night1_grp1 > box2_night1_grp2 > box2_night2_grp1 > box2_night2_grp2
   pal$date_box_win_grp <-
     factor(pal$date_box_win_grp,
-           levels= as.vector(unlist(unique(pal[with(pal, order(win, box, grp)), 'date_box_win_grp']))) )
+           levels= as.vector(unlist(unique(pal[with(pal, order(daynight, box, win, grp)), 'date_box_win_grp']))) )
 
-  ### date_box_win_clutch_grp ###
+  # previously...
+  # pal$date_box_win_grp <-
+  #   factor(pal$date_box_win_grp,
+  #          levels= as.vector(unlist(unique(pal[with(pal, order(win, box, grp)), 'date_box_win_grp']))) )
+
+  ### date_box_clutch_win ###
   # (if clutch column present)
   # similar logic
   # achieves something like:
-  # box1_day1_clutch1_grp1 > box1_day1_clutch1_grp2
-  # box1_day1_clutch*2*_grp1 > box1_day1_clutch*2*_grp2
-  # box1_day*2*_clutch1_grp1 > box_day*2*_clutch1_grp2
+  # box1_clutch1_day1_grp1 > box1_clutch1_day1_grp2
+  # box1_clutch2_day*2*_grp1 > box1_clutch2_day*2*_grp2
+  # box1_clutch*2*_day1_grp1 > box_clutch*2*_day1_grp2
   # ...
   # then start again for box*2*
   if('clutch' %in% colnames(pal)) {
-    pal$date_box_win_clutch_grp <-
-      factor(pal$date_box_win_clutch_grp,
-             levels= as.vector(unlist(unique(pal[with(pal, order(win, box, clutch, grp)), 'date_box_win_clutch_grp']))) )
+    pal$date_box_clutch_win <-
+      factor(pal$date_box_clutch_win,
+             levels= as.vector(unlist(unique(pal[with(pal, order(daynight, box, clutch, win)), 'date_box_clutch_win']))) )
+  }
+
+  ### date_box_clutch_win_grp ###
+  # (if clutch column present)
+  # similar logic
+  # achieves something like:
+  # box1_clutch1_day1_grp1 > box1_clutch1_day1_grp2
+  # box1_clutch*2*_day1_grp1 > box1_clutch*2*_day1_grp2
+  # box1_clutch1_day*2*_grp1 > box_clutch1_day*2*_grp2
+  # ...
+  # then start again for box*2*
+  if('clutch' %in% colnames(pal)) {
+    pal$date_box_clutch_win_grp <-
+      factor(pal$date_box_clutch_win_grp,
+             levels= as.vector(unlist(unique(pal[with(pal, order(box, clutch, win, grp)), 'date_box_clutch_win_grp']))) )
   }
 
 

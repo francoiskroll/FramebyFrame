@@ -201,26 +201,54 @@ ggParameter <- function(pa,
     pal <- pal[!is.na(pal$param),]
   }
 
-  # prepare the X axis labels
-  # first switch date_box_win to factor
-  pal$date_box_win <- factor(pal$date_box_win) # just following alphabetical order should usually give the order want
-  # print for the user to check
-  cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', levels(pal$date_box_win),'\n')
-  # now prepare the X axis labels
-  # we need a named vector, names = original labels (i.e. date_box_win in the data) and values = labels we want
-  # we will now assume that date_box_win is exactly YYMMDD_BX_dayX or YYMMDD_BX_nightX
-  # and we will split into YYMMDD_BX and dayX/nightX so that in two lines
-  # get YYMMDD_BX:
-  yymmdd_bx <- paste0(strNthSplit(levels(pal$date_box_win), split='_', nth=1), '_', strNthSplit(levels(pal$date_box_win), split='_', nth=2))
-  # get dayX/nightX:
-  dnx <- strNthSplit(levels(pal$date_box_win), split='_', nth=3)
-  # now we want each label to be e.g. 230214_14\nday1 so day1 is below on a new line
-  facetlabs <- sapply(1:length(yymmdd_bx), function(i) {
-    paste0(yymmdd_bx[i], '\n', dnx[i])
-  })
-  # now add names
-  names(facetlabs) <- levels(pal$date_box_win)
-  # ready to be given in ggplot call
+  ### prepare the X axis labels
+
+  # slightly different if clutch is present or not
+  # (i.e. if we are in situation where multiple clutches in one box)
+  if('clutch' %in% colnames(pal)) {
+
+    # first print the order of the plot for the user to check
+    cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', levels(pal$date_box_clutch_win),'\n')
+    # now prepare the X axis labels
+    # we need a named vector, names = original labels (i.e. date_box_clutch_win in the data) and values = labels we want
+    # we will now assume that date_box_clutch_win is exactly YYMMDD_BX_clutchX_dayX or YYMMDD_BX_clutchX_nightX
+    # and we will split into dayX/nightX and clutchX and YYMMDD_BX and so that in three lines
+    # get dayX/nightX:
+    dnx <- strNthSplit(levels(pal$date_box_clutch_win), split='_', nth=4)
+    # get clutchX:
+    clutchx <- strNthSplit(levels(pal$date_box_clutch_win), split='_', nth=3)
+    # get YYMMDD_BX:
+    yymmdd_bx <- paste0(strNthSplit(levels(pal$date_box_clutch_win), split='_', nth=1), '_', strNthSplit(levels(pal$date_box_win), split='_', nth=2))
+    # now we want each label to be e.g. day1 \n clutchX \n 230214_14
+    facetlabs <- sapply(1:length(yymmdd_bx), function(i) {
+      paste0(dnx[i], '\n', clutchx[i], '\n', yymmdd_bx[i])
+    })
+    # now add names
+    names(facetlabs) <- levels(pal$date_box_clutch_win)
+    # ready to be given in ggplot call
+
+  ### if clutch is not present (standard case)
+  } else {
+
+    # first print the order of the plot for the user to check
+    cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', levels(pal$date_box_win),'\n')
+    # now prepare the X axis labels
+    # we need a named vector, names = original labels (i.e. date_box_win in the data) and values = labels we want
+    # we will now assume that date_box_win is exactly YYMMDD_BX_dayX or YYMMDD_BX_nightX
+    # and we will split into dayX/nightX and YYMMDD_BX so that in two lines
+    # get dayX/nightX:
+    dnx <- strNthSplit(levels(pal$date_box_win), split='_', nth=3)
+    # get YYMMDD_BX:
+    yymmdd_bx <- paste0(strNthSplit(levels(pal$date_box_win), split='_', nth=1), '_', strNthSplit(levels(pal$date_box_win), split='_', nth=2))
+    # now we want each label to be e.g. day1 \n 230214_14 so exp is below on a new line
+    facetlabs <- sapply(1:length(yymmdd_bx), function(i) {
+      paste0(dnx[i], '\n', yymmdd_bx[i])
+    })
+    # now add names
+    names(facetlabs) <- levels(pal$date_box_win)
+    # ready to be given in ggplot call
+
+  }
 
   # ! need to make sure dodge.width is same for dots & mean crosses so they align
   dodgeby <- 0.7
@@ -233,7 +261,7 @@ ggParameter <- function(pa,
     # then check whether clutch column is present or not
     # if present, we need to also split by clutch
     if('clutch' %in% colnames(pal)) {
-      ggParam <- ggplot(pal, aes(x=date_box_win_clutch_grp, y=param, colour=grp))
+      ggParam <- ggplot(pal, aes(x=date_box_clutch_win_grp, y=param, colour=grp))
     } else {
       # THIS IS MOST COMMON CASE
       ggParam <- ggplot(pal, aes(x=date_box_win_grp, y=param, colour=grp))
@@ -242,7 +270,7 @@ ggParameter <- function(pa,
   # if want to poolDayNight
   } else {
     if('clutch' %in% colnames(pal)) {
-      ggParam <- ggplot(pal, aes(x=date_box_daynight_clutch_grp, y=param, colour=grp))
+      ggParam <- ggplot(pal, aes(x=date_box_clutch_daynight_grp, y=param, colour=grp))
     } else {
       ggParam <- ggplot(pal, aes(x=date_box_daynight_grp, y=param, colour=grp))
     }
@@ -269,8 +297,18 @@ ggParameter <- function(pa,
 
     ggbeeswarm::geom_quasirandom(groupOnX=TRUE, width=0.09, size=0.5, dodge.width=dodgeby) +
     stat_summary(aes(group=grp), fun=mean, geom='point', colour='#595E60', shape=3, size=1.2, stroke=0.8, position=position_dodge(dodgeby)) +
-    facet_grid(~date_box_win, scales='free_x', space='free_x', switch='both',
-               labeller=as_labeller(facetlabs)) +
+
+    # split the plot for clarity
+    # if clutch column present, each subplot is one date_box_clutch_win, e.g. 230306_14_clutch2_day1
+    {if('clutch' %in% colnames(pal)) facet_grid(~date_box_clutch_win, scales='free_x', space='free_x', switch='both',
+                                                labeller=as_labeller(facetlabs))} +
+    # but usually each subplot is one date_box_win, e.g. 230306_14_day1
+    {if(!'clutch' %in% colnames(pal)) facet_grid(~date_box_win, scales='free_x', space='free_x', switch='both',
+                                                labeller=as_labeller(facetlabs))} +
+
+    # usually each subplot = one date_box_win, e.g. 230306_14_day1
+    # facet_grid(~date_box_win, scales='free_x', space='free_x', switch='both',
+    #            labeller=as_labeller(facetlabs)) +
     {if(!is.na(colours[1])) scale_colour_manual(values=colours) } + # if user gave colours, follow them; if not ggplot will do default colours
     theme_minimal() +
     theme(
