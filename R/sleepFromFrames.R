@@ -179,15 +179,25 @@ detectNaps <- function(ffsource,
   # each row is a frame
   # each cell is TRUE = frame was part of a sleep bout // FALSE = frame was not part of a sleep bout
 
+
   fdz <- lapply(1:length(ffordn), function(win) { # note, if given ff then win is just the entire experiment
 
-    cat('\t \t \t \t >>> Detecting naps for', names(ffordn)[win], 'data \n')
+    cat('\n \t \t \t \t >>> Detecting naps for', names(ffordn)[win], 'data \n')
 
     ### smaller sapply to loop through fish ###
     # and do rolling sum etc. for each
+
+    # set-up a progress bar
+    nfis <- ncol(ffordn[[win]])-timecols # number of columns in the data, minus the time columns
+    prg <- txtProgressBar(min=0, max=nfis, style=3, char='><> ')
+
     zzz <- data.table::data.table(sapply( (timecols+1):ncol(ffordn[[win]]) , function(w) {
 
-      cat('\t \t \t \t \t \t >>> detecting naps for well', colnames(ffordn[[win]])[w], '\n')
+      # cat('\t \t \t \t \t \t >>> detecting naps for well', colnames(ffordn[[win]])[w], '\n')
+
+      # which fish are we at?
+      setTxtProgressBar(prg, w-timecols) # update progress bar
+      # w-timecols will give which fish we are at
 
       # get the data for this window, this fish
       fwf <- ffordn[[win]][,..w] # frame-by-frame data for one Window, one Fish

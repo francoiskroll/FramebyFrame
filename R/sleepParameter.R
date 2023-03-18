@@ -52,11 +52,12 @@ sleepParameter <- function(dn,
   timecols <- which(grepl("^f+[[:digit:]]", colnames(dnz[[1]])))[1] - 1
 
   # now we calculate `sleep parameter` for each day/night, and each fish
+  cat('\n \t \t \t \t >>> Calculating ~~~', parameter, '~~~ \n \n')
 
   # ** FIRST sapply to loop through time window, typically night0, day1, ...
   pal <- sapply( 1:length(dnz), function(win) {
 
-    cat('\t \t \t \t >>> Calculating', parameter, 'for', names(dnz)[win], ' \n')
+    cat('\n \t \t \t \t >>>', toupper(names(dnz)[win]), ' \n')
 
     # sleepFunction is still only a string
     # need to match.fun so points to a real function which can be used below
@@ -69,6 +70,11 @@ sleepParameter <- function(dn,
     # so calculate it here
     fps <- averageFramerate(dnzw$exsecs) # will print fps in Console too
 
+    ### set-up a progress bar
+    # how many fish are we about to calculate?
+    nfis <- ncol(dnzw)-timecols # number of columns in the data, minus the time columns
+    prg <- txtProgressBar(min=0, max=nfis, style=3, char='><> ')
+
     sapply((timecols+1):ncol(dnzw),
            function(fic) {
              # fic for fish column, will loop e.g. column #4, #5, ... (assuming first three columns are timestamps)
@@ -78,7 +84,10 @@ sleepParameter <- function(dn,
              # ffc = frame-by-frame data for that time window/fish, ffc for frame-by-frame column
              # zzc = the asleep/not asleep booleans (called zzz) for that time window/fish, zzc for zzz column
 
-             cat('\t \t \t \t \t >>> well', colnames(dnzw)[fic], ' \n')
+             # cat('\t \t \t \t \t >>> well', colnames(dnzw)[fic], ' \n')
+             # which fish are we at?
+             setTxtProgressBar(prg, fic-timecols) # update progress bar
+             # fic-timecols will give which fish we are at
 
              return(sleepFunction(zzc=dnzw[,fic],
                                   fps=fps))

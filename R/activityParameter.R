@@ -45,10 +45,12 @@ activityParameter <- function(dn,
 
   # then we calculate the activity parameter for each day/night and each fish
 
+  cat('\t \t \t \t >>> Calculating ~~~', parameter, '~~~ \n \n')
+
   # ** FIRST sapply to loop through time window, typically night0, day1, ...
   pal <- sapply( 1:length(dn), function(win) {
 
-    cat('\t \t \t \t >>> Calculating', parameter, 'for', names(dn)[win], ' \n')
+    cat('\n \t \t \t \t >>>', toupper(names(dn)[win]), ' \n')
 
     # note, no parallelisation for activity parameters
     # they are quick to calculate and will likely take more time if parallelised
@@ -65,6 +67,11 @@ activityParameter <- function(dn,
     fps <- averageFramerate(dnw$exsecs) # will print fps to Console too
     # in practice, fps is only used by activitySunsetStartle currently
 
+    ### set-up a progress bar
+    # how many fish are we about to calculate?
+    nfis <- ncol(dnw)-timecols # number of columns in the data, minus the time columns
+    prg <- txtProgressBar(min=0, max=nfis, style=3, char='><> ')
+
     # sapply to loop through fish
     sapply((timecols+1):ncol(dnw),
            function(fic) {
@@ -74,7 +81,10 @@ activityParameter <- function(dn,
              # using 'one fish' version of the parameter function
              # we give it
              # ffc = frame-by-frame data for that time window/fish, ffc for frame-by-frame column
-             cat('\t \t \t \t \t >>> well', colnames(dnw)[fic], ' \n')
+             # cat('\t \t \t \t \t >>> well', colnames(dnw)[fic], ' \n')
+             # which fish are we at?
+             setTxtProgressBar(prg, fic-timecols) # update progress bar
+             # fic-timecols will give which fish we are at
 
              return(activityFunction(ffc=dnw[,fic],
                                      zhc=dnw$zhrs,
@@ -199,9 +209,6 @@ activityParameter <- function(dn,
     }
   }
 
-
-  # tell we are done
-  cat('\t \t \t \t >>> DONE \n \n')
   gc()
 
   return(pal)

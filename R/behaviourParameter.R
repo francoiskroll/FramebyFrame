@@ -894,7 +894,7 @@ behaviourParameter <- function(parameter,
   # above was intensive in the case of active bout parameters, so take the garbage out
   gc()
 
-  return(paL[[1]])
+  invisible(paL[[1]])
 
 }
 
