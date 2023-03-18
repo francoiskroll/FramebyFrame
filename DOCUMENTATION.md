@@ -468,7 +468,7 @@ Note this conclusion is very likely to be dependent on the Sensitivity threshold
 Parameters were originally defined and coded with complete days/nights in mind, not window(s) of interest of arbitrary lengths. Therefore, some parameters may not be directly suited to being calculated within window(s) of interest. Namely:
 
 *	Calculating parameter **activityTransitionDelta** is not currently supported when analysing by window(s) of interest. The rationale for not calculating it is that windows of interest do not typically follow each other, in which case it does not make sense to calculate the ‘transition’. However, it could make sense to calculate it when the windows of interest directly follow each other, but it requires more work so let me know if it is ever needed.
-*	**activitySunsetStartle**: it will return the maximum Δ px during the 3 seconds at the beginning of each window of interest. You can decide whether this is any interesting in the context of your experiment.
+*	**activitySunsetStartle**: it will return the maximum Δ px during the 10 seconds at the beginning of each window of interest. You can decide whether this is any interesting in the context of your experiment.
 * **activitySlope**: the first 10 minutes of data is skipped prior to linear regression, then the data is summed in 10-minute bins. Accordingly, if the window of interest is only a few minutes long it will throw an error. If the window of interest is only a few tens of minutes long, it may return a result that is not particularly meaningful as the regression is calculated on only a few datapoints.
 
 

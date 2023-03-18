@@ -102,12 +102,12 @@ activitySunsetStartle_onefish <- function(ffc,
                                           fps) {
 
   # ***
-  nsecs <- 3 # 3-second window after transition defined here
+  nsecs <- 10 # 10-second window after transition defined here
   # ***
 
   return( max(ffc[1:fps*nsecs]) )
-  # fps*nsecs: e.g. 25 frames-per-second * 3 seconds = 75 frames
-  # take the first that many frames from ffc, e.g. the first 3 seconds' worth of data
+  # fps*nsecs: e.g. 25 frames-per-second * 10 seconds = 75 frames
+  # take the first that many frames from ffc, e.g. the first 10 seconds' worth of data
   # return the max deltapx during that period
 
 }
