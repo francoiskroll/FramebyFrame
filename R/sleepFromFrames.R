@@ -61,7 +61,7 @@
 #'
 #' @examples
 detectNaps <- function(ffsource,
-                       dtbx=NA,
+                       dtbx,
                        woi=NA,
                        zthr_min=1,
                        inaThr=0) {

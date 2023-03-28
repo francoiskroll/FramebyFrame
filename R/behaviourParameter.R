@@ -641,12 +641,12 @@ behaviourParameter <- function(parameter,
 
     }
 
-    # either way, at the top level each element of the list is an experiment
-    # so we will put name as YYMMDD_BX
-    # which we can obtain from ffpath
-    names(dnL) <- substr(afterLastSlash(ffpath), 1, 9)
-
   }
+
+  # either way, at the top level each element of the list is an experiment
+  # so we will put name as YYMMDD_BX
+  # which we can obtain from ffpath
+  names(dnL) <- substr(afterLastSlash(ffpath), 1, 9)
 
 
   # at this stage we can delete ffL to save space
@@ -1026,6 +1026,25 @@ multiBehaviourParameter <- function(parameters,
 
   }
 
+  ##### clear sleep detection
+  # 28/03/2023
+  # if we calculate different sleep parameters, we ran detectNaps() for the first sleep parameter
+  # then recorded dnz_YYMMDD_BX in Environment so that we could skip detectNaps() for the subsequent ones
+  # this is safe within a run of multiBehaviourParameter, as the user could not have changed detection settings woi, inaThr, zthr_min
+  # however, it is risky to keep the previous detection in Environment, because user may have changed the detection settings
+  # to address this, we record the previous detection settings as last__woi, last__inaThr, last__zthr_min
+  # but there were still some ways to make it fail with specific sequences
+  # e.g. detectNaps() on BOX1 with some settings; then BOX2 with new settings; then back to BOX1 with new settings
+  # when running again BOX1, last__XXX do not change and dnz_YYMMDD_BX exists, so it skips detection
+  # which is wrong
+  # a solution would be to record YYMMDD_BX in last__XXX, e.g. last__inaThr_YYMMDD_BX
+  # but the gain in speed by keeping pre-recorded dnz_ in Environment is null in great majority cases
+  # we just want to use previous detection when analysing different sleep parameters one after the other
+
+  # I think we can keep last__woi, last__inaThr, last__zthr_min for now
+  # might be useful if, for example, want to run detectNaps() multiple times with different detection settings
+
+  # remove any object in Environment that starts with dnz, which is pre-recorded nap detection
+  remove( list = ls(envir=.GlobalEnv)[startsWith(ls(envir=.GlobalEnv), 'dnz')], envir=.GlobalEnv)
+
 }
-
-
