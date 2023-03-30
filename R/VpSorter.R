@@ -104,10 +104,23 @@
 # v17
 # now accepts .xlsx (data format from Leah)
 
+# v18
+# data format from Amber Zimmerman
+# date in Zebralab results file is in US format MM/DD/YYYY
+# added setting 'dateformat'
+# it is possible to guess from the file, but this would entail regularly importing the entire file
+# solution is:
+# take all dates
+# split into three columns: component1 / component2 / component3
+# if component1 is above 12, component1 is DAY
+# else, only look at unique dates and ask: when next day comes, which format switches to +1?
+# if component1, then component1 is DAY
+# if component2, then component2 is DAY (and component1 is MONTH)
+# this works even if experiment started on 31st of the month, because in that case the "if above 12" clause gets triggered
+# (and there is no month that is 12 day-long or shorter!)
 
 
 # -------------------------------------------------------------------------
-
 
 
 # function to print to console as cat() + record to a Markdown logfile
@@ -270,6 +283,7 @@ vpSorter <- function(ffDir,
                      zt0='09:00:00',
                      date0=NA,
                      time0=NA,
+                     dateformat='DMY',
                      dayduration=14,
                      exportXlsOrNo=FALSE) {
 
@@ -291,6 +305,10 @@ vpSorter <- function(ffDir,
       time0 <- NA
     }
   }
+
+  # check date format
+  if(!dateformat %in% c('DMY', 'MDY')) stop('\t \t \t \t >>> Error vpSorter: setting dateformat is wrong.\
+                                            It can only be "DMY" for DD/MM/YYYY or "MDY" for MM/DD/YYYY (US format). Default is "DMY". \n')
 
   # check rawoutput folder (ffDir) is correct
   if(!dir.exists(ffDir))
@@ -1031,7 +1049,13 @@ vpSorter <- function(ffDir,
       dt0 <- zebfi$stdate
       tm0 <- zebfi$sttime
       startts <- paste(dt0, tm0) # start timestamp, e.g. 28/01/2021 10:27:35
-      startts <- lubridate::dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+
+      # ! if US format MM/DD/YYYY, need to read different
+      if (dateformat=='MDY') {
+        startts <- lubridate::mdy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+      } else {
+        startts <- lubridate::dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+      }
 
     } else if (importMethod=='readdelim') {
 
@@ -1039,7 +1063,13 @@ vpSorter <- function(ffDir,
       dt0 <- zebfi$stdate
       tm0 <- zebfi$sttime
       startts <- paste(dt0, tm0) # start timestamp, e.g. 28/01/2021 10:27:35
-      startts <- lubridate::dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+
+      # ! if US format MM/DD/YYYY, need to read different
+      if (dateformat=='MDY') {
+        startts <- lubridate::mdy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+      } else {
+        startts <- lubridate::dmy_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
+      }
 
     } else if (importMethod=='readxl') {
 
@@ -1049,9 +1079,12 @@ vpSorter <- function(ffDir,
       startts <- paste(dt0, tm0) # start timestamp, e.g. 28/01/2021 10:27:35
       startts <- lubridate::ymd_hms(startts) # convert in lubridate format eg. 2021-01-28 10:27:35 UTC
       # note here ymd_ (instead of dmy_), in my experience read_excel imports date as e.g. "2023-01-06 UTC"
-      # tm0: this might not be the most flexible solution
+      # re tm0: this might not be the most flexible solution
       # in my experience, read_excel gives sttime column as e.g. "1899-12-31 10:25:18 UTC"
       # so this keeps only the time component
+
+      # note, I do not have an example of US format with readxl
+      # I am guessing it would imported the same as above, i.e. YMD
 
     }
     # zebfi = ZebraLab XLS file's first row

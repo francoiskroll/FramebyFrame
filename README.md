@@ -237,9 +237,10 @@ vpSorter(ffDir="~/.../220531_14_15_rawoutput/",
 ```
 
 
-* `ffDir`: path to the folder with your raw .xls files.  
-* `zebpath`: path to the Zebralab results file (.xls).  
-* `boxGen`: 2 if you are using the newer version of Zebralab (post circa 2020), 1 for previous versions.  
+* `ffDir`: path to the folder with your raw .xls/xlsx files.  
+* `zebpath`: path to the Zebralab results file (.xls/xlsx).  
+* `boxGen`: 2 if you are using the newer version of Zebralab (post circa 2020), 1 for previous versions.
+> Note sure which one? Open one of the raw .xls/xlsx files, are the Δ pixel values (typically in column _data1_) mostly 1s or mostly 0s? If mostly 1s: `boxGen=1`; if mostly 0s: `boxGen=2`
 * `zt0`: Zeitgeber 0 (ZT0). What is the time of your sunrise?  
 * `dayduration`: how long does the day last in your experiment? By day, we mean lights ON.  
 
@@ -264,7 +265,7 @@ Each row is one frame. Each column is one well (f for fish), plus a few timestam
 * `f2`: data for well #2.  
 etc.  
 
-> Getting stuck here? Viewpoint changes the format of the output files all the time, so it is much more likely I have not seen your particular format yet, rather than you doing anything stupid. Just send me one of your raw .xls/xlsx files on francois@kroll.be and I will update the package.
+> Getting stuck here? Viewpoint changes the format of the output files all the time, so it is much more likely I have not seen your particular format yet, rather than you doing anything wrong. Just send me the first 10 or so raw .xls/xlsx files on francois@kroll.be and I will update the package.
 
 ### 2– Prepare your genotype map
 This will assign each well to a group. We say 'genotype' as our experiments often look at larvae of different genotypes (e.g. wild-type vs knockout), but your groups can be anything, e.g. different concentrations of a drug.  

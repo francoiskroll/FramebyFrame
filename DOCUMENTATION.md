@@ -37,6 +37,38 @@ Plotting functions start with _gg_, e.g. ggFramerate. This is because it uses a 
 
 ___
 
+## Sorting the frame-by-frame data
+
+### vpSorter(...)
+
+Sorts the Δ pixel data from a bunch of raw .xls/xlsx files and generates files _RAWs.csv and _lights.csv.
+
+**ffDir**: full path to folder which stores all the raw .xls/xlsx files from Zebralab's raw export.  
+
+**zebpath**: full path to Zebralab .xls/xlsx results file. In practice, vpSorter only looks at the first row to obtain the start time/date of the experiment. Default is NA.  
+
+**boxGen**: 2 if you are using the newer version of Zebralab (post circa 2020), 1 for previous versions. Default is 2.  
+
+> Note sure which one? Open one of the raw .xls/xlsx files, are the Δ pixel values (typically in column _data1_) mostly 1s or mostly 0s? If mostly 1s: `boxGen=1`; if mostly 0s: `boxGen=2`. 
+
+**twoBoxMode**: if two boxes ran in parallel, twoBoxMode=TRUE; if a single box ran at a time, twoBoxMode=FALSE. Precisely the question is: do the raw .xls/xlsx files contain data from two boxes or a single one? If you are unsure, you can open one of the .xls/xlsx files and look at the wells. Default is TRUE.  
+
+**boxnum**: if ran two boxes in parallel, which box do you want to process? It can only be 1 or 2. Default is 1.  
+
+**zt0**: what time do you want to take as reference Zeitgeber? Given as HH:MM:SS. This is typically the lights ON time. Default is '09:00:00'.  
+
+**date0**: if you do not have a Zebralab results file or there is an issue with it, you can give the date at which the experiment started manually instead, in the format DD/MM/YYYY, e.g. `date0="17/05/2022"`. Default is NA.  
+
+**time0**: if you do not have a Zebralab results file or there is an issue with it, you can give the time at which the experiment started manually instead, in the format HH:MM:SS, e.g. `time0="13:02:25"`. Default is NA.  
+
+**dateformat**: the format in which the date is given in the Zebralab results file. You only need to mention this setting if you are in the US and the Zebralab results file gives date as MM/DD/YYYY, in which case please give `dateformat="MDY"`. Default is 'DMY'.  
+
+**dayduration**: during your experiment, how long did the days (lights ON) last? FramebyFrame currently assumes 24-hr cycles, so e.g. if dayduration=14, it will understand this as: days last 14 hr, nights last 10 hr. Default is 14.  
+
+**exportXlsOrNo**: you probably do not need to worry about this. TRUE will attempt to export all the .xls files after correcting the errors, essentially as if Zebralab did not make any error. Default is FALSE.
+
+___
+
 ## Quality checks
 
 ### ggFramerate(...)
