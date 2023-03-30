@@ -843,6 +843,8 @@ vpSorter(ffDir=...,
 
 Ideally, you should be precise at the second as FramebyFrame will use this to determine when the light transitions occured.  
 
+If the experiment crashed and did not generate a Zebralab results file, one source for the date0/time0 may be the .phc file, if you can find it in the folder. Open the file in a text editor (e.g. Notepad) and you should find the start date and time at the top. Make sure to give date0 as DD/MM/YYYY and time0 as HH:MM:SS (24-hr format, so e.g. 9 PM should be 21).
+
 > _The first timestamp in my Zebralab results file is wrong!_
 
 Yes, this happens when running a Replay on Zebralab, for example. The software (stupidly) takes the computer clock time when you started the Replay, not the original start of the experiment. Follow instructions above to give the start date/time manually to `vpSorter()`.
