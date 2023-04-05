@@ -474,7 +474,8 @@ ggSleepLatencySurvival <- function(pa,
                                    exportDir,
                                    width=120,
                                    height=70,
-                                   dayduration=14) {
+                                   dayduration=14,
+                                   woi=NA) {
 
   ### check export settings ###
 
@@ -507,6 +508,12 @@ ggSleepLatencySurvival <- function(pa,
   # if given colours, need to be same number as grporder
   if (!is.na(grporder[1]) & !is.na(colours[1])) {
     if(length(grporder) != length(colours)) stop('\t \t \t \t Error: please give one colour per group in grporder \n')
+  }
+
+  # warn user about woi setting
+  if(!is.na(woi)) {
+    cat('\t \t \t \t >>> woi setting is given, so will ignore any dayduration value. \n')
+    dayduration <- NA
   }
 
   # use paramReadPivot() to prepare the parameter dataframe(s) we received
@@ -564,14 +571,48 @@ ggSleepLatencySurvival <- function(pa,
 
     cat('\n \n \t \t \t \t >>> Preparing sleepLatency survival plot for ***', winn, '*** \n')
 
-    # are we looking at day data or night data?
-    dayornight <- unique(paw$daynight)
+    ## are we analysing by day/night or windows of interest?
+    # if by day/night
+    if(!is.na(dayduration)) {
+      # are we currently looking at day data or night data?
+      dayornight <- unique(paw$daynight)
 
-    # we will need to tell timestampsToSurvival the last timepoint, i.e. how long the day/night lasted in minutes
-    if(dayornight=='day') {
-      lastt <- dayduration * 60 # typically 14 hours * 60 minutes
-    } else if(dayornight=='night') {
-      lastt <- (24-dayduration) * 60 # typically 10 hours * 60 minutes
+      # we will need to tell timestampsToSurvival the last timepoint, i.e. how long the day/night lasted in minutes
+
+      if(dayornight=='day') {
+        lastt <- dayduration * 60 # typically 14 hours * 60 minutes
+      } else if(dayornight=='night') {
+        lastt <- (24-dayduration) * 60 # typically 10 hours * 60 minutes
+      }
+
+    # if by windows of interest
+    } else if(!is.na(woi)) {
+
+      # woi should be an even number of elements as start/end, start/end, etc.
+      if (length(woi)%%2 !=0) stop('\t \t \t \t >>> Error splitFramesbyWoi: please give start and stop timestamps of each window of interest.
+                               Accordingly, woi should have an even number of timestamps. \n')
+
+      # calculate duration of each window
+      # make a small dataframe: one column with all start timestamps, one column will all stop timestamps
+      # each row is a window of interest
+      wois <- data.frame(start=woi[seq(1, length(woi), 2)], # start timestamps are at odd indices
+                         stop=woi[seq(2, length(woi), 2)]) # stop timestamps are at even indices
+
+      woidur <- apply(wois, 1, function(stasto) {
+        difftime( lubridate::dmy_hms(stasto['stop']) , lubridate::dmy_hms(stasto['start']), units='mins')
+      })
+
+      # make sure we do not have any negative durations
+      # which would be the sign of a stop timestamp occuring before a start timestamp, i.e. not chronological
+      if(length(woidur<0)>0) stop('\t \t \t \t >>> Error ggSleepLatencySurvival: can you check the woi setting,
+                                  some timestamps are not chronological. \n')
+
+      ###### 30/03/2023 left unfinished
+      # just need to give woidur to timestampsToSurvival one by one as lastt setting
+      # here is a woi setting to try on
+      # woi <- c('16/02/2023 13:00:00', '16/02/2023 16:00:00',
+      #          '17/02/2023 10:00:00', '17/02/2023 20:00:00')
+
     }
 
     # now split this window's `pal` by group
