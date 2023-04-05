@@ -955,6 +955,21 @@ Calculates the similarity between pairwise behavioural fingerprint and represent
 
 * **exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf.  
 
+
+### rawToMiddur(...)
+
+Converts frame-by-frame data (a RAWs.csv file) into middur data (a middur.csv file).  
+
+* **ffpath**: full path to _RAWs.csv.  
+
+* **zebpath**: full path to Zebralab .xls results file.  
+
+* **freezing**: minimum Δ pixel for a frame to be counted as active. Any Δ pixel below the freezing threshold is considered inactive. Default is 3.  
+
+* **burst**: minimum Δ pixel for a frame to be counted as active. Any Δ pixel above the burst threshold is considered inactive. Default is 200.  
+
+* **exportOrNo**: whether or not (TRUE or FALSE) to export the middur data to a csv file. TRUE writes a file called YYMMDD_BX_middur.csv in the ffpath folder. Default is FALSE. 
+
 # Troubleshooting
 
 Here are leads for troubleshooting. If this does not help in your case, let me know where you are stuck by raising an issue (`Issues` at the top > `New issue`) or get in touch with me.

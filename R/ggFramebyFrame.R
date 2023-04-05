@@ -446,6 +446,7 @@ ggFramerate <- function(ffpath,
 #' @param width
 #' @param height
 #' @param dayduration
+#' @param woi
 #'
 #' @return
 #' @export
