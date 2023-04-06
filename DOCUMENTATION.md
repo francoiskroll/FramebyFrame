@@ -959,6 +959,19 @@ Calculates the similarity between pairwise behavioural fingerprint and represent
 
 * **exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf.  
 
+### appendRAWs(...)
+
+If tracking was interrupted (for example because of a powershut) and quickly re-started, this function allows to append the two RAWs.csv files into one. Naturally, it will not magically recover the missing frames, so there will be a gap in the data, but the appended RAWs.csv is compatible with other functions.
+
+Note, it will generate a YYMMDD_BX_lights.csv file using the filename of the first RAWs.csv (first ffpath given). For example, if user gives `ffpaths=c('~/.../230307_17_Pt1_RAWs.csv',
+                     '~/.../230308_17_Pt2_RAWs.csv')`, it will generate a file called _230307_17_lights.csv_. This is likely to overwrite the original YYMMDD_BX_lights.csv.  
+
+* **ffpaths**: full paths to the two _RAWs.csv files to append. Make sure to give them in chronological order.  
+
+* **exportPath**: full path of RAWs.csv to export to, e.g. `exportPath='~/.../230307_17_RAWsappend.csv'`  
+
+* **dayduration**: day duration in hours. Default is 14.  
+
 
 ### rawToMiddur(...)
 
