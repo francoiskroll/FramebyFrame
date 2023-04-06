@@ -204,6 +204,8 @@ rawToMiddur <- function(ffpath,
     # we want name to be YYMMDD_BX_middur.csv
     exportPath <- paste0(dirname(ffpath), whatSlash(ffpath), ymdb, '_middur.csv')
 
+    cat('\t \t \t \t >>> Wrote', exportPath, '\n')
+
     write.csv(mid, file=exportPath, row.names=FALSE)
   }
 

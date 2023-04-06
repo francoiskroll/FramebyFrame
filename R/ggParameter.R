@@ -48,6 +48,7 @@
 #' @param width
 #' @param height
 #' @param exportPath
+#' @param dotSize
 #'
 #' @return
 #' @export
@@ -71,6 +72,7 @@ ggParameter <- function(pa,
                         colours=NA,
                         ymin=NA,
                         ymax=NA,
+                        dotSize=0.5,
                         legendOrNo=TRUE,
                         xtextOrNo=TRUE,
                         ynameOrNo=TRUE,
@@ -295,7 +297,7 @@ ggParameter <- function(pa,
 
     ggParam +
 
-    ggbeeswarm::geom_quasirandom(groupOnX=TRUE, width=0.09, size=0.5, dodge.width=dodgeby) +
+    ggbeeswarm::geom_quasirandom(groupOnX=TRUE, width=0.09, size=dotSize, dodge.width=dodgeby) +
     stat_summary(aes(group=grp), fun=mean, geom='point', colour='#595E60', shape=3, size=1.2, stroke=0.8, position=position_dodge(dodgeby)) +
 
     # split the plot for clarity
@@ -399,6 +401,7 @@ ggParameter <- function(pa,
 #' @param height
 #' @param exportPath
 #' @param keysOrNo
+#' @param dotSize
 #'
 #' @return
 #' @export
@@ -419,6 +422,7 @@ ggParameterGrid <- function(paDir,
                             onlyWin=NA,
                             colours=NA,
                             legendOrNo=TRUE,
+                            dotSize=0.5,
                             ynameOrNo=TRUE,
                             yunitOrNo=FALSE,
                             xtextOrNo=TRUE,
@@ -547,6 +551,7 @@ ggParameterGrid <- function(paDir,
                              colours=colours,
                              ymin=NA,
                              ymax=NA,
+                             dotSize=dotSize
                              legendOrNo=legendOrNo,
                              xtextOrNo=xtextOrNo,
                              ynameOrNo=ynameOrNo,

@@ -535,6 +535,8 @@ onlyExp: do you want to plot only specific experiment(s) of the parameter tables
 
 **ymax**: highest point of the Y axis. Default is NA, which will do it automatically.
 
+**dotSize**: size of the dots. Default is 0.5.  
+
 **legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
 
 **ynameOrNo**: whether or not (TRUE or FALSE) to write the name of the Y axis. It automatically writes a name depending on the parameter, e.g. “active bout mean (Δ px)”. Default is TRUE.
@@ -592,6 +594,8 @@ ggParameterGrid() does not currently support parameters calculated on specific w
 **colours**: colours for the groups (genotypes), either in the same order as grporder or in alphabetical order of the group names if not giving grporder. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
 
 **legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
+
+**dotSize**: size of the dots in each plot. Default is 0.5.  
 
 **xtextOrNo**: whether or not (TRUE or FALSE) to write the X axis tick labels.
 
