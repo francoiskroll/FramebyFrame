@@ -13,6 +13,7 @@ vpSorter(
   zt0 = "09:00:00",
   date0 = NA,
   time0 = NA,
+  dateformat = "DMY",
   dayduration = 14,
   exportXlsOrNo = FALSE
 )

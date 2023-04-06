@@ -25,11 +25,12 @@ ggSleepLatencySurvival(
   exportDir,
   width = 120,
   height = 70,
-  dayduration = 14
+  dayduration = 14,
+  woi = NA
 )
 }
 \arguments{
-\item{dayduration}{}
+\item{woi}{}
 }
 \description{
 Title

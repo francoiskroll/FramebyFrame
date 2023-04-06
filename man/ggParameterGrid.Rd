@@ -25,6 +25,7 @@ ggParameterGrid(
   xtextOrNo = TRUE,
   titleOrNo = TRUE,
   nightBgOrNo = TRUE,
+  keysOrNo = FALSE,
   statsOrNo = FALSE,
   ncol,
   nrow,
@@ -34,7 +35,7 @@ ggParameterGrid(
 )
 }
 \arguments{
-\item{exportPath}{}
+\item{keysOrNo}{}
 }
 \description{
 Title
