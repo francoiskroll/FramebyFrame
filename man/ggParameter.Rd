@@ -21,6 +21,7 @@ ggParameter(
   colours = NA,
   ymin = NA,
   ymax = NA,
+  dotSize = 0.5,
   legendOrNo = TRUE,
   xtextOrNo = TRUE,
   ynameOrNo = TRUE,
@@ -36,7 +37,7 @@ ggParameter(
 )
 }
 \arguments{
-\item{exportPath}{}
+\item{dotSize}{}
 }
 \description{
 Title

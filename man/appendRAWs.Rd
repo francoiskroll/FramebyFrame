@@ -4,10 +4,10 @@
 \alias{appendRAWs}
 \title{Title}
 \usage{
-appendRAWs(ffpaths, exportPath)
+appendRAWs(ffpaths, exportPath, dayduration = 14)
 }
 \arguments{
-\item{exportPath}{}
+\item{dayduration}{}
 }
 \description{
 Title

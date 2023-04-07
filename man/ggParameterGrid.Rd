@@ -20,6 +20,7 @@ ggParameterGrid(
   onlyWin = NA,
   colours = NA,
   legendOrNo = TRUE,
+  dotSize = 0.5,
   ynameOrNo = TRUE,
   yunitOrNo = FALSE,
   xtextOrNo = TRUE,
@@ -35,7 +36,7 @@ ggParameterGrid(
 )
 }
 \arguments{
-\item{keysOrNo}{}
+\item{dotSize}{}
 }
 \description{
 Title
