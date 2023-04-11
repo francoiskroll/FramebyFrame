@@ -252,6 +252,22 @@ detectNaps <- function(ffsource,
       # > 0 (now FALSE) represents 'frame was not part of a nap',
       # i.e. the fish had been active sometimes in the preceding `zthr` (typically 1500 frames, 1 min)
 
+      # additionally, first `zthr` frames (typically 1500 frames) are NA
+      # 11/04/2023
+      # previously: was leaving these frames as NA and proceed to do the retroactive corrections below
+      # an issue would occur for empty wells or if the larvae slept through the light transition
+      # its data would look like ..., NA, NA, NA, TRUE, TRUE, ...
+      # however, diff TRUE - NA returns NA, so the retroactive corrections would not detect the first TRUE as the start of a sleep bout
+      # therefore, it would leave the beginning of the data as ..., NA, NA, NA, TRUE, TRUE, ...
+      # so e.g. parameter sleep latency would return exactly 1.0, as first TRUE frame is at frame 1500
+      # in reality, first row should be NA, as the fish slept through the sleep transition
+      # solution: replace now those NA frames by FALSE
+      # so that data would look like ..., FALSE, FALSE, FALSE, TRUE, TRUE, ...
+      # note, we were already replacing the NA left by FALSE below,
+      # so we are not making any risky edits to the data,
+      # we are simply allowing those frames to be turned to TRUE during retroactive corrections
+      roll[is.na(roll)] <- FALSE
+
       # ! replace previous 'zthr' frames to TRUEs, retroactively
       # currently: first TRUE is NOT when the fish fell asleep, it is when the inactivity period has lasted for 1 minute
       # accordingly, definition should be 'retroactive',
@@ -259,6 +275,8 @@ detectNaps <- function(ffsource,
       # so now we need to detect the first TRUE of each sleep bout, and replace the previous `zthr` (typically 1500 frames) by TRUE
       # diff to detect the transitions to TRUE (diff2 will give correct positions, see statsUtilities)
       retrost <- which(diff2(roll)==1) - (zthr-1) # these are the retroactive starts, i.e. when the fish first became inactive
+
+      # note, if fish asleep during transition (or empty well), correctly finds first retrost = 1
 
       retroframes <- lapply(retrost, function(r) {
         r:(r+zthr-1) # for each real start, this gives the frames to replace
@@ -268,11 +286,6 @@ detectNaps <- function(ffsource,
       # we pool together all the frame indices to replace (unlist)
       # and finally replace in roll
       roll[unlist(retroframes)] <- TRUE
-
-      # and we can replace any NA left at the start with FALSE
-      # indeed, if they were part of a sleep bout they would have been replaced by TRUE
-      # e.g. at frame 1503 fish has been inactive for 1 minute, so now the start of its data looks like NA, NA, NA, TRUE, ..., TRUE
-      roll[is.na(roll)] <- FALSE
 
       return(roll)
 
