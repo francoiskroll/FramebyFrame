@@ -17,6 +17,7 @@
 #' @return
 #'
 #' @examples
+#' @export
 splitFramesbyDayNight <- function(tc,
                                   path) {
 
@@ -88,6 +89,7 @@ splitFramesbyDayNight <- function(tc,
 #' @return
 #'
 #' @examples
+#' @export
 splitFramesbyWoi <- function(tc,
                              woi) {
 
@@ -154,6 +156,7 @@ splitFramesbyWoi <- function(tc,
 #' @return
 #'
 #' @examples
+#' @export
 #' @importFrom dplyr %>%
 #' @importFrom tibble add_column
 #' @importFrom tidyr pivot_longer
