@@ -700,7 +700,7 @@ ggSleepLatencySurvival <- function(pa,
                        'sleepLatency', '_',
                        unique(paw$win), '.pdf')
       cat('\t \t \t \t >>> Exporting *', filenm, '* in', exportDir, '\n')
-      ggsave(filename=paste0(exportDir, '/', filenm), plot=ggLatency, width=width, height=height, units='mm')
+      ggsave(filename=paste0(exportDir, '/', filenm), plot=ggLatency, width=width, height=height, units='mm', device=cairo_pdf)
     }
 
   }

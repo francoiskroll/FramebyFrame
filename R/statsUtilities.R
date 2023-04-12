@@ -51,6 +51,7 @@ mad2 <- function(vector, na.rm=FALSE) {
 #' @return
 #'
 #' @examples
+#' @export
 diff2 <- function(vector) {
 
   return(c(NA, diff(vector)))
