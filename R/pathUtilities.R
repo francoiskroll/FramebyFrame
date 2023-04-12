@@ -376,6 +376,7 @@ parentFolder <- function(paths,
 #' @return
 #'
 #' @examples
+#' @export
 gatherFiles <- function(parent, output) {
 
   allfi <- list.files(parent,

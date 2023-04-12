@@ -663,11 +663,12 @@ ggSleepLatencySurvival <- function(pa,
 
     # ready to plot
     ggLatency <- ggplot(sw, aes(x=dthrs, y=perleft, colour=grp)) + # sleep latency survival curve
-      geom_step(linewidth=0.8) +
+      geom_step(linewidth=0.7) +
       {if(!is.na(colours[1])) scale_colour_manual(values=colours) } + # if user gave colours, follow them; if not ggplot will do default colours
       theme_minimal() +
       theme(
         panel.grid.minor.y=element_blank(),
+        panel.grid.minor.x=element_blank(),
         axis.text.x=element_text(size=7),
         axis.text.y=element_text(size=7),
         axis.title.y=element_text(size=9),
@@ -679,7 +680,7 @@ ggSleepLatencySurvival <- function(pa,
       {if(!xtextOrNo) theme(axis.text.x=element_blank())} +
 
       {if(!ynameOrNo) theme(axis.title.y=element_blank())} +
-      {if(ynameOrNo) ylab(label='% larvae which have not slept yet')} +
+      {if(ynameOrNo) ylab(label='% larvae which \nhave not slept yet')} +
 
       {if(!xnameOrNo) theme(axis.title.x=element_blank())} +
       {if(xnameOrNo) xlab(label='hours since light transition')} +
