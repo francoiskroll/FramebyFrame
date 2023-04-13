@@ -1003,7 +1003,7 @@ ggFingerprint <- function(fgp,
   # plot --------------------------------------------------------------------
 
   # set y axis name
-  yname <- expression(paste('deviation from controls (', italic(Z), '-score)'))
+  yname <- 'deviation from controls (z-score)'
 
   # set x text
   # ! need to be very careful not to change the order
@@ -1103,12 +1103,12 @@ ggFingerprint <- function(fgp,
 
     {if(!ynameOrNo) theme(axis.title.y=element_blank())} +
 
-    {if(ynameOrNo) theme(axis.title.y=element_text(size=9, margin=margin(t=0, r=-1.5, b=0, l=0)))} +
+    {if(ynameOrNo) theme(axis.title.y=element_text(size=9, margin=margin(t=0, r=0, b=0, l=0)))} +
 
     {if(ynameOrNo) ylab(yname)} +
 
     {if(!ytextOrNo) theme(axis.text.y=element_blank())} +
-    {if(ytextOrNo) theme(axis.text.y=element_text(size=7))} +
+    {if(ytextOrNo) theme(axis.text.y=element_text(size=7, margin=margin(t=0, r=-1, b=0, l=0)))} +
 
     {if(xtextOrNo & !xParamNum) scale_x_discrete(labels=xticks)} +
     {if(xtextOrNo & !xParamNum) theme(axis.text.x=element_text(size=7, angle=45, hjust=1))} +
@@ -1116,13 +1116,13 @@ ggFingerprint <- function(fgp,
 
 
     {if(xParamNum) scale_x_discrete(labels=xparamnum)} +
-    {if(xParamNum) theme(axis.text.x=element_text(size=6))} +
+    {if(xParamNum) theme(axis.text.x=element_text(size=6, margin=margin(t=-0.5, r=0, b=0, l=0)))} +
 
     coord_cartesian(ylim=c(ymin, ymax))
 
   ### export the plot
   if(exportOrNo) {
-    ggsave(exportPath, ggFgp, width=width, height=height, units='mm')
+    ggsave(exportPath, ggFgp, width=width, height=height, units='mm', device=cairo_pdf)
   }
 
   ### return plot
@@ -1433,7 +1433,7 @@ ggPairwiseHeat <- function(fgp,
 
   # export plot -------------------------------------------------------------
 
-  ggsave(exportPath, ggheat, width=width, height=height, units='mm')
+  ggsave(exportPath, ggheat, width=width, height=height, units='mm', device=cairo_pdf)
 
 
   # return plot -------------------------------------------------------------

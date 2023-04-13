@@ -99,6 +99,7 @@ sem_narm <- function(x) {
 #' @return
 #'
 #' @examples
+#' @export
 getUpperTri <- function(pwm,
                         skipCol=NA) {
 
@@ -121,6 +122,7 @@ getUpperTri <- function(pwm,
 #' @return
 #'
 #' @examples
+#' @export
 getLowerTri <- function(pwm,
                         skipCol=0) {
 
