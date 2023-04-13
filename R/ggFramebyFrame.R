@@ -1015,7 +1015,21 @@ ggFingerprint <- function(fgp,
   # because sunsetStartle (and maybe other parameters in the future) are not defined during both day and night
   # solution: look up each parameter from xticks (above) in allparameters
   # the position in allparameters becomes its number
-  xparamnum <- match(xticks, allparameters)
+
+  # ! in this case, allparameters should represent the parameters which are included in the fingerprint
+  # e.g. say user only calculated sleep parameters, we should not be naming parameters like 14, 15, 16, ...
+  allparamnms <- allparameters[which(allparameters %in% fgp$parameter)]
+
+  # at this stage, unique xticks will represent unique parameters included in the fingerprint
+  # so should say the same parameters as allparamnms
+
+  if(!identical(unique(sort(xticks)), sort(allparamnms)))
+    stop('\t \t \t \t >>> Error ggFingerprint: something wrong when preparing X axis labels. \n')
+
+  # can prepare the parameter numbers
+  # we simply match each unique parameter in allparamnms
+  # e.g. activityTotalPx is #2, etc.
+  xparamnum <- match(xticks, allparamnms)
 
   # find the middle of the plot to position the night background correctly
   # it should be the last day parameter + 0.5
