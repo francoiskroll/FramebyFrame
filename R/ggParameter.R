@@ -315,9 +315,10 @@ ggParameter <- function(pa,
     theme_minimal() +
     theme(
       axis.title.x=element_blank(),
+      axis.title.y=element_text(size=9, margin=margin(t=0, r=-1, b=0, l=0)), # if user does not want any y axis title, it gets removed below
       axis.text.x=element_blank(), # we always remove X axis labels, exp_win is given by facet titles and group is given by colour in legend
       panel.grid.minor.y=element_blank(),
-      axis.text.y=element_text(size=7),
+      axis.text.y=element_text(size=7, margin=margin(t=0, r=0, b=0, l=0)),
       legend.title=element_blank(),
       legend.spacing.x=unit(0.0, 'lines'), # brings legend text a little closer to the dots
       legend.box.margin=margin(0,-8,0,-18), # reduces margin around legend to gain space
@@ -337,7 +338,9 @@ ggParameter <- function(pa,
     # which by default are above each subplot, but switch='both' puts them below
 
     {if(!ynameOrNo & !yunitOrNo) theme(axis.title.y=element_blank())} +
+
     {if(ynameOrNo) ylab(label=param2Ytext(param=unique(pal$parameter)))} +
+
     {if(yunitOrNo) ylab(label=param2Yunit(param=unique(pal$parameter)))} +
 
     {if(titleOrNo & !blankTitle) ggtitle(label=param2Title(unique(pal$parameter)))} +
