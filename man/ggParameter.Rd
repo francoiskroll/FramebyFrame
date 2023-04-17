@@ -20,9 +20,11 @@ ggParameter(
   onlyWin = NA,
   colours = NA,
   fainterExp = FALSE,
+  faintMax = 0.5,
   ymin = NA,
   ymax = NA,
   dotSize = 0.5,
+  connectMean = FALSE,
   legendOrNo = TRUE,
   xtextOrNo = TRUE,
   ynameOrNo = TRUE,
@@ -38,7 +40,7 @@ ggParameter(
 )
 }
 \arguments{
-\item{dotSize}{}
+\item{connectMean}{}
 }
 \description{
 Title

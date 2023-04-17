@@ -941,3 +941,6 @@ I think the main consequence of this change is on parameter sleepLatency. Previo
 
 ### v0.5.0
 New settings `fainterExp` and `faintMax` for ggParameter/ggParameterGrid. See DOCUMENTATION.  
+
+### v0.6.0
+New setting `connectMean` for ggParameter/ggParameterGrid. See DOCUMENTATION. Might change default to TRUE once confirmed it behaves as expected.  

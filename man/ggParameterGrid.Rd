@@ -19,8 +19,11 @@ ggParameterGrid(
   onlyDayorNight = NA,
   onlyWin = NA,
   colours = NA,
+  fainterExp = FALSE,
+  faintMax = 0.5,
   legendOrNo = TRUE,
   dotSize = 0.5,
+  connectMean = FALSE,
   ynameOrNo = TRUE,
   yunitOrNo = FALSE,
   xtextOrNo = TRUE,
@@ -36,7 +39,7 @@ ggParameterGrid(
 )
 }
 \arguments{
-\item{dotSize}{}
+\item{connectMean}{}
 }
 \description{
 Title

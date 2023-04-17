@@ -51,6 +51,7 @@
 #' @param fainterExp
 #' @param dotSize
 #' @param faintMax
+#' @param connectMean
 #'
 #' @return
 #' @export
@@ -77,6 +78,7 @@ ggParameter <- function(pa,
                         ymin=NA,
                         ymax=NA,
                         dotSize=0.5,
+                        connectMean=FALSE,
                         legendOrNo=TRUE,
                         xtextOrNo=TRUE,
                         ynameOrNo=TRUE,
@@ -330,6 +332,9 @@ ggParameter <- function(pa,
     ggbeeswarm::geom_quasirandom(groupOnX=TRUE, width=0.09, size=dotSize, dodge.width=dodgeby) +
     stat_summary(aes(group=grp), fun=mean, geom='point', colour='#595E60', shape=3, size=1.2, stroke=0.8, position=position_dodge(dodgeby)) +
 
+    # should we also connect the cross means with a line? can help with readibility
+    {if(connectMean) stat_summary(aes(group=1), fun.y=mean, geom='line', colour='#595E60', size=0.2, position=position_dodge(dodgeby))} +
+
     # split the plot for clarity
     # if clutch column present, each subplot is one date_box_clutch_win, e.g. 230306_14_clutch2_day1
     {if('clutch' %in% colnames(pal)) facet_grid(~date_box_clutch_win, scales='free_x', space='free_x', switch='both',
@@ -436,6 +441,9 @@ ggParameter <- function(pa,
 #' @param exportPath
 #' @param keysOrNo
 #' @param dotSize
+#' @param fainterExp
+#' @param faintMax
+#' @param connectMean
 #'
 #' @return
 #' @export
@@ -459,6 +467,7 @@ ggParameterGrid <- function(paDir,
                             faintMax=0.5,
                             legendOrNo=TRUE,
                             dotSize=0.5,
+                            connectMean=FALSE,
                             ynameOrNo=TRUE,
                             yunitOrNo=FALSE,
                             xtextOrNo=TRUE,
@@ -537,6 +546,7 @@ ggParameterGrid <- function(paDir,
                            ymin=NA,
                            ymax=NA,
                            dotSize=dotSize,
+                           connectMean=connectMean,
                            legendOrNo=legendOrNo,
                            xtextOrNo=xtextOrNo,
                            ynameOrNo=ynameOrNo,
@@ -593,6 +603,7 @@ ggParameterGrid <- function(paDir,
                              ymin=NA,
                              ymax=NA,
                              dotSize=dotSize,
+                             connectMean=connectMean,
                              legendOrNo=legendOrNo,
                              xtextOrNo=xtextOrNo,
                              ynameOrNo=ynameOrNo,

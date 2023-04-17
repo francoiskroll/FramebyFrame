@@ -4,10 +4,10 @@
 \alias{fainterExp}
 \title{Title}
 \usage{
-fainterExp(pal, colours = NA)
+fainterExp(pal, colours = NA, faintMax)
 }
 \arguments{
-\item{colours}{}
+\item{faintMax}{}
 }
 \description{
 Title

@@ -541,7 +541,9 @@ onlyExp: do you want to plot only specific experiment(s) of the parameter tables
 
 **dotSize**: size of the dots. Default is 0.5.  
 
-**legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
+**connectMean**: whether or not (TRUE or FALSE) to connect the mean crosses with a line. This can help guiding the reader towards the comparisons they should be making, and also illustrate the LME slope (a steeper line represents a larger effect size). Default is TRUE.  
+
+**legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is FALSE.
 
 **ynameOrNo**: whether or not (TRUE or FALSE) to write the name of the Y axis. It automatically writes a name depending on the parameter, e.g. “active bout mean (Δ px)”. Default is TRUE.
 
@@ -600,6 +602,8 @@ ggParameterGrid() does not currently support parameters calculated on specific w
 **legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
 
 **dotSize**: size of the dots in each plot. Default is 0.5.  
+
+**connectMean**: whether or not (TRUE or FALSE) to connect the mean crosses with a line. This can help guiding the reader towards the comparisons they should be making, and also illustrate the LME slope (a steeper line represents a larger effect size). Default is FALSE.  
 
 **xtextOrNo**: whether or not (TRUE or FALSE) to write the X axis tick labels.
 
