@@ -1060,6 +1060,18 @@ vpSorter <- function(ffDir,
     } else if (importMethod=='readdelim') {
 
       zebfi <- read.delim(zebpath, fileEncoding='UCS-2LE', header=TRUE, nrow=1)
+
+      # below added 17/04/2023 after Val encountered the error
+      # is last column NA? then read.delim shifted the columns
+      # note, row.names=NULL stupidly calls first column 'row.names'
+      # shift the columns back manually
+      if(is.na(zebfi[,ncol(zebfi)])) {
+        zebfi <- as.data.frame(cbind(row.names(zebfi), zebfi))
+        row.names(zebfi) <- NULL
+        colnames(zebfi) <- colnames(zebfi)[2:ncol(zebfi)]
+        zebfi[,ncol(zebfi)] <- NULL
+      }
+
       dt0 <- zebfi$stdate
       tm0 <- zebfi$sttime
       startts <- paste(dt0, tm0) # start timestamp, e.g. 28/01/2021 10:27:35
