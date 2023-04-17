@@ -48,7 +48,9 @@
 #' @param width
 #' @param height
 #' @param exportPath
+#' @param fainterExp
 #' @param dotSize
+#' @param faintMax
 #'
 #' @return
 #' @export
@@ -70,6 +72,8 @@ ggParameter <- function(pa,
                         onlyDayorNight=NA,
                         onlyWin=NA,
                         colours=NA,
+                        fainterExp=FALSE,
+                        faintMax=0.5,
                         ymin=NA,
                         ymax=NA,
                         dotSize=0.5,
@@ -252,6 +256,25 @@ ggParameter <- function(pa,
 
   }
 
+
+  ### prepare the colours
+  # if fainterxp is OFF, that means we simply colour by grp, in which case either user gave colours for the groups or we pick the default ggplot ones
+  if(!fainterExp & is.na(colours[1])) {
+    colours <- scales::hue_pal()(length(unique(pal$grp)))
+    # this is "group colours"
+
+  # if fainterExp is ON, that means we colour by date_box_grp, but following (loosely) the colours given by the user for the groups (or the default ggplot ones)
+  # in the sense that we respect the colours, but make exp2 a bit fainter, exp3 a lot fainter, etc. to help distinguish them
+  # this gets fairly complex, so it is taken care of by fainterExps, which simply return the colours to be used with aes(colour=date_box_grp)
+  } else if(fainterExp) {
+    colours <- fainterExp(pal=pal,
+                          colours=colours,
+                          faintMax=faintMax)
+    # this is "date_box_grp colours"
+    # but we keep the same name so we can give them to scale_colour_manual without adding conditions
+  }
+
+
   # ! need to make sure dodge.width is same for dots & mean crosses so they align
   dodgeby <- 0.7
 
@@ -259,7 +282,7 @@ ggParameter <- function(pa,
   # so will start creating the plot here, then will add the rest as a second call
 
   # standard case: we do not want to poolDayNight
-  if (!poolDayNight) {
+  if (!poolDayNight & !fainterExp) {
     # then check whether clutch column is present or not
     # if present, we need to also split by clutch
     if('clutch' %in% colnames(pal)) {
@@ -270,12 +293,16 @@ ggParameter <- function(pa,
     }
 
   # if want to poolDayNight
-  } else {
+  } else if (poolDayNight & !fainterExp) {
     if('clutch' %in% colnames(pal)) {
       ggParam <- ggplot(pal, aes(x=date_box_clutch_daynight_grp, y=param, colour=grp))
     } else {
       ggParam <- ggplot(pal, aes(x=date_box_daynight_grp, y=param, colour=grp))
     }
+
+  # if want to make experiments fainter colours, that means we colour by date_box_grp
+  } else if (!poolDayNight & fainterExp) {
+    ggParam <- ggplot(pal, aes(x=date_box_daynight_grp, y=param, colour=date_box_grp))
   }
 
   # note 16/03/2023: I should probably delete poolDayNight setting
@@ -284,6 +311,9 @@ ggParameter <- function(pa,
   # also, it is not a good idea not to normalise in either way
   # a similar setting could be avgDayNight, then we average day1 & day2 datapoints together
   # would reduce the width of the plot and achieve one dot per animal
+
+  # note 17/04/2023: I added fainterExp, but did not try with the 'clutch' setting
+  # will probably fail
 
   # note, not easy to add the night background when we are plotting both day and night together
   # will simply turn off for now if both are called
@@ -311,7 +341,8 @@ ggParameter <- function(pa,
     # usually each subplot = one date_box_win, e.g. 230306_14_day1
     # facet_grid(~date_box_win, scales='free_x', space='free_x', switch='both',
     #            labeller=as_labeller(facetlabs)) +
-    {if(!is.na(colours[1])) scale_colour_manual(values=colours) } + # if user gave colours, follow them; if not ggplot will do default colours
+
+    scale_colour_manual(values=colours) +
     theme_minimal() +
     theme(
       axis.title.x=element_blank(),
@@ -424,6 +455,8 @@ ggParameterGrid <- function(paDir,
                             onlyDayorNight=NA,
                             onlyWin=NA,
                             colours=NA,
+                            fainterExp=FALSE,
+                            faintMax=0.5,
                             legendOrNo=TRUE,
                             dotSize=0.5,
                             ynameOrNo=TRUE,
@@ -499,6 +532,8 @@ ggParameterGrid <- function(paDir,
                            onlyDayorNight='day',
                            onlyWin=onlyWin,
                            colours=colours,
+                           fainterExp=fainterExp,
+                           faintMax=faintMax,
                            ymin=NA,
                            ymax=NA,
                            dotSize=dotSize,
@@ -553,6 +588,8 @@ ggParameterGrid <- function(paDir,
                              onlyDayorNight='night',
                              onlyWin=onlyWin,
                              colours=colours,
+                             fainterExp=fainterExp,
+                             faintMax=faintMax,
                              ymin=NA,
                              ymax=NA,
                              dotSize=dotSize,
@@ -611,4 +648,102 @@ ggParameterGrid <- function(paDir,
   # return just in case want the object, but do not print plot to RStudio as it takes too long
   invisible(gpgrid)
 
+}
+
+
+
+# function fainterExp(...) ------------------------------------------------
+
+# small function to deal with fainter colours in ggParam
+# would be a bit long to add to ggParam, which is already complex
+
+# it receives pal and the grp colours
+# grp colours can be NA, in which case it will take the default ggplot colours
+# and returns the colours to be used with aes(..., colour=date_box_grp)
+
+#' Title
+#'
+#' @param pal
+#' @param colours
+#' @param faintMax
+#'
+#' @return
+#' @export
+#'
+#' @examples
+fainterExp <- function(pal,
+                       colours=NA,
+                       faintMax) {
+
+  # if user did not give colours for the groups, we take the default ggplot ones
+  if(is.na(colours[1])) {
+    colours <- scales::hue_pal()(length(unique(pal$grp)))
+  }
+
+  # in which order are the date_box_grp plotted?
+  # (here we essentially want to colour by date_box_grp, so we do not need to worry about win)
+  # they will be in the order of the levels:
+  dbg_onplot <- levels(pal$date_box_grp)
+  # but not all may be plotted
+  # for example, user may have given onlyExp in which case not all experiments present in the levels will be present in the plot
+  # so keep only those actually in the data
+  dbg_onplot <- dbg_onplot[which(dbg_onplot %in% unique(pal$date_box_grp))]
+  # this way we have the date_box_grp, in the order they will be plotted
+
+  # what are the groups (genotypes) of those date_box_grp?
+  grps_onplot <- strNthSplit(dbg_onplot, '_', 3)
+
+  # what are those groups' indices?
+  # e.g. it is grp1; grp2, grp1, grp2, etc.
+  # and we use those indices to get the colours which will be used
+  dbg_cols <- colours[match(grps_onplot, unique(grps_onplot))]
+  # so those are the colours in the order they will appear in the plot
+  # they will repeat, for example: HOM red, HET green, WT blue; HOM red, HET green, WT blue; etc.
+  # note, unique(grps_onplot) should always give groups in the right order as originally comes from levels(pal$date_box_win_grp)
+
+  # now, which experiments do these colours belong date_box_grp belong to?
+  db_onplot <- paste(strNthSplit(dbg_onplot, '_', 1), strNthSplit(dbg_onplot, '_', 2), sep='_')
+  # a typical example would something like:
+  # exp1_night1_ko, exp1_night1_wt, exp1_night2_ko, exp1_night2_wt; exp2_night1_ko, exp2_night1_wt, exp2_night2_ko, exp2_night2_wt
+  # becoming
+  # exp1, exp1, exp1, exp1; exp2, exp2, exp2, exp2
+
+  # temporarily split the colours into a list so we have
+  # slot1: all the colours for exp1
+  # slot2: all the colours for exp2
+  # etc.
+
+  # a nice solution:
+  # add the experiment date_box as names of the colours
+  names(dbg_cols) <- db_onplot
+  # and that allows to easily split the colours into a list:
+  dbg_cols <- split(dbg_cols, f=names(dbg_cols))
+
+  # we leave the colours in first slot intact
+  # we make the colours in second slot a bit fainter
+  # we make the colours in third slot a lot fainter
+  # etc.
+
+  # we should try to avoid going to completely white,
+  # so make the level (i.e. by how much fainter we make each new experiment) proportional to how many experiments we have
+  # i.e. if many experiments, we should make each only slightly fainter
+
+  # set 0.6 fainter as maximum for now
+  # I think means 60% fainter, 100% being white
+  # so each step is:
+  faintstep <- faintMax / (length(unique(db_onplot))-1)
+  # e.g. if 4 experiments, we leave first as it is / we make second 0.2 fainter / we make third 0.4 fainter / we make fourth 0.6 fainter
+  # e.g. if 2 experiments, we leave first as it is / we make second 0.6 fainter
+
+  # to the steps will be
+  faintratios <- seq(0, faintMax, faintstep) # e.g. 0, 0.2, 0.4, 0.6 if 4 experiments
+
+  dbg_cols <- unlist(lapply(1:length(dbg_cols), function(e) {
+    colorspace::lighten(dbg_cols[[e]], faintratios[e])
+    # i.e. if second exp, we make every colour in second slot by the second ratio
+  }))
+
+  # these are the new colours we should be using for date_box_grp
+
+  return(dbg_cols)
 }

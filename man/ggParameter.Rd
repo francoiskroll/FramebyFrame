@@ -19,6 +19,7 @@ ggParameter(
   onlyDayorNight = NA,
   onlyWin = NA,
   colours = NA,
+  fainterExp = FALSE,
   ymin = NA,
   ymax = NA,
   dotSize = 0.5,

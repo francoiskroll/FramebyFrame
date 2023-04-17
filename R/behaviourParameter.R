@@ -255,6 +255,8 @@ paramReadPivot <- function(pa,
     add_column(date_box=paste(pal$date, pal$box, sep='_'), .before='param') %>%
     # add composite column date + box + win, i.e. labelling individual windows of individual experiments
     add_column(date_box_win=paste(pal$date, pal$box, pal$win, sep='_'), .before='param') %>%
+    # add composite column date + box + grp, i.e. e.g. 220531_14_scr
+    add_column(date_box_grp=paste(pal$date, pal$box, pal$grp, sep='_'), .before='param') %>%
     # add composite column day/night + grp, i.e. ignoring which experiment is which
     add_column(daynight_grp=paste(pal$daynight, pal$grp, sep='_'), .before='param') %>%
     # add composite column win + grp, i.e. ignoring which experiment is which
@@ -312,15 +314,30 @@ paramReadPivot <- function(pa,
   }
 
 
+  ### should we skip night0?
+  # for standard Rihel lab experiments night0/day1/night1/day2/night2 we often want to skip night0
+  if (skipNight0) {
+    pal <- pal %>%
+      filter(win != 'night0')
+
+    if (nrow(pal)==0) stop('\t \t \t \t >>> No complete day or night left after removing night0! \
+                            \t \t \t Did you have only one night? Then you should turn OFF skipNight0, as skipNight0=FALSE. \n')
+  }
+
+
   # order factors
 
   ### date ###
-  # convert to factor, no need to worry about order for now
+  # convert to factor, will give chronological
   pal$date <- factor(pal$date)
 
   ### box ###
   # convert to factor, no need to worry about order for now
   pal$box <- factor(pal$box)
+
+  ### date_box ###
+  # convert to factor, will give chronological
+  pal$date_box <- factor(pal$date_box)
 
   ### fish ###
   # convert to factor, no need to worry about order for now
@@ -382,14 +399,19 @@ paramReadPivot <- function(pa,
   # indeed, order by grp will follow the levels we set above
   pal$date_box_daynight_grp <-
     factor(pal$date_box_daynight_grp,
-           levels= as.vector(unlist(unique(pal[with(pal, order(daynight, box, grp)), 'date_box_daynight_grp']))) )
+           levels= as.vector(unlist(unique(pal[with(pal, order(daynight, date_box, grp)), 'date_box_daynight_grp']))) )
   # about levels=...: we sort the rows by daynight first, box second, grp third
   # then unique of the date_box_daynight_grp column gives us the group in right order
 
   ### date_box_win ###
   pal$date_box_win <-
     factor(pal$date_box_win,
-           levels= as.vector(unlist(unique(pal[with(pal, order(daynight, box, win)), 'date_box_win']))) )
+           levels= as.vector(unlist(unique(pal[with(pal, order(daynight, date_box, win)), 'date_box_win']))) )
+
+  ### date_box_grp ###
+  pal$date_box_grp <-
+    factor(pal$date_box_grp,
+           levels= as.vector(unlist(unique(pal[with(pal, order(daynight, date_box, grp)), 'date_box_grp']))) )
 
   ### date_box_win_grp ###
   # similar logic, but now win is higher level (see e.g. plots used in PhD thesis)
@@ -400,7 +422,7 @@ paramReadPivot <- function(pa,
   # box2_night1_grp1 > box2_night1_grp2 > box2_night2_grp1 > box2_night2_grp2
   pal$date_box_win_grp <-
     factor(pal$date_box_win_grp,
-           levels= as.vector(unlist(unique(pal[with(pal, order(daynight, box, win, grp)), 'date_box_win_grp']))) )
+           levels= as.vector(unlist(unique(pal[with(pal, order(daynight, date_box, win, grp)), 'date_box_win_grp']))) )
 
   # previously...
   # pal$date_box_win_grp <-
@@ -419,7 +441,7 @@ paramReadPivot <- function(pa,
   if('clutch' %in% colnames(pal)) {
     pal$date_box_clutch_win <-
       factor(pal$date_box_clutch_win,
-             levels= as.vector(unlist(unique(pal[with(pal, order(daynight, box, clutch, win)), 'date_box_clutch_win']))) )
+             levels= as.vector(unlist(unique(pal[with(pal, order(daynight, date_box, clutch, win)), 'date_box_clutch_win']))) )
   }
 
   ### date_box_clutch_win_grp ###
@@ -434,18 +456,7 @@ paramReadPivot <- function(pa,
   if('clutch' %in% colnames(pal)) {
     pal$date_box_clutch_win_grp <-
       factor(pal$date_box_clutch_win_grp,
-             levels= as.vector(unlist(unique(pal[with(pal, order(box, clutch, win, grp)), 'date_box_clutch_win_grp']))) )
-  }
-
-
-  # should we skip night0?
-  # for standard Rihel lab experiments night0/day1/night1/day2/night2 we often want to skip night0
-  if (skipNight0) {
-    pal <- pal %>%
-      filter(win != 'night0')
-
-    if (nrow(pal)==0) stop('\t \t \t \t >>> No complete day or night left after removing night0! \
-                            \t \t \t Did you have only one night? Then you should turn OFF skipNight0, as skipNight0=FALSE. \n')
+             levels= as.vector(unlist(unique(pal[with(pal, order(date_box, clutch, win, grp)), 'date_box_clutch_win_grp']))) )
   }
 
   # pal ready to be returned
