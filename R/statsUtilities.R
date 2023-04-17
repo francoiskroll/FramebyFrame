@@ -69,6 +69,8 @@ diff2 <- function(vector) {
 #' @return
 #'
 #' @examples
+#' @export
+
 sem <- function(x) {
   sd(x)/sqrt(length(x))
 }

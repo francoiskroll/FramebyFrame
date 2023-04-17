@@ -52,6 +52,7 @@ substrEnding <- function(x, n){ # x = string (or vector of strings); n = last n 
 #' @return
 #'
 #' @examples
+#' @export
 afterLastSlash <- function(stri) {
 
   # will assume stri is a path
@@ -89,6 +90,7 @@ afterLastSlash <- function(stri) {
 #' @return
 #'
 #' @examples
+#' @export
 beforeLastSlash <- function(stri) {
 
   # will assume stri is a path
@@ -277,6 +279,7 @@ startsWith <- function(stri,
 #' @return
 #'
 #' @examples
+#' @export
 levelUpPath <- function(paths,
                         upn,
                         slash='/') {
