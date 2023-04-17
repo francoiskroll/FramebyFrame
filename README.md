@@ -938,3 +938,6 @@ Allows analysis of an experiment where there are multiple clutches in the same Z
 (Issuing as new version as it will affect slighly existing results, mainly of parameter sleep latency).  
 Caught small inconsistency when detecting sleep bouts. For an empty well or if the larvae was asleep throughout the light transition, the first asleep frame was #1500 (assuming `zthr_min`=1 and framerate 25 fps). However, in this situation, first asleep frame should #1, as definition of sleep is retroactive, e.g. if at frame #1500, the larva had been asleep for 1 minute, this means the sleep bout started exactly one minute earlier, i.e. at frame #1. In this situation, the first asleep frame is now correctly marked as #1. See comments in function detectNaps() for more details.  
 I think the main consequence of this change is on parameter sleepLatency. Previously, it was returning ~ 1.0 min for empty wells or if the larva was asleep during the transition. Now it returns 0.0 min (more precisely 0.00067 min, i.e. one frame in minute) which I think is more accurate.  
+
+### v0.5.0
+New settings `fainterExp` and `faintMax` for ggParameter/ggParameterGrid. See DOCUMENTATION.  
