@@ -52,6 +52,7 @@
 #' @param dotSize
 #' @param faintMax
 #' @param connectMean
+#' @param splitBy
 #'
 #' @return
 #' @export
@@ -83,6 +84,7 @@ ggParameter <- function(pa,
                         xtextOrNo=TRUE,
                         ynameOrNo=TRUE,
                         yunitOrNo=FALSE,
+                        splitBy='window',
                         titleOrNo=TRUE,
                         blankTitle=FALSE,
                         nightBgOrNo=TRUE,
@@ -96,43 +98,47 @@ ggParameter <- function(pa,
 
   # check onlyDayorNight
   if (!is.na(onlyDayorNight) & onlyDayorNight!='day' & onlyDayorNight!='night')
-    stop('\t \t \t \t >>> Error: onlyDayorNight can only be day, night, or NA. \n')
+    stop('\t \t \t \t >>> Error ggParameter: onlyDayorNight can only be day, night, or NA. \n')
 
   # cannot skipNight0 AND ask to plot only night0
   if(!is.na(onlyWin)) {
-    if (skipNight0 & onlyWin=='night0') stop('\t \t \t \t >>> Error: cannot skipNight0 AND ask to only plot night0. \n')
+    if (skipNight0 & onlyWin=='night0') stop('\t \t \t \t >>> Error ggParameter: cannot skipNight0 AND ask to only plot night0. \n')
   }
 
   # cannot have onlyWin set if pooling days/nights
-  if (!is.na(onlyWin) & poolDayNight) stop('\t \t \t \t >>> Error: cannot plot individual window(s) AND pool days/nights at the same time. \n')
+  if (!is.na(onlyWin) & poolDayNight) stop('\t \t \t \t >>> Error ggParameter: cannot plot individual window(s) AND pool days/nights at the same time. \n')
 
   # if only day or night, needs to be consistent with which win to plot
   if (!is.na(onlyWin) & !is.na(onlyDayorNight)) {
     if(substr(onlyDayorNight, 1, 3)!=unique(substr(onlyWin, 1, 3)))
-      stop('\t \t \t \t >>> Error: onlyDayorNight and onlyWin settings not compatible,
+      stop('\t \t \t \t >>> Error ggParameter: onlyDayorNight and onlyWin settings not compatible,
            probably asking to plot individual night(s) while asking for only day, or vice-versa. \n')
   }
 
   # if given colours, need to be same number as grporder
   if (!is.na(grporder[1]) & !is.na(colours[1])) {
-    if(length(grporder) != length(colours)) stop('\t \t \t \t Error: please give one colour per group in grporder \n')
+    if(length(grporder) != length(colours)) stop('\t \t \t \t Error ggParameter: please give one colour per group in grporder \n')
   }
 
   # need to be given both ymin/ymax or none
   # or in other words, sorting c(ymin, ymax) (which removes NA) should be length 0 or length 2
   if (length(sort(c(ymin, ymax))) != 0 & length(sort(c(ymin, ymax))) != 2)
-    stop('\t \t \t \t Error: either give both ymin and ymax or none of them \n')
+    stop('\t \t \t \t Error ggParameter: either give both ymin and ymax or none of them \n')
 
   # check exportPath finishes with .pdf (if it was given)
   if (!missing(exportPath)) {
     if (substrEnding(exportPath, 4) != '.pdf')
-      stop('\t \t \t \t >>> Error: exportPath does not finish with .pdf \n')
+      stop('\t \t \t \t >>> Error ggParameter: exportPath does not finish with .pdf \n')
   }
 
   # cannot have both yname and yunit
   if(ynameOrNo & yunitOrNo)
-    stop('\t \t \t \t Error: do you want Y axis as small sentence or just unit? If small sentence, set ynameOrNo=TRUE;
+    stop('\t \t \t \t Error ggParameter: do you want Y axis as small sentence or just unit? If small sentence, set ynameOrNo=TRUE;
          if unit, set yunitOrNo=TRUE, but do not set both to TRUE at the same time \n')
+
+  # currently splitBy can only be window or experiment
+  if(!splitBy %in% c('window', 'experiment'))
+    stop('\t \t \t \t >>> Error ggParameter: splitBy setting can only be "experiment" or "window", e.g. splitBy="window". \n')
 
 
   ### deal with statistics, if required ###
@@ -304,7 +310,7 @@ ggParameter <- function(pa,
 
   # if want to make experiments fainter colours, that means we colour by date_box_grp
   } else if (!poolDayNight & fainterExp) {
-    ggParam <- ggplot(pal, aes(x=date_box_daynight_grp, y=param, colour=date_box_grp))
+    ggParam <- ggplot(pal, aes(x=date_box_win_grp, y=param, colour=date_box_grp))
   }
 
   # note 16/03/2023: I should probably delete poolDayNight setting
@@ -329,23 +335,24 @@ ggParameter <- function(pa,
 
     ggParam +
 
-    ggbeeswarm::geom_quasirandom(groupOnX=TRUE, width=0.09, size=dotSize, dodge.width=dodgeby) +
+    ggbeeswarm::geom_quasirandom(width=0.09, size=dotSize, dodge.width=dodgeby) +
     stat_summary(aes(group=grp), fun=mean, geom='point', colour='#595E60', shape=3, size=1.2, stroke=0.8, position=position_dodge(dodgeby)) +
 
     # should we also connect the cross means with a line? can help with readibility
-    {if(connectMean) stat_summary(aes(group=1), fun=mean, geom='line', colour='#595E60', size=0.4, position=position_dodge(dodgeby))} +
+    {if(connectMean) stat_summary(aes(group=date_box_win), fun=mean, geom='line', colour='#595E60', size=0.4, position=position_dodge(dodgeby))} +
 
     # split the plot for clarity
     # if clutch column present, each subplot is one date_box_clutch_win, e.g. 230306_14_clutch2_day1
     {if('clutch' %in% colnames(pal)) facet_grid(~date_box_clutch_win, scales='free_x', space='free_x', switch='both',
                                                 labeller=as_labeller(facetlabs))} +
-    # but usually each subplot is one date_box_win, e.g. 230306_14_day1
-    {if(!'clutch' %in% colnames(pal)) facet_grid(~date_box_win, scales='free_x', space='free_x', switch='both',
-                                                labeller=as_labeller(facetlabs))} +
 
-    # usually each subplot = one date_box_win, e.g. 230306_14_day1
-    # facet_grid(~date_box_win, scales='free_x', space='free_x', switch='both',
-    #            labeller=as_labeller(facetlabs)) +
+    # if not, we can split by date_box, i.e. experiment (so all days/nights for one experiment, then all days/nights for other experiment), etc.
+    # or by date_box_win, i.e. split every day/night of every experiment
+    {if(!'clutch' %in% colnames(pal) & splitBy=='window') facet_grid(~date_box_win, scales='free_x', space='free_x', switch='both',
+                                                                    labeller=as_labeller(facetlabs))} +
+
+    {if(!'clutch' %in% colnames(pal) & splitBy=='experiment') facet_grid(~date_box, scales='free_x', space='free_x', switch='both',
+                                                                        labeller=as_labeller(facetlabs))} +
 
     scale_colour_manual(values=colours) +
     theme_minimal() +
@@ -444,6 +451,7 @@ ggParameter <- function(pa,
 #' @param fainterExp
 #' @param faintMax
 #' @param connectMean
+#' @param splitBy
 #'
 #' @return
 #' @export
@@ -471,6 +479,7 @@ ggParameterGrid <- function(paDir,
                             ynameOrNo=TRUE,
                             yunitOrNo=FALSE,
                             xtextOrNo=TRUE,
+                            splitBy='window',
                             titleOrNo=TRUE,
                             nightBgOrNo=TRUE,
                             keysOrNo=FALSE,
@@ -551,6 +560,7 @@ ggParameterGrid <- function(paDir,
                            xtextOrNo=xtextOrNo,
                            ynameOrNo=ynameOrNo,
                            yunitOrNo=yunitOrNo,
+                           splitBy=splitBy,
                            titleOrNo=titleOrNo,
                            blankTitle=FALSE,
                            nightBgOrNo=nightBgOrNo,
@@ -608,6 +618,7 @@ ggParameterGrid <- function(paDir,
                              xtextOrNo=xtextOrNo,
                              ynameOrNo=ynameOrNo,
                              yunitOrNo=yunitOrNo,
+                             splitBy=splitBy,
                              titleOrNo=titleOrNo,
                              blankTitle=blankTitle,
                              nightBgOrNo=nightBgOrNo,

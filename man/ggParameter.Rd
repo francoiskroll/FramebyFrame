@@ -29,6 +29,7 @@ ggParameter(
   xtextOrNo = TRUE,
   ynameOrNo = TRUE,
   yunitOrNo = FALSE,
+  splitBy = "window",
   titleOrNo = TRUE,
   blankTitle = FALSE,
   nightBgOrNo = TRUE,
@@ -40,7 +41,7 @@ ggParameter(
 )
 }
 \arguments{
-\item{connectMean}{}
+\item{splitBy}{}
 }
 \description{
 Title

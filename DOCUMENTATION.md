@@ -547,13 +547,15 @@ onlyExp: do you want to plot only specific experiment(s) of the parameter tables
 
 **ynameOrNo**: whether or not (TRUE or FALSE) to write the name of the Y axis. It automatically writes a name depending on the parameter, e.g. “active bout mean (Δ px)”. Default is TRUE.
 
-**yunitOrNo**: whether or not (TRUE or FALSE) to only write the unit of measure on the Y axis, e.g. Δ px for active bout length. It is essentially a simpler version of ynameOrNo. I would recommend yunitOrNo=TRUE if you have the parameter names as titles already (below), otherwise the Y axis name is redundant. Default is FALSE.
+**yunitOrNo**: whether or not (TRUE or FALSE) to only write the unit of measure on the Y axis, e.g. Δ px for active bout length. It is essentially a simpler version of ynameOrNo. I would recommend yunitOrNo=TRUE if you have the parameter names as titles already (below), otherwise the Y axis name is redundant. Default is FALSE.  
+
+**splitBy**: how to split the panel, can be `"window"`, which splits the panel by each day/night of each experiment, or `"experiment"`, which splits the panel by experiment Splitting the panel only means that the horizontal lines of the grid have breaks, it does not affect the order of the dots. Default is `'window'`.  
 
 **titleOrNo**: whether or not (TRUE or FALSE) to write the parameter name as title of the plot.
 
 **blankTitle**: you can probably skip, this is for internal use. TRUE (with titleOrNo=TRUE) writes a blank title. It helps to align the day and night plots properly in ggParameterGrid(). Default is FALSE.
 
-**nightBgOrNo**: whether or not (TRUE or FALSE) to add a grey background when night datapoints are plotted. Currently, it only works if onlyDayorNight='night'. Default is TRUE.
+**nightBgOrNo**: whether or not (TRUE or FALSE) to add a grey background when night datapoints are plotted. Currently, it only works if `onlyDayorNight='night'`. Default is TRUE.
 
 **statsOrNo**: whether or not (TRUE or FALSE) to add ns/*/**/*** on top of the plot to indicate statistical significance between groups. This is calculated by LMEdaynight(), read there for details.
 

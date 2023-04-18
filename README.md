@@ -944,3 +944,6 @@ New settings `fainterExp` and `faintMax` for ggParameter/ggParameterGrid. See DO
 
 ### v0.6.0
 New setting `connectMean` for ggParameter/ggParameterGrid. See DOCUMENTATION. Might change default to TRUE once confirmed it behaves as expected.  
+
+### v0.7.0
+New setting `splitBy` for ggParameter/ggParameterGrid. See DOCUMENTATION.  

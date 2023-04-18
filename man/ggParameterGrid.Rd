@@ -27,6 +27,7 @@ ggParameterGrid(
   ynameOrNo = TRUE,
   yunitOrNo = FALSE,
   xtextOrNo = TRUE,
+  splitBy = "window",
   titleOrNo = TRUE,
   nightBgOrNo = TRUE,
   keysOrNo = FALSE,
@@ -39,7 +40,7 @@ ggParameterGrid(
 )
 }
 \arguments{
-\item{connectMean}{}
+\item{splitBy}{}
 }
 \description{
 Title
