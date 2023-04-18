@@ -333,7 +333,7 @@ ggParameter <- function(pa,
     stat_summary(aes(group=grp), fun=mean, geom='point', colour='#595E60', shape=3, size=1.2, stroke=0.8, position=position_dodge(dodgeby)) +
 
     # should we also connect the cross means with a line? can help with readibility
-    {if(connectMean) stat_summary(aes(group=1), fun=mean, geom='line', colour='#595E60', size=0.2, position=position_dodge(dodgeby))} +
+    {if(connectMean) stat_summary(aes(group=1), fun=mean, geom='line', colour='#595E60', size=0.4, position=position_dodge(dodgeby))} +
 
     # split the plot for clarity
     # if clutch column present, each subplot is one date_box_clutch_win, e.g. 230306_14_clutch2_day1
