@@ -212,6 +212,10 @@ calculateFingerprint <- function(paDir,
 
       psm$box <- as.integer(as.character(psm$box))
       psm[which(psm$date_box %in% poL[[p]]), 'box'] <- p # i.e. 1, 2, etc.
+
+      # date_box might be stored as a factor, which prevents to change to mergeExp_x
+      # so first make sure date_box is character
+      psm$date_box <- as.character(psm$date_box)
       psm[which(psm$date_box %in% poL[[p]]), 'date_box'] <- paste('mergeExp', p, sep='_') # i.e. mergeExp_1, mergeExp_2, etc.
 
     }
