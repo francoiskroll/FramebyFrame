@@ -47,7 +47,7 @@ calculateFingerprint <- function(paDir,
   # (list.files can take multiple directories as input, no need for a lapply or else here)
 
   # check that the bhvparams folder user gave exists
-  if(!dir.exists(paDir)) stop('\t \t \t \t >>> Error calculateFingerprint: cannot find directory ', paDir,'\
+  if(!dir.exists(paDir[1])) stop('\t \t \t \t >>> Error calculateFingerprint: cannot find directory ', paDir,'\
                               \t Check paDir setting and try again. \n')
 
   flis <- which(substrEnding(list.files(paDir), 4) == '.csv') # indices of files we will probably want to import from paDir
