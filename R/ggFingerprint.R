@@ -175,7 +175,7 @@ ggFingerprint <- function(fgp,
     # exception: if multiple experiments were merged when calculating fingerprints,
     # fingerprint data gives date_box as e.g. mergeExp_1 but LME report (rightly) lists all the experiments
     # so we cannot check in that case
-    if(fgp$date[1]=='mergeExp') {
+    if('mergeExp' %in% unique(fgp$date)) {
       cat('\t \t \t \t >>> Beware! Cannot check that the correct LME report was given. Please double-check you are giving the LME statistics for exactly the experiments that are plotted. \n')
 
     } else {
