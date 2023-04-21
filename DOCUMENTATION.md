@@ -170,7 +170,7 @@ Note, xstart/xstop & trimstart/trimstop are especially useful to align plots fro
 
 **ymajorOrNo**: whether or not (TRUE or FALSE) to draw the major horizontal grid lines in the background of the plot. Default is TRUE.
 
-nightBgOrNo: whether or not (TRUE or FALSE) to add grey backgrounds to represent the nights.  
+**nightBgOrNo**: whether or not (TRUE or FALSE) to add grey backgrounds to represent the nights.  
 
 **sunlinesOrNo**: whether or not (TRUE or FALSE) to draw vertical dashed lines representing the light transitions. You probably do not need these light transition lines if you are happy with the night backgrounds (when nightBgOrNo=TRUE, see above). However, if for whatever reason you want to add the night backgrounds yourself in Illustrator or else, I recommend exporting the plot once with sunlinesOrNo=TRUE so you can place your grey rectangles correctly, then return to R, export the plot without the sunlines (sunlinesOrNo=FALSE) and replace the file in your graphics software. Default is FALSE.  
 
@@ -923,17 +923,56 @@ About **mergeExp1–3** settings: this can be useful if you tracked a single clu
 
 ### ggFingerprint(...)
 
-**fgp**: object or full path to _fingerprint.csv_, created by calculateFingerprint(...). You can overlay multiple fingerprints by giving multiple paths here, e.g. `fgp=c("'~/.../fingerprintExp1.csv", "fingerprintExp2.csv")`.
+**fgp**: object or full path to _fingerprint.csv_, created by calculateFingerprint(...). You can overlay multiple fingerprints by giving multiple paths here, e.g. `fgp=c("'~/.../fingerprintExp1.csv", "fingerprintExp2.csv")`.  
+
+**lmePath**: full path to a .csv LME report file created by `LMEreport()`. It will be used to add asterisks on top of the fingerprint to mark the significant parameters. This only works if you are plotting a single group (from one or multiple experiments) in the fingerprint plot, e.g. the homozygous fingerprint of two replicate experiments. If you do not want these asterisks, simply skip the setting or turn to NA: `lmePath=NA`. Default is NA.  
 
 **metric**: `mean` or `median`. I briefly experimented with defining the fingerprint as median ± MAD of all *Z*-scores instead of mean ± SEM (see step 6 above). This caused several issues, for example the median of all *Z*-scores is not 0 so the controls' fingerprint was not at 0 anymore. Overall I do not think this was a good idea, but it is left here if ever useful. Default is `mean`.
 
-**controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example `controlGrp=c('control', 'wt')`.
-
 **grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.
 
-**skipNight0**: whether or not (TRUE or FALSE) to remove the night0’s datapoints prior to calculating the fingerprint. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
+**controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example `controlGrp=c('control', 'wt')`.
 
-**avgDayNight**: whether or not (TRUE or FALSE) to average, for each parameter and each larva, its days datapoints together and its nights datapoints together prior to calculating the fingerprint. This will affect what each unique parameter is in the fingerprint: if TRUE, parameters are e.g. day_sleepHours and night_sleepHours; if FALSE, parameters are e.g. day1_sleepHours, day2_sleepHours, night1_sleepHours, night2_sleepHours. In other words, do you want to keep individual day/night resolution or not?
+**removeControl**: whether or not (TRUE or FALSE) to remove the controls' fingerprint(s). Every point of the controls' fingerprint(s) should be at 0 ± SEM, by definition of the Z-scores. Setting to TRUE first can be a good way to check this and understand the plot. Default is FALSE. Not mentioning the control group(s) in `grporder` is another way of excluding them from the plot.  
+
+**onlyExp**: if you do not wish to plot every experiment present in the data, you can list the only experiments you want to plot here in the format YYMMDD_BX, e.g. `onlyExp=c('220601_16', '220601_17')`.  
+
+**removeParam**: if you do not wish to plot every behaviour parameter present in the data, you can list some parameters to exclude here, e.g. `removeParam=c('activeboutStd', 'sleepLatency')`.  
+
+**colours**: colour of each fingerprint. The order will follow the chronological order of the experiments (their YYMMDD), and within each experiment the order of the groups (genotypes), given as `grporder` or in alphabetical order if `grporder` is not given. For example, say you are plotting experiment 220601_16 and 220609_16 and each have groups hom & het, the order in which to give the colours is: 220601_16_het, 220601_16_hom, 220601_16_het, 220601_16_hom. In practice, you can simply keep `legendOrNo=TRUE` (see below) and do by trial-and-error. Note, R understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will give default R colours, which actually look alright.  
+
+**connectOrNo**: whether or not (TRUE or FALSE) to connect the dots in the fingerprint plot. I find that the lines help visually tracking each fingerprint. However, connecting the behaviour parameters together does not have any meaning, hence the option to delete these lines. Default is TRUE.  
+
+**legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.  
+
+**ynameOrNo**: whether or not (TRUE or FALSE) to write the name of the Y axis. TRUE writes "deviation from controls (z-score)" as Y axis name. Default is TRUE.  
+
+***ytextOrNo**: whether or not (TRUE or FALSE) to write the units on the Y axis.  
+
+**xtextOrNo**: whether or not (TRUE or FALSE) to write labels on the X axis. What is written depends on `xParamNum` below. Default is TRUE.  
+
+**xParamNum**: whether or not (TRUE or FALSE) to write the parameter numbers on the X axis, typically 1, 2, 4, ... for day; then 1, 2, 3, ... for night (day skips two parameters: activitySunsetStartle and sleepLatency). FALSE with `xtextOrNo=TRUE` will write the parameter names instead. Default is FALSE.  
+
+**nightBgOrNo**: whether or not (TRUE or FALSE) to add a grey background behind the fingerprint of the night parameters. Default is TRUE.  
+
+**ymin**: start of Y axis, in z-scores.  
+
+**ymax**: end of Y axis, in z-scores.  
+
+**dotSize**: size of the dots ± range (to represent SEM). Default is 0.2.  
+
+**lineSize**: size (thickness) of the lines connecting the parameters. Default is 0.2.  
+
+**asteriskSize**: size of the asterisks taken from the LME report. Default is 3.  
+
+**exportOrNo**: whether or not (TRUE or FALSE) to export to plot to a .pdf file. Default is TRUE.  
+
+**exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf.  
+
+**width**: width of the pdf in mm. Default is 150.  
+
+**height**: height of the pdf in mm. Default is 100.  
+
 
 ### ggPairwiseHeat(...)
 
