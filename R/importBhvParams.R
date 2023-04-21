@@ -34,9 +34,11 @@ importBhvParams <- function(paDir,
   # but to be safe, will take only .csv files which start with activity or activebout or sleep
   # (as user may have put other stuff in the folder like plots)
 
-  # check that the bhvparams folder user gave exists
-  if(!dir.exists(paDir)) stop('\t \t \t \t >>> Error calculateFingerprint: cannot find directory ', paDir,'\
+  # check that the bhvparams folder(s) user gave exists
+  for(pth in paDir) {
+    if(!dir.exists(pth)) stop('\t \t \t \t >>> Error importBhvParams: cannot find directory ', pth,'\
                               \t Check paDir setting and try again. \n')
+  }
 
   flis <- which(substrEnding(list.files(paDir), 4) == '.csv') # indices of files we will probably want to import from paDir
 
