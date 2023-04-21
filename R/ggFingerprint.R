@@ -195,8 +195,8 @@ ggFingerprint <- function(fgp,
     if(length(unique(fgp$grp))>1)
       stop('\t \t \t \t >>> Error ggFingerprint: currently only supports adding LME asterisks if one group is plotted. There can still be one fingerprint per experiment, but it needs to be the same group in each experiment. You can adjust in grporder, e.g. grporder="hom" \n')
 
-    # delete from the LMEreport any row that gives another grp as 'beingGroup'
-    lme <- subset(lme, beingGroup!=unique(fgp$grp))
+    # from the LMEreport, only keeps rows that give this grp as 'beingGroup'
+    lme <- subset(lme, beingGroup==unique(fgp$grp))
 
     # we need to join by uparam
     # create this composite column in lme:

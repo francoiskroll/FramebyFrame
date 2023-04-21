@@ -96,7 +96,7 @@ LMEdaynight <- function(pa,
 
     # check more than one exp
     if(length(unique(pal$date_box))<2)
-      stop('\t \t \t \t >>> Error LMEdaynight: it does not make sense to have fewer than  and give sameClutch setting \n')
+      stop('\t \t \t \t >>> Error LMEdaynight: it does not make sense to have fewer than 2 experiments and give sameClutch setting \n')
 
     sameClutchMode <- TRUE
 
@@ -115,6 +115,8 @@ LMEdaynight <- function(pa,
       cat('\t \t \t \t >>> Labelling experiments', scL[[sc]], 'as clutch', sc,'\n')
 
       # now find all rows which belong to sameClutch experiments and edit clutch column
+      # ! date_box may be a factor, in which case it would throw an error to try to modify values
+      pal$clutch <- as.character(pal$clutch)
       pal[which(pal$date_box %in% scL[[sc]]), 'clutch'] <- paste0('clutch', sc)
 
     }
@@ -561,7 +563,8 @@ LMEmodel <- function(pdn,
 
   ########
   ### special case: if multiple clutches in same box
-  if('clutch' %in% colnames(pdn)) {
+  # is there a 'clutch' column?; but ! there is also a 'clutch' column when same clutch is tracked in two parallel boxes (in which case sameClutchMode is ON)
+  if('clutch' %in% colnames(pdn) & !sameClutchMode) {
 
     # I do not see how sameClutchMode could be ON and have multiple clutches in same box
     if(sameClutchMode) stop('\t \t \t \t >>> Error LMEmodel: did not consider situation where you would both have the same clutch in multiple boxes AND multiple clutches in the same box. Please report the issue. \n')
