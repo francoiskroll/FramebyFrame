@@ -326,7 +326,7 @@ ggFingerprint <- function(fgp,
         {if(connectOrNo) geom_line(aes(group=date_box_period_grp), linewidth=lineSize)} +
         geom_pointrange(aes(ymin=mean-sem, ymax=mean+sem), size=dotSize) +
         # add the pvalue asterisks, if user gave a LME report
-        {if(!is.na(lmePath)) geom_text(aes(label=posthocpvalsymbol), y=ymax, angle=90, vjust=0.75, size=asteriskSize, colour='#4d4d4d')} +
+        {if(!is.na(lmePath)) geom_text(aes(label=posthocpvalsymbol), y=ymin, angle=90, vjust=0.75, hjust=0, size=asteriskSize, colour='#4d4d4d')} +
 
         scale_colour_manual(values=colours)
 
