@@ -195,8 +195,8 @@ ggFingerprint <- function(fgp,
     if(length(unique(fgp$grp))>1)
       stop('\t \t \t \t >>> Error ggFingerprint: currently only supports adding LME asterisks if one group is plotted. There can still be one fingerprint per experiment, but it needs to be the same group in each experiment. You can adjust in grporder, e.g. grporder="hom" \n')
 
-    # from the LMEreport, we take all the rows that have beingGroup as that group
-    # at this stage, we can simply join to the fingerprint data
+    # delete from the LMEreport any row that gives another grp as 'beingGroup'
+    lme <- subset(lme, beingGroup!=unique(fgp$grp))
 
     # we need to join by uparam
     # create this composite column in lme:
@@ -259,8 +259,8 @@ ggFingerprint <- function(fgp,
 
   # set x text
   # ! need to be very careful not to change the order
-  # the trick is to take the levels of uparam (set above), not the actual uparam column
-  xticks <- strNthSplit(levels(fgp$uparam), '_', 2)
+  # the trick is to take the parameter names from the levels of uparam (set above), not the actual uparam column
+  xparams <- strNthSplit(levels(fgp$uparam), '_', 2)
 
   # alternative x text is to have parameter number
   # ! should not assume we can just repeat a series of digits twice
@@ -275,13 +275,17 @@ ggFingerprint <- function(fgp,
   # at this stage, unique xticks will represent unique parameters included in the fingerprint
   # so should say the same parameters as allparamnms
 
-  if(!identical(unique(sort(xticks)), sort(allparamnms)))
+  if(!identical(unique(sort(xparams)), sort(allparamnms)))
     stop('\t \t \t \t >>> Error ggFingerprint: something wrong when preparing X axis labels. \n')
 
   # can prepare the parameter numbers
   # we simply match each unique parameter in allparamnms
   # e.g. activityTotalPx is #2, etc.
-  xparamnum <- match(xticks, allparamnms)
+  xparamnum <- match(xparams, allparamnms)
+
+  # finally, we can convert the parameter names to better wording with function param2Title
+  # so if using names (rather than parameter number), it is more readable
+  xparams <- as.character(sapply(xparams, param2Title))
 
   # find the middle of the plot to position the night background correctly
   # it should be the last day parameter + 0.5
@@ -365,8 +369,8 @@ ggFingerprint <- function(fgp,
     {if(!ytextOrNo) theme(axis.text.y=element_blank())} +
     {if(ytextOrNo) theme(axis.text.y=element_text(size=7, margin=margin(t=0, r=-1, b=0, l=0)))} +
 
-    {if(xtextOrNo & !xParamNum) scale_x_discrete(labels=xticks)} +
-    {if(xtextOrNo & !xParamNum) theme(axis.text.x=element_text(size=7, angle=45, hjust=1))} +
+    {if(xtextOrNo & !xParamNum) scale_x_discrete(labels=xparams)} +
+    {if(xtextOrNo & !xParamNum) theme(axis.text.x=element_text(size=7, angle=90, hjust=1, vjust=0.5, margin=margin(t=-2, r=0, b=0, l=0)))} +
 
 
     {if(xParamNum) scale_x_discrete(labels=xparamnum)} +
