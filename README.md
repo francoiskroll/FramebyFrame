@@ -953,4 +953,5 @@ New setting `splitBy` for ggParameter/ggParameterGrid. See DOCUMENTATION.
 * ggFingerprint: new settings `dotSize` to control the size of the point ± SEM range; `lineSize` to control the thickness of the lines; `asteriskSize` to control the size of the LME asterisks.
 
 ### v0.9.0
+24/04/2023  
 Better definition of parameter **activitySunsetStartle**. It now looks for the maximum Δ px from a bit before the light/woi transition up to a bit after (currently −1 min up to +1 min). Solves a concern which was that we might miss the real startle response if the light transition was not perfectly accurate.  
