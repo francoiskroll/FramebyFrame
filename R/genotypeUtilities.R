@@ -156,6 +156,7 @@ pivotLongAssignGenotype <- function(txf,
 #' @return
 #'
 #' @examples
+#' @export
 addGenotypefXColnames <- function(df,
                                   genopath) {
 
