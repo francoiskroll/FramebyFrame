@@ -951,3 +951,6 @@ New setting `splitBy` for ggParameter/ggParameterGrid. See DOCUMENTATION.
 ### v0.8.0
 * Option to give an LME report to ggFingerprint (setting `lmePath`) so it adds p-value asterisks on top of the fingerprint plot. See DOCUMENTATION. I have not extensively tested this feature yet, please check manually for a few parameters that the asterisks match what you read in the the LME report. Please let me know if you find anything odd.  
 * ggFingerprint: new settings `dotSize` to control the size of the point ± SEM range; `lineSize` to control the thickness of the lines; `asteriskSize` to control the size of the LME asterisks.
+
+### v0.9.0
+Better definition of parameter **activitySunsetStartle**. It now looks for the maximum Δ px from a bit before the light/woi transition up to a bit after (currently −1 min up to +1 min). Solves a concern which was that we might miss the real startle response if the light transition was not perfectly accurate.  

@@ -412,7 +412,8 @@ There are currently 17 behavioural parameters.
 
 *	**activityTotalPx**: the total (sum) number of pixels moved per larva per time window. This parameter is given in millions (106) of pixels. For example, larva #7 moved 3 (× 106) pixels during day1.
 
-*	**activitySunsetStartle**: each larva’s startle response at the day-to-night transition, defined as the maximum delta pixel value during the three seconds after lights switch OFF. Note, this parameter is only defined for nights. For example, the highest swimming bout of larva #9 during the first three seconds of night2 reached 50 pixels.
+*	**activitySunsetStartle**: each larva’s startle response at the day-to-night transition, defined as the maximum Δ px value found around the transition (as of v0.9.0, it looks from 1 min before the transition up to 1 min after the transition to be safe not to miss the real startle response in case the transition is not perfectly precise). Note, this parameter is only defined for nights. For example, the highest swimming bout of larva #9 during the first three seconds of night2 reached 50 pixels.  
+Are you analysing your data by woi? activitySunsetStartle will return the maximum Δ px value from a bit before up to a bit after the first frame of the woi. You may need to think whether this has any meaning in the context of your experiment.  
 
 *	**activitySlope**: the slope in the activity for one larva and one time window. For example, the activity of larva #7 decreased with a slope of −1,000 during day1.
 In practice, the slope is calculated by linear regression of Y = frame-by-frame data summed in 10-minute bins and X = hours since the start of this window. This is because most frames are 0 Δpixel so calculating the linear regression on the ‘raw’ frame-by-frame data would not be meaningful. Consequently, you can read the example above as “each additional hour of day1 decreased the activity of larva #7 by 1,000 Δpixel/10 minute in average”.
