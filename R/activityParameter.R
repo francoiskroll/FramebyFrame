@@ -68,7 +68,7 @@ activityParameter <- function(dn,
     # in practice, fps is only used by activitySunsetStartle currently
 
     ### set-up a progress bar
-    # how many fish are we about to calculate?
+    # how many fish are we about to calculate?
     nfis <- ncol(dnw)-timecols # number of columns in the data, minus the time columns
     prg <- txtProgressBar(min=0, max=nfis, style=3, char='><> ')
 
@@ -110,18 +110,6 @@ activityParameter <- function(dn,
     add_column(fish=colnames(dn[[1]])[(timecols+1):ncol(dn[[1]])], .before=1)
   row.names(pal) <- NULL
 
-  # exception: activitySunsetStartle is only calculated on nights
-  # it would have been more intuitive not to calculate it on day data
-  # but easier to calculate parameter on every window, then switch day results to NA now
-  if(parameter=='activitySunsetStartle') {
-    cat('\t \t \t \t >>> activitySunsetStartle is only meaningful for nights, switching day results to NA... \n')
-
-    cols2NA <- which(substr(colnames(pal), 1, 3)=='day')
-
-    if(length(cols2NA)>0) {
-      pal[,cols2NA] <- NA
-    }
-  }
 
   # exception: parameters based on regression need further processing
   # we got a string 'intercept_slope'

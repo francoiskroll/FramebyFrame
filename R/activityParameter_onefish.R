@@ -77,43 +77,6 @@ activityTotalPx_onefish <- function(ffc,
 
 
 
-# function activitySunsetStartle_onefish(...) -----------------------------
-
-# note, we do not look here whether we are given day or night data
-# will simply calculate parameter on any ffc given
-# activityParameter() then takes care of removing the day results
-
-# SunsetStartle is currently defined as the maximum deltapx during the 3 seconds after the light transition
-
-#' Title
-#'
-#' @param ffc
-#' @param zhc
-#' @param bin_nsecs
-#' @param fps
-#'
-#' @return
-#' @export
-#'
-#' @examples
-activitySunsetStartle_onefish <- function(ffc,
-                                          zhc,
-                                          bin_nsecs,
-                                          fps) {
-
-  # ***
-  nsecs <- 10 # 10-second window after transition defined here
-  # ***
-
-  return( max(ffc[1:fps*nsecs]) )
-  # fps*nsecs: e.g. 25 frames-per-second * 10 seconds = 75 frames
-  # take the first that many frames from ffc, e.g. the first 10 seconds' worth of data
-  # return the max deltapx during that period
-
-}
-
-
-
 # function activitySlope_onefish(...) -------------------------------------
 
 # ffc = one column of frame-by-frame deltapx
@@ -314,4 +277,131 @@ activityCompressibility_onefish <- function(ffc,
   # e.g. sequence is 100,000 frames and its length becomes 500 after compression
   # so compressed sequence is 0.005 (0.5%) of original
   # i.e. we reduced the sequence length by 99.5%
+}
+
+
+
+# function activitySunsetStartle(...) -------------------------------------
+
+# read comments in activityParameter.R
+# exception to the framework of calculating parameters by time window/by fish
+# we want last n values of previous day/night and first n values of current day/night
+# so better to calculate with all of dn as input
+
+# note, we do not look here whether we are given day or night data
+# will calculate the parameter on any ffc given
+# activityParameter() then takes care of removing the day results
+
+# SunsetStartle is currently defined as the maximum deltapx during the 3 seconds after the light transition
+
+# dn: all frame-by-frame data splitted in a list by day/night
+
+# win: window index given by the sapply in activityParameter
+
+# fps: frames-per-second
+
+# behaviourParameter gives us all ff data of one experiment and dn, i.e. ff split by day/night or woi
+
+#' Title
+#'
+#' @param ff
+#' @param dn
+#'
+#' @return
+#' @export
+#'
+#' @examples
+activitySunsetStartle <- function(ff,
+                                  dn) {
+
+  ### defining here how big of a window we consider
+  # let us say 1 min before transition up to 1 min after transition
+  nsecs <- 60
+  ###
+
+  # chunk of code below originally taken from activityParameter.R
+  # logic is similar, we loop through time windows, and within each we loop through fish
+  # but we need access to full data ff
+
+  # (how many time columns?)
+  # need this number below so we do not process the time columns as actual data
+  timecols <- which(grepl("^f+[[:digit:]]", colnames(dn[[1]])))[1] - 1
+
+  # ** FIRST sapply to loop through time window, typically night0, day1, ...
+  pal <- sapply( 1:length(dn), function(win) {
+
+    cat('\n \t \t \t \t >>>', toupper(names(dn)[win]), ' \n')
+
+    ### average framerate of this window?
+    fps <- averageFramerate(dn[[win]]$exsecs) # will print fps to Console too
+
+    # therefore, how many frames should we look before/after transition to find the sunsetStartle?
+    nfras <- nsecs*fps
+
+    ### prepare a dataframe of ff data which is last n frames of previous time window up to first n frames of this time window
+    # essentially as if we were zooming on the light transition in the big RAWs.csv file
+    # to do this, we simply append together end of previous time window and start of current time window
+
+    # we need to know start of this window in frame index
+    # unfortunately do not have frame index as a column, but we can get the exsecs from dn and match to find the row in full ff
+    staf <- which(ff$exsecs==dn[[win]]$exsecs[1]) # will give row (frame) index of first frame of current time window
+
+    # now prepare dataframe (read above)
+    # I think we can assume here we will always have a couple of minutes of data before this transition, even if first day/night or woi transition?
+    ffwt <- as.data.frame( ff[ (staf-nfras) : (staf+nfras) , ] )
+    # ffwt is for ff around window transition
+
+    ### set-up a progress bar
+    # how many fish are we about to calculate sunsetStartle for?
+    nfis <- ncol(ffwt)-timecols # number of columns in the data, minus the time columns
+    prg <- txtProgressBar(min=0, max=nfis, style=3, char='><> ')
+
+    # sapply to loop through fish
+    sapply((timecols+1):ncol(ffwt),
+           function(fic) {
+             # fic for fish column, will loop e.g. column #4, #5, ... (assuming first three columns are timestamps)
+
+             # calculate the activity parameter for this fish
+             # using 'one fish' version of the parameter function
+             # we give it
+             # ffc = frame-by-frame data for that time window/fish, ffc for frame-by-frame column
+             # cat('\t \t \t \t \t >>> well', colnames(dnw)[fic], ' \n')
+             # which fish are we at?
+             setTxtProgressBar(prg, fic-timecols) # update progress bar
+             # fic-timecols will give which fish we are at
+
+             # now we simply return the maximum delta-pixel of the timecourse zoomed in on the window transition (ffwt created above)
+             return( max(ffwt[,fic]) )
+           })
+
+  })
+  # overarching (** first) sapply gives 'pal' directly as a dataframe columns = day/night rows = fish
+
+  # make sure it is a dataframe
+  pal <- as.data.frame(pal)
+
+  # add column names as day/night or woi
+  colnames(pal) <- names(dn)
+
+  # put back fishid as first column
+  # take them from column names of dn
+  pal <- pal %>%
+    add_column(fish=colnames(dn[[1]])[(timecols+1):ncol(dn[[1]])], .before=1)
+  row.names(pal) <- NULL
+
+  # ! activitySunsetStartle is only calculated on nights
+  # it would have been more intuitive not to calculate it on day data
+  # but easier to calculate parameter on every window, then switch day results to NA now
+  cat('\t \t \t \t >>> activitySunsetStartle is only meaningful for nights, switching day results to NA... \n')
+
+  cols2NA <- which(substr(colnames(pal), 1, 3)=='day')
+
+  if(length(cols2NA)>0) {
+    pal[,cols2NA] <- NA
+  }
+
+  # return pal
+  # should have the same format as created by e.g. activityParameter
+  return(pal)
+
 }

@@ -663,11 +663,6 @@ behaviourParameter <- function(parameter,
   names(dnL) <- substr(afterLastSlash(ffpath), 1, 9)
 
 
-  # at this stage we can delete ffL to save space
-  rm(ffL)
-
-
-
   # /// to run tests /// ----------------------------------------------------
   # to run quick tests, only calculate day1 on one experiment
   # ! load only one experiment
@@ -699,27 +694,44 @@ behaviourParameter <- function(parameter,
   # result will be a list, one slot per experiment
   # each slot is a simple parameter dataframe `pa` where rows = fish, column = day/night
 
-  # category1
+  ### category1: activity ###
   if(substr(parameter, 1, 8) == 'activity') {
 
-    # !! exception: we cannot calculate activityTransitionDelta if there is only one time window (day/night or window of interest)
-    if(parameter=='activityTransitionDelta' & length(dnL[[1]])==1) { # ! only looking at first experiment given***
+    cat('\n \t \t \t \t >>> ACTIVITY parameter \n')
+
+    # ! EXCEPTION1: activitySunsetStartle
+    # parameter activitySunsetStartle is an annoying exception that is best taken care of here
+    # exact frame of light transition can be slightly imprecise
+    # consequently, it is safer to look for sunset startle in a window starting a bit before the transition and finishing a bit after the transition
+    # this is an exception to the framework which consists in calculating parameters by time window/by fish
+    # best is to calculate activitySunsetStartle now separately while we still have all frame-by-frame data at hand, then proceed as normal for the other parameters
+    if(parameter == 'activitySunsetStartle') {
+
+      cat('\t \t \t \t >>> Calculating ~~~', parameter, '~~~ \n \n')
+
+      paL <- lapply(1:length(dnL), function(i) { # i is experiment index
+        activitySunsetStartle(ff=ffL[[i]],
+                              dn=dnL[[i]])
+      })
+
+    # ! EXCEPTION2: we cannot calculate activityTransitionDelta if there is only one time window (day/night or window of interest)
+    } else if(parameter=='activityTransitionDelta' & length(dnL[[1]])==1) { # ! only looking at first experiment given***
+      # ***as of 17/03/2023; I am not sure what would happen if user were to give experiments with different number of days/nights
       cat('\t \t \t \t >>> Cannot calculate activityTransitionDelta as there is only one time window. \n')
       return(NULL)
+    } else {
+      ### normal case ###
+      paL <- lapply(dnL, activityParameter, parameter=parameter, dayduration=dayduration)
     }
-    # ***as of 17/03/2023; I am not sure what would happen if user were to give experiments with different number of days/nights
-
-    cat('\n \t \t \t \t >>> ACTIVITY parameter \n')
-    paL <- lapply(dnL, activityParameter, parameter=parameter, dayduration=dayduration)
   }
 
-  # category2
+  ### category2: activebout ###
   if(substr(parameter, 1, 10) == 'activebout') {
     cat('\n \t \t \t \t >>> ACTIVE BOUT parameter \n')
     paL <- lapply(dnL, activeboutParameter, parameter=parameter)
   }
 
-  # category3
+  ### category3: sleep ###
   # sleepParameter() need a few more parameters, mainly due to detectNaps()
   # so will need to loop instead of a clean lapply
   if(substr(parameter, 1, 5) == 'sleep') {
@@ -736,7 +748,8 @@ behaviourParameter <- function(parameter,
     }
   }
 
-  # at this stage we can delete dnL to save space
+  # at this stage we can delete ffL & dnL to save space
+  rm(ffL)
   rm(dnL)
   gc()
 
