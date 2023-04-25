@@ -60,11 +60,26 @@
 #' @export
 #'
 #' @examples
+#' @import dplyr
+#' @import data.table
 adjustPixel <- function(ffpath,
                         genopath,
-                        grp,
-                        scale,
-                        round='down') {
+                        grpL,
+                        grpS=NA,
+                        scale=NA,
+                        round='down',
+                        dayduration=14) {
+
+
+  ### find scaling ratio using scaleFromStartle
+  # if not given by user
+  if(is.na(scale)) {
+    scale <- scaleFromStartle(ffpath=ffpath,
+                              genopath=genopath,
+                              grpL=grpL,
+                              grpS=grpS,
+                              dayduration=dayduration)
+  }
 
 
   # import & get info -------------------------------------------------------
@@ -96,7 +111,7 @@ adjustPixel <- function(ffpath,
 
   # find fish we need to scale ----------------------------------------------
   # i.e. fish belonging to grp
-  fish2scale <- as.vector(unlist(select(geno, all_of(grp)))) # take fish in grp, those are the ones we need to scale up or down
+  fish2scale <- as.vector(unlist(select(geno, all_of(grpL)))) # take fish in grp, those are the ones we need to scale up or down
   fish2scale <- fish2scale[!is.na(fish2scale)] # remove any NA
   fish2scale <- sprintf('f%i', fish2scale) # add f to them, so becomes f2, f4, ...
 
@@ -128,5 +143,78 @@ adjustPixel <- function(ffpath,
   # can find in previous version of adjustPixel (before it was a FramebyFrame function)
 
 
+
+}
+
+
+# function scaleFromStartle(...) ------------------------------------------
+
+# function will calculate parameter activitySunsetStartle
+# and return a scaling ratio which can be used in adjustPixel
+# approach was originally developed for experiment 210907_PSEN2 to cancel potential bias due to fainter pigmentation of psen2 f0 knockouts
+
+#' Title
+#'
+#' @param ffpath
+#' @param genopath
+#' @param grpL
+#' @param grpS
+#' @param dayduration
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' @import dplyr
+
+scaleFromStartle <- function(ffpath,
+                             genopath,
+                             grpL,
+                             grpS,
+                             dayduration=14) {
+
+
+  ### calculate parameter activitySunsetStartle
+  # note, easier than asking user to give parameter table as input
+  sut <- behaviourParameter(parameter='activitySunsetStartle',
+                            ffpath=ffpath,
+                            genopath=genopath,
+                            skipNight0=FALSE,
+                            dayduration=dayduration)
+
+
+  ### calculate maximum across nights
+  # take the largest sunset startle of the 3 nights
+  # assumption being that this is the closest we can get to the real size/darkness of each larva in pixels
+
+  # which are the night columns?
+  nicols <- colnames(sut)[startsWith(colnames(sut), 'night')]
+
+  if(length(nicols)==0)
+    stop('\t \t \t \t >>> Error scaleFromStartle: need at least activitySunsetStartle for at least one night in order to calculate scaling ratio. \n')
+
+  cat('\t \t \t \t >>> For each larva, taking maximum sunsetStartle across all nights. \n')
+  sut <- sut %>%
+    mutate(maxSt=apply(sut, 1, function(row) {
+      max(as.numeric(row[nicols]))
+    }))
+
+
+  ### keep only the two groups given by the user
+  sut <- sut %>%
+    filter(grp %in% c(grpL, grpS))
+
+
+  ### compare with t-test and tell user
+  cat('\t \t \t \t >>> t-test on maximum sunsetStartle', grpL, 'vs', grpS, ': \n')
+  print( t.test(maxSt ~ grp, data=sut) )
+
+
+  ### ratio of means is the scaling ratio
+  scar <- mean(sut[which(sut$grp==grpS), 'maxSt']) / mean(sut[which(sut$grp==grpL), 'maxSt'])
+
+  cat('\t \t \t \t >>> Scaling ratio =', scar, '\n')
+
+  return(scar)
 
 }

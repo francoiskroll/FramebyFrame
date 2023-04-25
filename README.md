@@ -958,5 +958,5 @@ Better definition of parameter **activitySunsetStartle**. It now looks for the m
 
 ### v0.10.0
 25/04/2023
-* New function adjustPixel to increase or decrease all Δ px of some larvae to counteract bias due to difference in size and/or pigmentation. See DOCUMENTATION.  
+* New function **adjustPixel** to increase or decrease all Δ px of some larvae to counteract bias due to difference in size and/or pigmentation. See DOCUMENTATION.  
 * ggParameter: new setting `violinWidth` to control spread of dots in X.  

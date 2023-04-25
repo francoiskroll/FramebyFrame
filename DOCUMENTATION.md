@@ -1046,15 +1046,21 @@ Decreases or increases all Δ px data of a group of larvae by a given ratio to c
 
 Currently, you will need to give the ratio to multiply the Δ px data by. My approach was to extract it from the parameter activitySunsetStartle, with the assumption that maximum number of pixels each larva moves during the startle response should be fairly proportional to its size/darkness. In the future, I should probably integrate this step in the function. Let me know if needed.  
 
+Function will print in Console the result of a t-test comparing the maximum sunset startle response across nights of `grpL` vs `grpS` (see below) to help you decide whether adjusting the Δ px is worth the effort.  
+
+Beware, adjusting the data will make you lose parameter activitySunsetStartle. We use it to calculate the scaling ratio the procedure cancels any difference in that parameter. Additionally, it seems to create an artefact in parameter activeboutMinimum. Please ignore/delete these parameters from any analysis that uses the adjusted data as input. If you create a fingerprint using `ggFingerprint`, you can make use of the `removeParam` setting, e.g. you probably want: `removeParam=c('activitySunsetStartle', 'activeboutMin')`. Alternatively, you can simply delete the parameter tables.  
+
 **ffpath**: full path to _RAWs.csv.
 
 **genopath**: full path to genotype.txt.
 
-**grp**: which group do you want to adjust? Larvae of this group will get their Δ px data modified.
+**grpL**: which group of larvae do you suspect has a larger size/darker pigmentation? Larvae of this group will get their Δ px data downscaled. Currently the function does not support adjusting the Δ px data of multiple groups, let me know if needed.   
 
-**scale**: scaling ratio. For example, 0.9 will multiply every Δ px datapoints of larvae of group `grp` by 0.9 (i.e. reduce them a bit).  
+**grpS**: the group of larvae to compare `grpL` to, i.e. the group with the smaller size/fainter pigmentation in comparison.  
 
-**round**: multiplying by `scale` likely give a decimal number, but Δ px should be integers. Do you want to round them `up` (e.g. 0.9 becomes 1) or `down` (e.g. 0.9 becomes 0)? Default is `down`. My logic is that a partial pixel does not exist, if it below detection it would not be counted, so I think we should round down.  
+**scale**: scaling ratio. For example, `scale=0.9` will multiply every Δ px datapoints of larvae of group `grpL` by 0.9 (i.e. reduce them a bit). If you do not give this setting (or `scale=NA`), adjustPixel will analyse parameter activitySunsetStartle as a proxy for the size/darkness of each larva. The logic is that the startle response at lights OFF should be fairly close to the maximum number of pixels each larva can move in a single frame, which should be directly proportional to its size/darkness. To get as close as possible to the maximum number of pixels each larva can move, adjustPixel takes the maximum startle response across all nights available in the data. For example, say larva #5 moved 55 px at the start of night0, 73 px at the start of night1, 65 at the start of night2; adjustPixel keeps 73 px at the maximum startle response for this larva. The scale setting is then calculated as the ratio of the means (mean of all maximum startle response of larvae from grpS / mean of all maximum startle response of larvae from grpS), which essentially says how much fainter/smaller the larvae of grpS are compared to the larvae of grpL.  
+
+**round**: multiplying by `scale` likely give a decimal number, but Δ px values should be integers. Do you want to round them `up` (e.g. 0.9 becomes 1) or `down` (e.g. 0.9 becomes 0)? Default is `down`, which you should probably use too. My logic is that a partial pixel does not exist, if it is below detection it would not be counted, so I think we should round down.  
 
 # Troubleshooting
 
