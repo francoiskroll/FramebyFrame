@@ -511,7 +511,7 @@ Parameters were originally defined and coded with complete days/nights in mind, 
 
 Plots a scatter plot for one behavioural parameter, from one or multiple parameter tables. Whatever the settings used, one dot represents one larva during one time window.
 
-**pa**: parameter table(s), given as Environment object(s) or full path(s) to .csv.
+**pa**: parameter table(s), given as Environment object(s) or full path(s) to .csv. If giving as Environment object(s), give the names as strings, e.g. `pa=c('pa1', 'pa2')`.  
 
 **grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which plots all groups present in the parameter table(s) in alphabetical order.
 
@@ -541,6 +541,8 @@ onlyExp: do you want to plot only specific experiment(s) of the parameter tables
 **ymax**: highest point of the Y axis. Default is NA, which will do it automatically.
 
 **dotSize**: size of the dots. Default is 0.5.  
+
+**violinWidth**: dots are arranged like they were inside a violin plot. What do you want the width of the violin to be? Default is 0.09, which makes a very narrow violin.  
 
 **connectMean**: whether or not (TRUE or FALSE) to connect the mean crosses with a line. This can help guiding the reader towards the comparisons they should be making, and also illustrate the LME slope (a steeper line represents a larger effect size). Default is TRUE.  
 
@@ -1036,6 +1038,23 @@ Converts frame-by-frame data (a RAWs.csv file) into middur data (a middur.csv fi
 * **burst**: minimum Δ pixel for a frame to be counted as active. Any Δ pixel above the burst threshold is considered inactive. Default is 200.  
 
 * **exportOrNo**: whether or not (TRUE or FALSE) to export the middur data to a csv file. TRUE writes a file called YYMMDD_BX_middur.csv in the ffpath folder. Default is FALSE. 
+
+
+### adjustPixel(...)
+
+Decreases or increases all Δ px data of a group of larvae by a given ratio to cancel (as best as possible) effect of smaller/bigger or darker/fainter pigmentation. It will output a file _YYMMDD_BX_RAWsadjusted.csv_.  
+
+Currently, you will need to give the ratio to multiply the Δ px data by. My approach was to extract it from the parameter activitySunsetStartle, with the assumption that maximum number of pixels each larva moves during the startle response should be fairly proportional to its size/darkness. In the future, I should probably integrate this step in the function. Let me know if needed.  
+
+**ffpath**: full path to _RAWs.csv.
+
+**genopath**: full path to genotype.txt.
+
+**grp**: which group do you want to adjust? Larvae of this group will get their Δ px data modified.
+
+**scale**: scaling ratio. For example, 0.9 will multiply every Δ px datapoints of larvae of group `grp` by 0.9 (i.e. reduce them a bit).  
+
+**round**: multiplying by `scale` likely give a decimal number, but Δ px should be integers. Do you want to round them `up` (e.g. 0.9 becomes 1) or `down` (e.g. 0.9 becomes 0)? Default is `down`. My logic is that a partial pixel does not exist, if it below detection it would not be counted, so I think we should round down.  
 
 # Troubleshooting
 

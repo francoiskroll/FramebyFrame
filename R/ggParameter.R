@@ -53,6 +53,7 @@
 #' @param faintMax
 #' @param connectMean
 #' @param splitBy
+#' @param violinWidth
 #'
 #' @return
 #' @export
@@ -79,6 +80,7 @@ ggParameter <- function(pa,
                         ymin=NA,
                         ymax=NA,
                         dotSize=0.5,
+                        violinWidth=0.09,
                         connectMean=FALSE,
                         legendOrNo=TRUE,
                         xtextOrNo=TRUE,
@@ -222,44 +224,50 @@ ggParameter <- function(pa,
   if('clutch' %in% colnames(pal)) {
 
     # first print the order of the plot for the user to check
-    cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', levels(pal$date_box_clutch_win),'\n')
+    # ! not every date_box_clutch_win in the levels is on the plot (e.g. if user has given onlyWin, some datapoints get excluded)
+    # these are the date_box_clutch_win plotted, in order of the levels:
+    dbcw_onplot <- levels(pal$date_box_clutch_win)[which(levels(pal$date_box_clutch_win) %in% pal$date_box_clutch_win)]
+    cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', dbcw_onplot,'\n')
     # now prepare the X axis labels
     # we need a named vector, names = original labels (i.e. date_box_clutch_win in the data) and values = labels we want
     # we will now assume that date_box_clutch_win is exactly YYMMDD_BX_clutchX_dayX or YYMMDD_BX_clutchX_nightX
     # and we will split into dayX/nightX and clutchX and YYMMDD_BX and so that in three lines
     # get dayX/nightX:
-    dnx <- strNthSplit(levels(pal$date_box_clutch_win), split='_', nth=4)
+    dnx <- strNthSplit(dbcw_onplot, split='_', nth=4)
     # get clutchX:
-    clutchx <- strNthSplit(levels(pal$date_box_clutch_win), split='_', nth=3)
+    clutchx <- strNthSplit(dbcw_onplot, split='_', nth=3)
     # get YYMMDD_BX:
-    yymmdd_bx <- paste0(strNthSplit(levels(pal$date_box_clutch_win), split='_', nth=1), '_', strNthSplit(levels(pal$date_box_win), split='_', nth=2))
+    yymmdd_bx <- paste0(strNthSplit(dbcw_onplot, split='_', nth=1), '_', dbcw_onplot, split='_', nth=2)
     # now we want each label to be e.g. day1 \n clutchX \n 230214_14
     facetlabs <- sapply(1:length(yymmdd_bx), function(i) {
       paste0(dnx[i], '\n', clutchx[i], '\n', yymmdd_bx[i])
     })
     # now add names
-    names(facetlabs) <- levels(pal$date_box_clutch_win)
+    names(facetlabs) <- dbcw_onplot
     # ready to be given in ggplot call
 
   ### if clutch is not present (standard case)
   } else {
 
     # first print the order of the plot for the user to check
-    cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', levels(pal$date_box_win),'\n')
+    # ! not every date_box_win in the levels is on the plot (e.g. if user has given onlyWin, some datapoints get excluded)
+    # these are the date_box_win plotted, in order of the levels:
+    dbw_onplot <- levels(pal$date_box_win)[which(levels(pal$date_box_win) %in% pal$date_box_win)]
+    cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', dbw_onplot,'\n')
     # now prepare the X axis labels
     # we need a named vector, names = original labels (i.e. date_box_win in the data) and values = labels we want
     # we will now assume that date_box_win is exactly YYMMDD_BX_dayX or YYMMDD_BX_nightX
     # and we will split into dayX/nightX and YYMMDD_BX so that in two lines
     # get dayX/nightX:
-    dnx <- strNthSplit(levels(pal$date_box_win), split='_', nth=3)
+    dnx <- strNthSplit(dbw_onplot, split='_', nth=3)
     # get YYMMDD_BX:
-    yymmdd_bx <- paste0(strNthSplit(levels(pal$date_box_win), split='_', nth=1), '_', strNthSplit(levels(pal$date_box_win), split='_', nth=2))
+    yymmdd_bx <- paste0(strNthSplit(dbw_onplot, split='_', nth=1), '_', strNthSplit(dbw_onplot, split='_', nth=2))
     # now we want each label to be e.g. day1 \n 230214_14 so exp is below on a new line
     facetlabs <- sapply(1:length(yymmdd_bx), function(i) {
       paste0(dnx[i], '\n', yymmdd_bx[i])
     })
     # now add names
-    names(facetlabs) <- levels(pal$date_box_win)
+    names(facetlabs) <- dbw_onplot
     # ready to be given in ggplot call
 
   }
@@ -267,6 +275,7 @@ ggParameter <- function(pa,
 
   ### prepare the colours
   # if fainterxp is OFF, that means we simply colour by grp, in which case either user gave colours for the groups or we pick the default ggplot ones
+  # here, if user did not give colours:
   if(!fainterExp & is.na(colours[1])) {
     colours <- scales::hue_pal()(length(unique(pal$grp)))
     # this is "group colours"
@@ -275,6 +284,7 @@ ggParameter <- function(pa,
   # in the sense that we respect the colours, but make exp2 a bit fainter, exp3 a lot fainter, etc. to help distinguish them
   # this gets fairly complex, so it is taken care of by fainterExps, which simply return the colours to be used with aes(colour=date_box_grp)
   } else if(fainterExp) {
+    # note, if user did not give any colours, fainterExp uses default ggplot colours
     colours <- fainterExp(pal=pal,
                           colours=colours,
                           faintMax=faintMax)
@@ -335,11 +345,11 @@ ggParameter <- function(pa,
 
     ggParam +
 
-    ggbeeswarm::geom_quasirandom(width=0.09, size=dotSize, dodge.width=dodgeby) +
+    ggbeeswarm::geom_quasirandom(width=violinWidth, size=dotSize, dodge.width=dodgeby) +
     stat_summary(aes(group=grp), fun=mean, geom='point', colour='#595E60', shape=3, size=1.2, stroke=0.8, position=position_dodge(dodgeby)) +
 
     # should we also connect the cross means with a line? can help with readibility
-    {if(connectMean) stat_summary(aes(group=date_box_win), fun=mean, geom='line', colour='#595E60', size=0.4, position=position_dodge(dodgeby))} +
+    {if(connectMean) stat_summary(aes(group=date_box_win), fun=mean, geom='line', colour='#595E60', linewidth=0.4, position=position_dodge(dodgeby))} +
 
     # split the plot for clarity
     # if clutch column present, each subplot is one date_box_clutch_win, e.g. 230306_14_clutch2_day1
@@ -729,6 +739,12 @@ fainterExp <- function(pal,
   # exp1_night1_ko, exp1_night1_wt, exp1_night2_ko, exp1_night2_wt; exp2_night1_ko, exp2_night1_wt, exp2_night2_ko, exp2_night2_wt
   # becoming
   # exp1, exp1, exp1, exp1; exp2, exp2, exp2, exp2
+
+  ### EXCEPTION: do we only have one experiment?
+  # then there is no point making colours fainter, just return the colours we currently have
+  if(length(unique(db_onplot))==1) {
+    return(colours)
+  }
 
   # temporarily split the colours into a list so we have
   # slot1: all the colours for exp1

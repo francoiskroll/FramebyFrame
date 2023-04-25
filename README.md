@@ -954,4 +954,9 @@ New setting `splitBy` for ggParameter/ggParameterGrid. See DOCUMENTATION.
 
 ### v0.9.0
 24/04/2023  
-Better definition of parameter **activitySunsetStartle**. It now looks for the maximum Δ px from a bit before the light/woi transition up to a bit after (currently −1 min up to +1 min). Solves a concern which was that we might miss the real startle response if the light transition was not perfectly accurate.  
+Better definition of parameter **activitySunsetStartle**. It now looks for the maximum Δ px from a bit before the light/woi transition up to a bit after (currently −1 min up to +1 min). Solves a concern which was that we might miss the real startle response if the precise frame at which the light transition occured was not perfectly accurate.  
+
+### v0.10.0
+25/04/2023
+* New function adjustPixel to increase or decrease all Δ px of some larvae to counteract bias due to difference in size and/or pigmentation. See DOCUMENTATION.  
+* ggParameter: new setting `violinWidth` to control spread of dots in X.  
