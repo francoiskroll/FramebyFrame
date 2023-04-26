@@ -8,6 +8,7 @@
 #' @return
 #'
 #' @examples
+#' @export
 importGenotype <- function(genopath) {
   if( substrEnding(genopath, 3) != 'txt') stop('\t \t \t \t >>> Genotype file does not finish by .txt \n')
 
