@@ -469,7 +469,7 @@ ggFingerprintGrid <- function(fgp,
   # loop through fish available for that experiment,
   # each time creating the ggFingerprint
   # we get list of plots ggL, where each element is ggFingerprint for one larva
-  fis <- mixedsort(as.character(unique(fgp$fish))) # ! mixedsort here, otherwise goes f89, f9, f91
+  fis <- gtools::mixedsort(as.character(unique(fgp$fish))) # ! mixedsort here, otherwise goes f89, f9, f91
 
   ggL <- lapply(1:length(fis), function(fi) {
     ggFingerprint(fgp=fgp,
@@ -497,7 +497,7 @@ ggFingerprintGrid <- function(fgp,
 
 
   # place these plots in a grid
-  ggG <- ggarrange(plotlist=ggL, nrow=nrow, ncol=ncol)
+  ggG <- ggpubr::ggarrange(plotlist=ggL, nrow=nrow, ncol=ncol)
 
   # export
   ggsave(exportPath, ggG, width=width, height=height, units='mm')
