@@ -24,6 +24,7 @@ ggParameter(
   ymin = NA,
   ymax = NA,
   dotSize = 0.5,
+  violinWidth = 0.09,
   connectMean = FALSE,
   legendOrNo = TRUE,
   xtextOrNo = TRUE,
@@ -41,7 +42,7 @@ ggParameter(
 )
 }
 \arguments{
-\item{splitBy}{}
+\item{violinWidth}{}
 }
 \description{
 Title

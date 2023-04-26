@@ -4,10 +4,18 @@
 \alias{adjustPixel}
 \title{Title}
 \usage{
-adjustPixel(rawpath, grp, scale, round = "down", export = TRUE)
+adjustPixel(
+  ffpath,
+  genopath,
+  grpL,
+  grpS = NA,
+  scale = NA,
+  round = "down",
+  dayduration = 14
+)
 }
 \arguments{
-\item{export}{}
+\item{round}{}
 }
 \description{
 Title

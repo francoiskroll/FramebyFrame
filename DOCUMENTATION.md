@@ -1042,13 +1042,11 @@ Converts frame-by-frame data (a RAWs.csv file) into middur data (a middur.csv fi
 
 ### adjustPixel(...)
 
-Decreases or increases all Δ px data of a group of larvae by a given ratio to cancel (as best as possible) effect of smaller/bigger or darker/fainter pigmentation. It will output a file _YYMMDD_BX_RAWsadjusted.csv_.  
-
-Currently, you will need to give the ratio to multiply the Δ px data by. My approach was to extract it from the parameter activitySunsetStartle, with the assumption that maximum number of pixels each larva moves during the startle response should be fairly proportional to its size/darkness. In the future, I should probably integrate this step in the function. Let me know if needed.  
+Decreases or increases all Δ px data of a group of larvae by a given ratio to cancel (as best as possible) effect of smaller/bigger or darker/fainter pigmentation. It will output a file _YYMMDD_BX_RAWsadjusted.csv_. Obviously editing the raw data comes with some risks, so please only use the function if you suspect that keeping the raw data with the potential detection bias is worse than the small artefacts adjustPixel may cause (see below). Finally, I would recommend you compare results before and after adjusting the Δ px data, for example by comparing fingerprints (`ggFingerprint`) or parameter grid (`ggParameterGrid`) plots.  
 
 Function will print in Console the result of a t-test comparing the maximum sunset startle response across nights of `grpL` vs `grpS` (see below) to help you decide whether adjusting the Δ px is worth the effort.  
 
-Beware, adjusting the data will make you lose parameter activitySunsetStartle. We use it to calculate the scaling ratio the procedure cancels any difference in that parameter. Additionally, it seems to create an artefact in parameter activeboutMinimum. Please ignore/delete these parameters from any analysis that uses the adjusted data as input. If you create a fingerprint using `ggFingerprint`, you can make use of the `removeParam` setting, e.g. you probably want: `removeParam=c('activitySunsetStartle', 'activeboutMin')`. Alternatively, you can simply delete the parameter tables.  
+Beware, adjusting the data will make you lose parameter activitySunsetStartle. We use it to calculate the scaling ratio (see setting `scale` below) so the procedure cancels any difference in that parameter. Additionally, it seems to create an artefact in parameter activeboutMin. Please ignore/delete these two parameters from any analysis that uses the adjusted data as input. If you create a fingerprint using `ggFingerprint`, you can make use of the `removeParam` setting, i.e. you probably want: `removeParam=c('activitySunsetStartle', 'activeboutMin')`. Alternatively, you can simply delete these parameter tables.  
 
 **ffpath**: full path to _RAWs.csv.
 

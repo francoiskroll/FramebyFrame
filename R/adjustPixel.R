@@ -48,6 +48,8 @@
 # adjustPixel(here(210907_12_RAWs.csv), 0.5, 'scr', export=TRUE)
 # will give the same as above: adjustPixel(here(210907_12_RAWs.csv), 0.5, 'scr')
 
+# below: not sure if need to import other things from data.table? the .SDcols system may need to be imported
+
 #' Title
 #'
 #' @param grp
@@ -60,8 +62,8 @@
 #' @export
 #'
 #' @examples
-#' @import dplyr
-#' @import data.table
+#' @importFrom dplyr %>% select all_of
+#' @importFrom data.table :=
 adjustPixel <- function(ffpath,
                         genopath,
                         grpL,

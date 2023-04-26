@@ -8,6 +8,7 @@
 #' @return
 #'
 #' @examples
+#' @export
 whatSlash <- function(path) {
   # Am I running on a Windows or a Mac?
   # on Windows, slash in path will be \\
