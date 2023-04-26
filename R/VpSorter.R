@@ -119,6 +119,10 @@
 # this works even if experiment started on 31st of the month, because in that case the "if above 12" clause gets triggered
 # (and there is no month that is 12 day-long or shorter!)
 
+# v19
+# well location format from Christina Lillesaar
+# C0101 >> C0296 (Viewpoint are a creative bunch!)
+
 
 # -------------------------------------------------------------------------
 
@@ -410,6 +414,13 @@ vpSorter <- function(ffDir,
     fi1 <- read.table(paste0(ffDir, xlsnames[1]), fill=TRUE, header=TRUE)
   }
 
+  # exclude any row where type is not 101
+  # these rows can also have glitchy 'location' column and disturb the below
+  # make sure we are looking at a character
+  fi1$type <- as.character(fi1$type)
+  # keep only the 101
+  fi1 <- fi1[which(fi1$type=='101'),]
+
 
   ### which are the columns we need? ###
 
@@ -456,6 +467,8 @@ vpSorter <- function(ffDir,
   # option1: C001--C192
   # option2: c1--c192
   # option3: w001--w192
+  # option4: LocA01--LocA96
+  # option5: C0101--C0296
 
   # what is the first character?
   locfirstchar <- strsplit(fi1$location[1], '')[[1]][1]
@@ -479,7 +492,7 @@ vpSorter <- function(ffDir,
 
   SpeaknRecord('Detected *', nwells, '* - well plate')
 
-  # additionally, note Zebralab starts second box at well 97 regardless of number of wells
+  # additionally, it seems Zebralab starts second box at well 97 (or equivalent, depending on format) regardless of number of wells
 
   # differentiate between various options:
 
@@ -545,9 +558,27 @@ vpSorter <- function(ffDir,
       stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
     }
 
-  } else {
+  } else if (locfirstchar=='C' & locnchar==5) { # OPTION 5
 
-    stop('\t \t \t \t >>> Error: in the xls files, expecting the location column to be formatted as: C001 or c1 or w001.
+    SpeaknRecord('Locations are written C01/2XX. BOX1: from C0101 to C0196; BOX2: from C0201 to C0296. ')
+
+    # set the locations accordingly
+    if (boxnum==1){
+      SpeaknRecord('Running BOX1 so expecting C0101, C0102, ...')
+      locs=sprintf('C01%0.2d', 1:nwells) # Box1 locations = C0101 >> C0196
+    } else if (boxnum==2) {
+      SpeaknRecord('Running BOX2 so expecting C0201, C0202, ...')
+      # note 12/01/2023, I am guessing this, only time I have seen the Loc version of the column it was for a single box and it was LocA01, ..., LocA96
+      # so probably second box would be LocB01?
+      locs=sprintf('C02%0.2d', 1:nwells) # Box2 locations = C0201 >> C0296
+    } else {
+      stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
+    }
+
+    # if cannot recognise one of the known formats...
+    } else {
+
+    stop('\t \t \t \t >>> Error: in the xls files, expecting the location column to be formatted as: C001 or c1 or w001 or LocA01 or C0101.
          \t \t \t Open one of the xls files, is your location column written differently? Viewpoint always finds new ways to name the wells!
          \t \t \t Send me a sample xls file on francois@kroll.be and I will update the package. \n')
 
@@ -889,11 +920,21 @@ vpSorter <- function(ffDir,
                function(wed){wed[,c(1,3)]}) %>%
     purrr::reduce(inner_join, by='abstime')
 
-  locnum <- readr::parse_number(locs)
-  colnames(bx) <- c('abstime', sprintf('f%i', locnum))
-  # parse_number: from C001, C002, ... (or other formats) >> 1, 2, ...
-  # then sprintf to add f for fish, so >> f1, f2, f3, ...
+  ### ! 26/04/2023: previously, was parsing number from locations:
 
+  # below: parse_number: from C001, C002, ... (or other formats) >> 1, 2, ...
+  # then sprintf to add f for fish, so >> f1, f2, f3, ...
+  # locnum <- readr::parse_number(locs)
+  # colnames(bx) <- c('abstime', sprintf('f%i', locnum))
+
+  # but Viewpoint is too unreliable with formats, will change to something agnostic to format
+  # simply doing f1, f2, etc. until nwells for BOX1
+  # then f97, f98, etc until nwells for BOX2
+  if(boxnum==1) {
+    colnames(bx) <- c('abstime', sprintf('f%i', 1:nwells))
+  } else if(boxnum==2) {
+    colnames(bx) <- c('abstime', sprintf('f%i', 97:(nwells+96)))
+  }
   # gives abstime + 1 column per well of its data; all synced by abstime
 
   # 3- replace it by synced times of well 96 found above
@@ -1061,11 +1102,34 @@ vpSorter <- function(ffDir,
 
       zebfi <- read.delim(zebpath, fileEncoding='UCS-2LE', header=TRUE, nrow=1)
 
-      # below added 17/04/2023 after Val encountered the error
+      # read.delim is capricious, sometimes imports a NA column at the end, with or without shifting the column names
+      # check that columns stdate & sttime look like date or time
+      OK_dt <- stringr::str_detect(zebfi$stdate, stringr::regex('^\\d{1,2}.\\d{2}.\\d{2}'))
+      # if NA, that means issue, so replace by FALSE, i.e. not OK
+      if(is.na(OK_dt)) {
+        OK_dt <- FALSE
+      }
+
+
+      OK_tm <- stringr::str_detect(zebfi$sttime, stringr::regex('^\\d{2}.\\d{2}.\\d{2}'))
+      # if NA, that means issue, so replace by FALSE, i.e. not OK
+      if(is.na(OK_tm)) {
+        OK_tm <- FALSE
+      }
+
+      # regex matches 2 digits / any character / 2 digits / any character / 2 digits
+      # for date: 1 or 2 digits, because I have seen e.g. 5/17/2022
+      # ^: has to start this way
+      # same regex will match many date/time formats
+      # including e.g. 17.02.2023 as it does contain 2 digits, 2 digits, 2 digits
+      # Note, will fail if stdate and sttime columns are inverted, will need another solution if ever find the case...
+
+      # below originally added 17/04/2023 after Val encountered the error
       # is last column NA? then read.delim shifted the columns
       # note, row.names=NULL stupidly calls first column 'row.names'
       # shift the columns back manually
-      if(is.na(zebfi[,ncol(zebfi)])) {
+      # should we try to shift the columns? Yes, if there is any FALSE
+      if( (!OK_dt|!OK_tm) & is.na(zebfi[,ncol(zebfi)])) {
         zebfi <- as.data.frame(cbind(row.names(zebfi), zebfi))
         row.names(zebfi) <- NULL
         colnames(zebfi) <- colnames(zebfi)[2:ncol(zebfi)]
@@ -1074,6 +1138,7 @@ vpSorter <- function(ffDir,
 
       dt0 <- zebfi$stdate
       tm0 <- zebfi$sttime
+
       startts <- paste(dt0, tm0) # start timestamp, e.g. 28/01/2021 10:27:35
 
       # ! if US format MM/DD/YYYY, need to read different
@@ -1109,7 +1174,6 @@ vpSorter <- function(ffDir,
 
   # ! we assume here that first timestamp is correct. ViewPoint have made serious errors about this; carefully check
   # especially if Replay; first timestamp is (stupidly) taken from the computer clock when you start the Replay, not from the raw file
-
 
   #### add full clock timestamps to frame-by-frame data
 
