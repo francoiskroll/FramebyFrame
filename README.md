@@ -681,10 +681,11 @@ We calculate the behavioural fingerprint with:
 calculateFingerprint(paDir="~/.../bhvparams/",
                      controlGrp='scr',
                      grporder=c('sorl1', 'scr'),
-                     skipNight0=TRUE)
+                     skipNight0=TRUE)  
+# if you give grporder (instead of NA), make sure to also give the controlGrp (here: scr)
 ```
 
-* `controlGrp`: whichever group you want to use as reference/baseline in your experiment. The fingerprint will represent the *Z*-scores from this reference. 
+* `controlGrp`: whichever group you want to use as reference/baseline in your experiment. The fingerprint will represent the *Z*-scores from this reference.  
 
 `calculateFingerprint(...)` will write _fingerprint.csv_ in the experiment folder.
 

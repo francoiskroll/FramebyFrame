@@ -796,7 +796,7 @@ vpSorter <- function(ffDir,
   # 3: 1377542221 13.64014     0
   # 4: 1377582160 13.68008     0
 
-  SpeaknRecord('Removing duplicated frames, if any')
+  SpeaknRecord('Removing duplicated frames, if any...')
 
   pw <- lapply(1:length(pw), function(w) {
 
