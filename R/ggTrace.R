@@ -634,11 +634,30 @@ ggTrace <- function(tc,
 
   # should we mark specific times? Then we need to find their Zeitgeber durations
   if (!is.na(markTimes[1])) {
-    # Zeitgeber durations are number of hours since 9 AM on day0
-    # so for each markTimes, convert to lubridate format and calculate number of hours since 9 AM day 0
+
+    # X axis is number of hours since ZT0 on day0
+    # ! previous version was assuming ZT0 was 9AM, but this is not always the case
+    # we could ask the user for zt0 in case it is different than 9AM, or we can back-calculate it here
+    # zhrs column gives number of hours since ZT0 and fullts column gives full timestamp
+    # so we simply have to subtract zhrs from fullts to get ZT0
+
+    # lubridate wants durations to be integers
+    # so first convert zhrs to milliseconds
+    zth1_ms <- round(sbg$zhrs[1]*60*60*1000) # looks like milliseconds is small enough that it is always an integer, but round just to be safe
+    # then calculate difference between zth and fullts
+    # to be exactly correct, calculation will give zt0 - 1 frame
+    # so we should be adding duration of one frame here
+    # no easy access to framerate, unfortunately, will assume 25 fps which is generally correct
+    # in case it is e.g. 50 fps, error will still be only 20 ms, i.e. not even a full frame
+    backZT0 <- sbg$fullts[1] - lubridate::milliseconds(zth1_ms) + lubridate::milliseconds(40) # 40 ms is duration of one frame at 25 fps
+
+    # tell user so can check just in case
+    cat('\t \t \t \t >>> ZT0 back-calculated to', as.character(backZT0), '\t')
+
+    # now, for each markTimes, convert to lubridate format and calculate number of hours since ZT0
     # and that will give where to place the mark on X axis
     markZth <- as.numeric(unlist(sapply(markTimes, function(ti) {
-      difftime(lubridate::ymd_hms(ti), lubridate::ymd_hms(paste(lubridate::date(sbg$fullts[1]), '09:00:00')), units='hours')
+      difftime(lubridate::ymd_hms(ti), backZT0, units='hours')
     })))
   }
 

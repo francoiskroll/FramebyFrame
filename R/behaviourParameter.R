@@ -97,9 +97,30 @@ splitFramesbyWoi <- function(tc,
   if (length(woi)%%2 !=0) stop('\t \t \t \t >>> Error splitFramesbyWoi: please give start and stop timestamps of each window of interest.
                                Accordingly, woi should have an even number of timestamps. \n')
 
-  # convert woi timestamps to zth, i.e. number of hours since 9AM on day0
+  # convert woi timestamps to zth, i.e. number of hours since ZT0
+  # ! previous version was assuming ZT0 was 9AM, but this is not always the case
+  # we could ask the user for zt0 in case it is different than 9AM, or we can back-calculate it here
+  # zhrs column gives number of hours since ZT0 and fullts column gives full timestamp
+  # so we simply have to subtract zhrs from fullts to get ZT0
+
+  # lubridate wants durations to be integers
+  # so first convert zhrs to milliseconds
+  zth1_ms <- round(tc$zhrs[1]*60*60*1000) # looks like milliseconds is small enough that it is always an integer, but round just to be safe
+  # then calculate difference between zhrs and fullts
+  # to be exactly correct, calculation will give zt0 - 1 frame
+  # so we should be adding duration of one frame here
+  # I think can assume splitFramesbyWoi is used on full frame-by-frame data?
+  # so will calculate framerate here, rather than assume 25 fps
+  fps <- averageFramerate(tc$exsecs)
+  # duration of 1 frame is 1/fps
+  backZT0 <- tc$fullts[1] - lubridate::milliseconds(zth1_ms) + lubridate::milliseconds(1/fps) # 40 ms is duration of one frame at 25 fps
+
+  # tell user so can check just in case
+  cat('\t \t \t \t >>> ZT0 back-calculated to', as.character(backZT0), '\t')
+
+  # now, convert woi timestamps given by user to number of hours since ZT0 so we can easily slice the data
   woiz <- as.numeric(unlist(sapply(woi, function(ti) {
-    difftime( lubridate::ymd_hms(ti), lubridate::ymd_hms(paste(lubridate::date(tc$fullts[1]), '09:00:00')), units='hours')
+    difftime( lubridate::ymd_hms(ti), backZT0, units='hours')
   })))
 
   # check that woi timestamps are actually within the experiment

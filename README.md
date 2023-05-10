@@ -961,3 +961,7 @@ Better definition of parameter **activitySunsetStartle**. It now looks for the m
 25/04/2023
 * New function **adjustPixel** to increase or decrease all Δ px of some larvae to counteract bias due to difference in size and/or pigmentation. See DOCUMENTATION.  
 * ggParameter: new setting `violinWidth` to control spread of dots in X.  
+
+### v0.11.0
+10/05/2023
+Caught error which affected results when analysing by windows-of-interests and ZT0 was _not_ 9 AM. In such case, it was incorrectly assuming that ZT0 was 9 AM. Now, it back-calculates ZT0 from the timestamps in the RAWs.csv data, which should return exactly what the user gave as `zt0` when running `vpSorter`. This is to avoid asking ZT0 to the user repeatedly, which also prevents the user making a mistake (i.e. giving a different ZT0 than they gave to `vpSorter`). It returns the result of this calculation to Console so user can check.  
