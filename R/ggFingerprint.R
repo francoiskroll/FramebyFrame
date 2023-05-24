@@ -285,7 +285,7 @@ ggFingerprint <- function(fgp,
 
   # finally, we can convert the parameter names to better wording with function param2Title
   # so if using names (rather than parameter number), it is more readable
-  xparams <- as.character(sapply(xparams, param2Title))
+  xparams <- as.character(sapply(xparams, param2shortName))
 
   # find the middle of the plot to position the night background correctly
   # it should be the last day parameter + 0.5
