@@ -180,9 +180,9 @@ ggFingerprint <- function(fgp,
 
     } else {
       # extract the experiments analysed in the LMEreport
-      lmexps <- sort(strsplit(unique(lme$exps), ' & ')[[1]])
+      lmexps <- as.character(sort(strsplit(unique(lme$exps), ' & ')[[1]]))
       # they should be the same as in the fingerprint data
-      fgexps <- sort(unique(fgp$date_box))
+      fgexps <- as.character(sort(unique(fgp$date_box)))
       if (!identical(lmexps, fgexps)) stop('\t \t \t \t >>> Error ggFingerprint: it seems like the LME report refers to different experiments than the ones we are about to plot. Please check you gave the correct LMEreport. \n')
     }
 
