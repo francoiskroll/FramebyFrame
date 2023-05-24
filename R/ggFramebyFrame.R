@@ -241,6 +241,86 @@ param2Yunit <- function(param) {
 }
 
 
+
+# function param2shortName ------------------------------------------------
+
+# version of param2Title which gives shorter names
+# currently only used in ggFingerprint
+
+
+#' Title
+#'
+#' @param param
+#'
+#' @return
+#' @export
+#'
+#' @examples
+param2shortName <- function(param) {
+
+  if (param=='activityPercentageTimeActive') {
+    return('% time active')
+
+  } else if (param== 'activityTotalPx') {
+    return('total \u0394 px')
+
+  } else if (param=='activitySunsetStartle') {
+    return('startle')
+
+  } else if(param=='activitySlope') {
+    return('slope')
+
+  } else if(param=='activityTransitionDelta') {
+    return('transition delta')
+
+  } else if(param=='activityFractalDim') {
+    return('fractal dimension')
+
+  } else if(param=='activityCompressibility') {
+    return('compressibility')
+
+
+
+  } else if (param=='activeboutLength') {
+    return('active bout length')
+
+  } else if (param=='activeboutMean') {
+    return('active bout mean')
+
+  } else if (param=='activeboutSum') {
+    return('active bout sum')
+
+  } else if (param=='activeboutStd') {
+    return('active bout std')
+
+  } else if (param=='activeboutMin') {
+    return('active bout min')
+
+  } else if (param=='activeboutMax') {
+    return('active bout max')
+
+  } else if (param=='activeboutNum') {
+    return('active bout num')
+
+
+
+  } else if (param=='sleepHours') {
+    return('sleep total')
+
+  } else if (param=='sleepNumNaps') {
+    return('sleep bout num')
+
+  } else if (param=='sleepLatency') {
+    return('sleep latency')
+
+  } else if (param=='sleepNapDuration') {
+    return('sleep bout length')
+  }
+
+
+}
+
+
 # function ggFramerate(...)
 # used for quality check, not for publication
 # plots framerate over time
