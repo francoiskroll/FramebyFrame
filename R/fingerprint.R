@@ -152,9 +152,9 @@ calculateFingerprint <- function(paDir,
                      pazm= ~ mean(., na.rm=TRUE) # ***
                    )) %>% # pazm for mean of parameter z-scores
       add_column(uparam=paste(.$daynight, .$parameter, sep='_'), .before='parameter')
-
     # re-create uparam column
     # which now will be e.g. day_activeboutLength
+
     psm <- psm
 
 
@@ -268,7 +268,7 @@ calculateFingerprint <- function(paDir,
     colnames(fgp) <- sub('daynight', 'period', colnames(fgp))
     ### add date_box_grp column
     fgp <- fgp %>%
-      add_column(date_box_grp=paste(fgp$date, fgp$box, fgp$grp, sep='_'), .after='date_box') %>%
+      # add_column(date_box_grp=paste(fgp$date, fgp$box, fgp$grp, sep='_'), .after='date_box') %>% # column is already added by paramReadPivot, no need to add it again!
       ### add date_box_grp_fish column
       add_column(date_box_grp_fish=paste(fgp$date, fgp$box, fgp$grp, fgp$fish, sep='_'), .before='parameter')
   }

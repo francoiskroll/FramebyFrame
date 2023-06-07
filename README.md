@@ -822,7 +822,7 @@ ___
 
 ## FAQ
 
-> _I use the Noldus from DanioVision (or else). Can I still use your amazing package?_  
+> _I use DanioVision from Noldus (or else). Can I still use your amazing package?_  
 
 Yes, it is possible. Get in touch with me. At least one person has used it successfully with data from DanioVision's Noldus, but the conversion is not yet integrated in the package. I could work on it if there is demand.
 
