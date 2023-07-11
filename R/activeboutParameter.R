@@ -36,6 +36,7 @@
 #' @return
 #'
 #' @examples
+#' @export
 framesToActiveInactiveTransitions <- function(dn) {
 
   # how many time columns?
