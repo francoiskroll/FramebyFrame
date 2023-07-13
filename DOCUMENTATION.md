@@ -788,9 +788,9 @@ Overall, I think the only situation where you could justify using directly the p
 
 **EXCEPTION 1**  
 If there is only one day or night in the data, then there is only datapoint per larva for a given parameter. In this situation, the random effect `larva age` is meaningless (all measurements were done at the same age) and the random effect `larva ID` does not group the datapoints in any way (as there is only one datapoint per larva). These random effects get dropped from the LME formula. For example,   
-`lmer(parameter ~ 1 + (1|experiment/larva ID) + (1|larva age))`  
+`lmer(parameter ~ group + (1|experiment/larva ID) + (1|larva age))`  
 becomes  
-`lmer(parameter ~ 1 + (1|experiment)`  
+`lmer(parameter ~ group + (1|experiment)`  
 (see below if you also have only one experiment).  
 
 **EXCEPTION 2**  
