@@ -123,6 +123,11 @@
 # well location format from Christina Lillesaar
 # C0101 >> C0296 (Viewpoint are a creative bunch!)
 
+# v20
+# error with Leah's data
+# about "BACKLIGHT" rows when files are .xls
+# see in import loop
+
 
 # -------------------------------------------------------------------------
 
@@ -669,8 +674,18 @@ vpSorter <- function(ffDir,
       # (usual miserable Viewpoint formatting)
       # i.e. indexing on the location column, [., (locs)] above, works ok; it takes only expected well numbers so will exclude rows A01-1
       # the problem is indexing on the type column, it needs to know whether it looks through numbers (101, 71) or strings ('101', 'c1', ...)
-      # (clever) solution is to convert type column into character by default when important (see colClasses=c('location'))
+      # (clever) solution is to convert type column into character by default when important (see colClasses=c(type='character'))
       # then filter to keep only '101', so whenever it is 'c1' (when BACK_LIGHT rows appear), it will get thrown out
+
+
+      # v20: works well to filter data, but can throw an error when converting time column (fif$time <- fif$time/timeconv) below
+      # because columns are now character, not numeric
+      # so convert back to numeric
+      # hopefully this will not make much difference to performance if columns are already numeric
+      fif$abstime <- as.numeric(fif$abstime)
+      fif$time <- as.numeric(fif$time)
+      fif$data1 <- as.numeric(fif$data1)
+
 
     ### OPTION 2: if we have a .xlsx, we need to use read_xlsx (fread does not like .xlsx)
     # note it is faster than openxlsx's read.xlsx (source: StackOverflow)
