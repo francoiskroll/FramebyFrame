@@ -760,7 +760,7 @@ ggSleepLatencySurvival <- function(pa,
       {if(!xtextOrNo) theme(axis.text.x=element_blank())} +
 
       {if(!ynameOrNo) theme(axis.title.y=element_blank())} +
-      {if(ynameOrNo) ylab(label='% larvae which \nhave not slept yet')} +
+      {if(ynameOrNo) ylab(label='% larvae still awake')} +
 
       {if(!xnameOrNo) theme(axis.title.x=element_blank())} +
       {if(xnameOrNo) xlab(label='hours since light transition')} +
