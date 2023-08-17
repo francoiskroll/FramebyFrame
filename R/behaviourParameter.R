@@ -347,18 +347,24 @@ paramReadPivot <- function(pa,
 
 
   # order factors
+  # edit 17/08/2023
+  # previously, was doing mostly alphabetical order, which e.g. would give experiment in chronological order
+  # however, I think better to respect the order given by the user
+  # as the user may want to plot exp2 first, exp1 second
+
+  print(pal)
 
   ### date ###
-  # convert to factor, will give chronological
-  pal$date <- factor(pal$date)
+  # convert to factor, respecting order in which users gave pa
+  pal$date <- factor(pal$date, levels=unique(pal$date))
 
   ### box ###
-  # convert to factor, no need to worry about order for now
-  pal$box <- factor(pal$box)
+  # convert to factor, respecting order in which users gave pa
+  pal$box <- factor(pal$box, levels=unique(pal$box))
 
   ### date_box ###
-  # convert to factor, will give chronological
-  pal$date_box <- factor(pal$date_box)
+  # convert to factor, respecting order in which users gave pa
+  pal$date_box <- factor(pal$date_box, levels=unique(pal$date_box))
 
   ### fish ###
   # convert to factor, no need to worry about order for now
