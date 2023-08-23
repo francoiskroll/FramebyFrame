@@ -12,7 +12,7 @@ But feel free to get in touch about commercial use!
 
 * When opened in PrusaSlicer, select the 'generic-slab' (right panel) to adjust the infill density for the part of the model which overlaps the generic slab. A higher infill density will make the mesh tighter. Infill density of 55% seem to work well. A first prototype at infill 45% was loose enough to allow some larvae to escape. When you slice the object in PrusaSlicer, the mesh should be clearly visible, as in the screenshot below.
 
-![alt text](https://github.com/francoiskroll/FramebyFrame/blob/main/prusa_screenshot.png?raw=true)
+![alt text](https://github.com/francoiskroll/FramebyFrame/blob/main/meshPlate3D/    prusa_screenshot.png?raw=true)
 
 ![alt text](http://url/to/img.png)
 
