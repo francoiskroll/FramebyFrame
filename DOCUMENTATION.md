@@ -1106,6 +1106,6 @@ Please let me know if those instructions do not help.
 
 Try following the instructions above. If that does not help, check how much space you have on your hard drive. If you do not have a lot (e.g. less than 20 Gb), there is a good chance this is the cause of the problem. Try to free > 50 Gb. On macos (and probably on Windows too), you can see the free space on your hard drive going down when R runs an intensive operation (Apple logo > About This Mac > Storage). So the more space there is, the more R can use to store temporary files.
 
-> Warnings related to "cairo", such as _failed to load cairo DLL_
+> Errors/warnings related to "cairo", such as _failed to load cairo DLL_
 
-I think these warnings do not impact the output, but if you want to get rid of them, installing `xquartz` on your computer seems to work. On Mac: `brew install --cask xquartz` in Terminal.
+Installing `xquartz` on your computer seems to fix this issue. On Mac, if you have Homebrew installed: `brew install --cask xquartz` in Terminal. I found that installing latest release of XQuartz (https://www.xquartz.org/index.html) like you would for any other app works too.  
