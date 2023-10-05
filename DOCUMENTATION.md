@@ -622,7 +622,7 @@ ggParameterGrid() does not currently support parameters calculated on specific w
 
 **keysOrNo**: whether or not (TRUE or FALSE) to add A, B, C, ... keys to the panels. Default is FALSE.
 
-**statsOrNo**: whether or not (TRUE or FALSE) to add ns/*/**/*** on top of the plot to indicate statistical significance between groups. This is calculated by LMEdaynight(), read there for details.
+**statsOrNo**: whether or not (TRUE or FALSE) to add ns / * / ** / *** on top of the plot to indicate statistical significance between groups. This is calculated by LMEdaynight(), read there for details.
 
 **ncol**: how many columns should the grid have?
 
