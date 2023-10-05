@@ -4,7 +4,7 @@
 \alias{rawToMiddur}
 \title{Title}
 \usage{
-rawToMiddur(ffpath, zebpath, freezing = 3, burst = 200, exportOrNo = FALSE)
+rawToMiddur(ffpath, freezing = 3, burst = 200, exportOrNo = FALSE)
 }
 \arguments{
 \item{exportPath}{}

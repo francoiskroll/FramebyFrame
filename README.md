@@ -966,3 +966,10 @@ Better definition of parameter **activitySunsetStartle**. It now looks for the m
 10/05/2023  
 Caught error which affected results when analysing by windows-of-interests and ZT0 was _not_ 9 AM. In such case, it was incorrectly assuming that ZT0 was 9 AM.  
 Now, it back-calculates ZT0 from the timestamps in the RAWs.csv data, which should return exactly what the user gave as `zt0` when running `vpSorter`. This is to avoid asking ZT0 to the user repeatedly, which also prevents the user making a mistake (i.e. giving a different ZT0 than they gave to `vpSorter`). It returns the result of this calculation to Console so user can check.  
+
+### v0.12.0
+05/10/2023  
+Minor edits:
+* `genotypeGenerator` was generating file omitted.txt which listed wells labelled as empty or excluded. I never found this file to be useful, so `genotypeGenerator` does not generate it anymore to avoid creating a mess in the user's directory.
+* DOCUMENTATION of `ggFramerate`; `ggActivityTraceGrid`; `ggActivityTraceByGroup`; `ggSleepTraceByGroup`; `multiBehaviourParameter`; `rawToMiddur` were still mentioning parameter `zebpath` but that was deleted a while ago. Note, code for `rawToMiddur` also had the parameter in function definition, but was not used in actual code. Now, only documentation for `vpSorter` mentions `zebpath`, which is correct.
+* `importRAWs` added clear error if the `ffpath` is incorrect.

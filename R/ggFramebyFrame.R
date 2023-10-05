@@ -348,7 +348,8 @@ param2shortName <- function(param) {
 
 
 
-# function frameratePlot(...) ---------------------------------------------
+
+# function ggFramerate(...) -----------------------------------------------
 
 # plots framerate over time from RAWs.csv
 

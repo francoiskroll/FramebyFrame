@@ -982,7 +982,8 @@ behaviourParameter <- function(parameter,
 
 
 
-# multiBehaviourParameters(...) -------------------------------------------
+
+# function multiBehaviourParameter(...) -----------------------------------
 
 #' Title
 #'

@@ -25,6 +25,7 @@
 # v7: tests if running on Mac or Windows, so can choose appropriate slash character for paths
 # v8: fixed bug; if a genotype name was in all uppercase e.g. HOM, would delete thinking it is a row name like A, B, C. Now looks if cell is actually A, B, C, ..., Z
 # v9: genotypeGenerator as function in FramebyFrame
+# >> subsequent changes are tracked in GitHub, not here
 
 #' Title
 #'
@@ -188,28 +189,8 @@ genotypeGenerator <- function(plateMap) {
               sep='\t', na='', row.names=FALSE, col.names=FALSE, quote=FALSE, append=TRUE)
 
 
-  #### write omitted file ####
-
-  # same idea as genotype file, but omitted wells
-  # not extremely useful
-
-  # preallocate dataframe
-  em <- which(cnts=='empty')
-  ex <- which(cnts=='excluded')
-
-  omi <- as.data.frame(matrix(nrow=max(length(ex), length(em)), ncol=2))
-  colnames(omi) <- c('empty', 'excluded')
-
-  if (length(em) > 0) {
-    omi[1:length(em), 'empty'] <- em
-  }
-
-  if (length(ex) > 0) {
-    omi[1:length(ex), 'excluded'] <- ex
-  }
-
-  # write it
-  write.table(omi, paste0(beforeLastSlash(plateMap), datebox, 'omitted.txt'),
-              sep='\t', row.names=FALSE, col.names=TRUE, quote=FALSE)
-
+  ### until 05/10/2023, genotypeGenerator was also creating omitted.txt file
+  # which was list of wells labelled as empty or excluded
+  # I think was useless, and makes more files generated
+  # deleted section 05/10/2023
 }

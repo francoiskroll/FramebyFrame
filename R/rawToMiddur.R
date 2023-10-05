@@ -91,7 +91,6 @@ ffColtoMid <- function(ffcol, fps, freezing, burst) {
 # main function to convert a RAWs to middur data
 # usage rawtoMiddur(ffpath, freezing=3, burst=200)
 # ffpath = where to find frame-by-frame data
-# zebpath = where to find original Zebralab XLS file
 # freezing = Viewpoint tracking parameter, minimum delta-pixel to be considered an active frame
 # default is 3 px
 # burst = Viewpoint tracking parameter, maximum delta-pixel to be considered an active frame (above this is considered abnormally high)
@@ -112,7 +111,6 @@ ffColtoMid <- function(ffcol, fps, freezing, burst) {
 #' Title
 #'
 #' @param ffpath
-#' @param zebpath
 #' @param freezing
 #' @param burst
 #' @param exportPath
@@ -122,7 +120,6 @@ ffColtoMid <- function(ffcol, fps, freezing, burst) {
 #'
 #' @examples
 rawToMiddur <- function(ffpath,
-                        zebpath,
                         freezing=3,
                         burst=200,
                         exportOrNo=FALSE) {

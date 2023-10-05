@@ -101,6 +101,10 @@ importRAWs <- function(ffpath) {
   if(substrEnding(ffpath, 4) != '.csv')
     stop('\t \t \t \t >>> Error: did you pick the correct file? It is not .csv \n')
 
+  # check we are given a file that exists
+  if(!file.exists(ffpath))
+    stop('\t \t \t \t >>> Error ffpath: file does not exist. \n')
+
   #### first; do we actually need to import? ####
   # if importRAWs(...) was ran already, frame-by-frame data is already in Environment
 

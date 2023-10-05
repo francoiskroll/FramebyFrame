@@ -77,8 +77,6 @@ Plots instantaneous frame rates over the course of the experiment.
 
 **ffpath**: full path to _RAWs.csv.  
 
-**zebpath**: full path to Zebralab .xls results file.  
-
 **subsample**: whether or not (TRUE or FALSE) to subsample the frame rates. It calculates instantaneous frame rate between every successive frame so it ends up with a lot of data points, subsample allow to not plot all of them. If use FALSE, you will have to wait for a bit. Default is TRUE.  
 
 **subsample_by**: if subsampling, plot only every nth data point, thereby decreasing the total number of data points plotted by n. For example subsample_by=1000 will only plot every 1000th instantaneous frame rate, thereby 1000 times fewer points. Default is 1000.  
@@ -132,8 +130,6 @@ ggActivityTraceGrid currently does not support making a legend. Accordingly, ple
 **ffpath**: full path to _RAWs.csv.  
 
 **genopath**: full path to genotype.txt.  
-
-**zebpath**: full path to Zebralab .xls results file.  
 
 **dayduration**: how many hours do the days last in your experiment. Default is 14.  
 
@@ -199,8 +195,6 @@ Plots binned & smoothed activity traces by group.
 **ffpath**: full path to _RAWs.csv.
 
 **genopath**: full path to genotype.txt.
-
-**zebpath**: full path to Zebralab .xls results file.
 
 **dayduration**: how many hours do the days last in your experiment. Default is 14.
 
@@ -301,8 +295,6 @@ Plots binned & smoothed sleep traces by group.
 **ffpath**: full path to _RAWs.csv.
 
 **genopath**: full path to genotype.txt.
-
-**zebpath**: full path to Zebralab .xls results file.
 
 **zthr_min**: stands for zzz threshold in minutes, i.e. minimum number of minutes of inactivity to call a period of inactivity a sleep bout. Default is 1.
 
@@ -464,8 +456,6 @@ Calculates multiple behaviour parameters.
 **ffpath**: full path(s) to _RAWs.csv.
 
 **genopath**: full path(s) to genotype.txt. If giving multiple ffpaths, make sure to match the order, i.e. it will assume that the first genopath is the genotype file for the first ffpath, etc.
-
-**zebpath**: full path(s) to Zebralab .xls results file. In the case of two Zebraboxes run in parallel, give the path to the common Zebralab .xls results file here. It is possible to calculate parameters for experiments not run in parallel, in which case you should give one zebpath for each ffpath, with orders matching.
 
 **woi**: window(s) of interest. This is if you want to analyse specific window(s) of data, _instead_ of analysing days/nights. Give the time windows as: `c('start1', 'stop1', 'start2', 'stop2', ...)`, each *start* or *stop* timestamp is given in the format YYYY-MM-DD HH:MM:SS. Here _woi1_ will be from _start1_ until _stop1_; _woi2_ will be from _start2_ until _stop2_, etc. For example, `woi=c('2022-01-25 20:00:00', '2022-01-25 23:00:00', '2022-01-26 20:00:00', '2022-01-26 23:00:00')` will analyse two windows of interest: _woi1_ from 8 PM to 11 PM on 25/01/2022 (3 hours of data) and _woi2_ is from 8 PM to 11 PM on 26/01/2022 (3 hours of data). Not mentioning this setting or giving NA will analyse days/nights present in the data. Default is NA.
 
@@ -1030,8 +1020,6 @@ Note, it will generate a YYMMDD_BX_lights.csv file using the filename of the fir
 Converts frame-by-frame data (a RAWs.csv file) into middur data (a middur.csv file).  
 
 * **ffpath**: full path to _RAWs.csv.  
-
-* **zebpath**: full path to Zebralab .xls results file.  
 
 * **freezing**: minimum Δ pixel for a frame to be counted as active. Any Δ pixel below the freezing threshold is considered inactive. Default is 3.  
 
