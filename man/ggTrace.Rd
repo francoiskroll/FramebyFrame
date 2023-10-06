@@ -12,6 +12,7 @@ ggTrace(
   grporder,
   onlyWell,
   tracecols,
+  tracedash,
   ribboncols,
   linethick,
   xname,

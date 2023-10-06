@@ -14,6 +14,7 @@ ggActivityTraceGrid(
   bin_nsecs = 10 * 60,
   onlyWell = NA,
   tracecols = NA,
+  tracedash = NA,
   linethick = 0.4,
   ymin = 0,
   ymax,

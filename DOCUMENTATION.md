@@ -51,7 +51,7 @@ Sorts the Δ pixel data from a bunch of raw .xls/xlsx files and generates files 
 
 > Note sure which one? Open one of the raw .xls/xlsx files, are the Δ pixel values (typically in column _data1_) mostly 1s or mostly 0s? If mostly 1s: `boxGen=1`; if mostly 0s: `boxGen=2`. 
 
-**twoBoxMode**: if two boxes ran in parallel, twoBoxMode=TRUE; if a single box ran at a time, twoBoxMode=FALSE. Precisely the question is: do the raw .xls/xlsx files contain data from two boxes or a single one? If you are unsure, you can open one of the .xls/xlsx files and look at the wells. Default is TRUE.  
+**twoBoxMode**: if two boxes ran in parallel, `twoBoxMode=TRUE`; if a single box ran at a time, `twoBoxMode=FALSE`. Precisely the question is: do the raw .xls/xlsx files contain data from two boxes or a single one? If you are unsure, you can open one of the .xls/xlsx files and look at the wells. Default is TRUE.  
 
 **boxnum**: if ran two boxes in parallel, which box do you want to process? It can only be 1 or 2. Default is 1.  
 
@@ -63,7 +63,7 @@ Sorts the Δ pixel data from a bunch of raw .xls/xlsx files and generates files 
 
 **dateformat**: the format in which the date is given in the Zebralab results file. You only need to mention this setting if you are in the US and the Zebralab results file gives date as MM/DD/YYYY, in which case please give `dateformat="MDY"`. Default is 'DMY'.  
 
-**dayduration**: during your experiment, how long did the days (lights ON) last? FramebyFrame currently assumes 24-hr cycles, so e.g. if dayduration=14, it will understand this as: days last 14 hr, nights last 10 hr. Default is 14.  
+**dayduration**: during your experiment, how long did the days (lights ON) last? FramebyFrame currently assumes 24-hr cycles, so e.g. if `dayduration=14`, it will understand this as: days last 14 hr, nights last 10 hr. Default is 14.  
 
 **exportXlsOrNo**: you probably do not need to worry about this. TRUE will attempt to export all the .xls files after correcting the errors, essentially as if Zebralab did not make any error. Default is FALSE.
 
@@ -79,7 +79,7 @@ Plots instantaneous frame rates over the course of the experiment.
 
 **subsample**: whether or not (TRUE or FALSE) to subsample the frame rates. It calculates instantaneous frame rate between every successive frame so it ends up with a lot of data points, subsample allow to not plot all of them. If use FALSE, you will have to wait for a bit. Default is TRUE.  
 
-**subsample_by**: if subsampling, plot only every nth data point, thereby decreasing the total number of data points plotted by n. For example subsample_by=1000 will only plot every 1000th instantaneous frame rate, thereby 1000 times fewer points. Default is 1000.  
+**subsample_by**: if subsampling, plot only every nth data point, thereby decreasing the total number of data points plotted by n. For example `subsample_by=1000` will only plot every 1000th instantaneous frame rate, thereby 1000 times fewer points. Default is 1000.  
 
 **xstart**: start of X axis, in hours since 9 AM of day0. Default is 0.  
 
@@ -135,15 +135,17 @@ ggActivityTraceGrid currently does not support making a legend. Accordingly, ple
 
 **smoothOrNo**: whether or not (TRUE or FALSE) to smooth the frame-by-frame data. Default is TRUE.  
 
-**smooth_nsecs**: Number of seconds in rolling average during smoothing. Higher number gives a smoother trace. Setting will be ignored if smoothOrNo=FALSE. Default is 30\*60 = 1800 seconds = 30 minutes.  
+**smooth_nsecs**: Number of seconds in rolling average during smoothing. Higher number gives a smoother trace. Setting will be ignored if `smoothOrNo=FALSE`. Default is 30\*60 = 1800 seconds = 30 minutes.  
 
 **binOrNo**: whether or not (TRUE or FALSE) to bin the frame-by-frame data. Beware, not binning will take a while to plot. Default is TRUE.  
 
-**bin_nsecs**: Number of seconds in bin for binning. Higher number gives fewer datapoints plotted. For example, 600 seconds (10 minutes) sums the data in 10-minute bins. Setting will be ignored if binOrNo=FALSE. Default is 10\*60 = 600 seconds = 10 minutes.  
+**bin_nsecs**: Number of seconds in bin for binning. Higher number gives fewer datapoints plotted. For example, 600 seconds (10 minutes) sums the data in 10-minute bins. Setting will be ignored if `binOrNo=FALSE`. Default is 10\*60 = 600 seconds = 10 minutes.  
 
-**onlyWell**: do you only want to plot some specific well(s)? You can give them here as ‘fX’. Examples: onlyWell='f1' or onlyWell=c('f1', 'f5', 'f7'). You can give well(s) not present in the genotype file, it will plot them in light grey. Default is NA, which plots every well in the data, including those not mentioned in light grey.  
+**onlyWell**: do you only want to plot some specific well(s)? You can give them here as ‘fX’. Examples: `onlyWell='f1'` or `onlyWell=c('f1', 'f5', 'f7')`. You can give well(s) not present in the genotype file, it will plot them in light grey. Default is NA, which plots every well in the data, including those not mentioned in light grey.  
 
-**tracecols**: one trace colour per group in genotype file. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Give the colours in the order of the groups in the genotype file. For example, tracecols=c('#fcb505', '#78ac63'). Default is NA which uses default R colours.  
+**tracecols**: one trace colour per group in genotype file. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Give the colours in the order of the groups in the genotype file. For example, `tracecols=c('#fcb505', '#78ac63')`. Default is NA which uses default R colours.  
+
+**tracedash**: line type for each group. Options are 0 = blank; 1 = solid; 2 = dashed; 3 = dotted; 4 = dotdash; 5 = longdash; 6 = twodash. Give those in the order of the groups in the genotype file. For example, `tracedash=c(1, 2)` for two groups. Default is NA which plots all traces are solid lines.  
 
 **linethick**: thickness of the trace. Default is 0.4.  
 
@@ -155,9 +157,9 @@ ggActivityTraceGrid currently does not support making a legend. Accordingly, ple
 
 **xstop**: end of the X axis, in hours since 9 AM of day0. Default is 0, which means plot all the timecourse.  
 
-**trimstart**: whether to trim some of the data at the start, in number of hours since 9 AM of day0. e.g. trimstart = 24 trims all the data before 9 AM night0 >> day1 transition (i.e. 24 hours after 9 AM day 0). It is slightly different than xstart because xstart leaves a little bit of the data before the start (try to see how it looks without trimming). If you want the trace to start at 24 hours (9 AM day1) sharp, use xstart=24 and trimstart=24 together. Default is 0, i.e. no trimming.  
+**trimstart**: whether to trim some of the data at the start, in number of hours since 9 AM of day0. e.g. `trimstart=24` trims all the data before 9 AM night0 >> day1 transition (i.e. 24 hours after 9 AM day 0). It is slightly different than xstart because xstart leaves a little bit of the data before the start (try to see how it looks without trimming). If you want the trace to start at 24 hours (9 AM day1) sharp, use `xstart=24` and `trimstart=24` together. Default is 0, i.e. no trimming.  
 
-**trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. trimstart = 72 trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use xstart=72 and trimstart=72 together.
+**trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. `trimstart=72` trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use xstart=72 and `trimstart=72` together.
 
 Default is 0, i.e. no trimming. Default is 0, which means no trimming.  
 Note, xstart/xstop & trimstart/trimstop are especially useful to align plots from different experiments, as you probably did not start/stop the experiments at exactly the same times.
@@ -168,15 +170,15 @@ Note, xstart/xstop & trimstart/trimstop are especially useful to align plots fro
 
 **nightBgOrNo**: whether or not (TRUE or FALSE) to add grey backgrounds to represent the nights.  
 
-**sunlinesOrNo**: whether or not (TRUE or FALSE) to draw vertical dashed lines representing the light transitions. You probably do not need these light transition lines if you are happy with the night backgrounds (when nightBgOrNo=TRUE, see above). However, if for whatever reason you want to add the night backgrounds yourself in Illustrator or else, I recommend exporting the plot once with sunlinesOrNo=TRUE so you can place your grey rectangles correctly, then return to R, export the plot without the sunlines (sunlinesOrNo=FALSE) and replace the file in your graphics software. Default is FALSE.  
+**sunlinesOrNo**: whether or not (TRUE or FALSE) to draw vertical dashed lines representing the light transitions. You probably do not need these light transition lines if you are happy with the night backgrounds (when `nightBgOrNo=TRUE`, see above). However, if for whatever reason you want to add the night backgrounds yourself in Illustrator or else, I recommend exporting the plot once with `sunlinesOrNo=TRUE` so you can place your grey rectangles correctly, then return to R, export the plot without the sunlines (`sunlinesOrNo=FALSE`) and replace the file in your graphics software. Default is FALSE.  
 
-**markTimes**: specific time(s) to mark as vertical dashed lines. Give them in the format YYYY-MM-DD HH:MM:SS. For example, markTimes=c('2022-01-25 11:40:00', '2022-01-26 12:40:00'). Lines will be in the same style as the sunlines (see setting sunlinesOrNo). To not mark any times, simply skip this setting or give NA. Default is NA.  
+**markTimes**: specific time(s) to mark as vertical dashed lines. Give them in the format YYYY-MM-DD HH:MM:SS. For example, `markTimes=c('2022-01-25 11:40:00', '2022-01-26 12:40:00')`. Lines will be in the same style as the sunlines (see setting sunlinesOrNo). To not mark any times, simply skip this setting or give NA. Default is NA.  
 
 **ncol**: how many columns should the grid have?  
 
 **nrow**: how many rows should the grid have?  
 
-If you are plotting every well (so onlyWell is not mentioned or onlyWell=NA), then what I recommend is setting ncol and nrow to the number of columns/rows you have in your plate, that way the grid will represent your plate. For a 96-well plate: ncol=12 and nrow=8.  
+If you are plotting every well (so onlyWell is not mentioned or `onlyWell=NA`), then what I recommend is setting ncol and nrow to the number of columns/rows you have in your plate, that way the grid will represent your plate. For a 96-well plate: `ncol=12` and `nrow=8`.  
 
 **exportOrNo**: Whether or not (TRUE or FALSE) to export the plot. Default is TRUE.  
 
@@ -186,7 +188,7 @@ If you are plotting every well (so onlyWell is not mentioned or onlyWell=NA), th
 
 **height**: height of pdf in mm. Default is 55.  
 
-As above, you can set width and height to be same size or width:height ratio as your plate. For a 96-well plate: width=255 and height=171 work well and are exactly twice the dimensions of a real 96-well plate.  
+As above, you can set width and height to be same size or width:height ratio as your plate. For a 96-well plate: `width=255` and `height=171` work well and are exactly twice the dimensions of a real 96-well plate.  
 
 ### ggActivityTraceByGroup(...)
 
@@ -205,17 +207,19 @@ Setting will be ignored if `smoothOrNo=FALSE`. Default is 30\*60 = 1800 seconds 
 
 **binOrNo**: whether or not (TRUE or FALSE) to bin the frame-by-frame data. Beware, not binning will take a while to plot. Default is TRUE.
 
-**bin_nsecs**: Number of seconds in bin for binning. Higher number gives fewer datapoints plotted. For example, 600 seconds (10 minutes) sums the data in 10-minute bins. Setting will be ignored if binOrNo=FALSE. Default is 10*60 = 600 seconds = 10 minutes.
+**bin_nsecs**: Number of seconds in bin for binning. Higher number gives fewer datapoints plotted. For example, 600 seconds (10 minutes) sums the data in 10-minute bins. Setting will be ignored if `binOrNo=FALSE`. Default is 10*60 = 600 seconds = 10 minutes.
 
 **ribbon**: how ribbon (error bar around mean trace) should be calculated. Options are ‘sd’ for standard deviation or or ‘sem’ standard error of the mean.
 
 **grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which plots all groups present in the data in the alphabetical order.
 
-**onlyWell**: do you only want to plot some specific well(s)? You can give them here as ‘fX’. Examples: onlyWell='f1' or onlyWell=c('f1', 'f5', 'f7'). You can give well(s) not present in the genotype file, it will plot them in light grey and label them as ‘excluded’ in legend. Default is NA, which plots the larvae present in the genotype file.
+**onlyWell**: do you only want to plot some specific well(s)? You can give them here as ‘fX’. Examples: `onlyWell='f1'` or `onlyWell=c('f1', 'f5', 'f7')`. You can give well(s) not present in the genotype file, it will plot them in light grey and label them as ‘excluded’ in legend. Default is NA, which plots the larvae present in the genotype file.
 
-**tracecols**: colours of the mean trace(s). If also giving grporder, give the colours in the same order. Default is NA which uses default R colours.
+**tracecols**: colours of the mean trace(s). If also giving `grporder`, give the colours in the same order. Default is NA which uses default R colours.
 
-**ribboncols**: colours of the ribbon(s). If also giving grporder, give the colours in the same order. Default is NA which uses default R colours with 50% transparency.
+**tracedash**: line type of the mean trace(s). Options are 0 = blank; 1 = solid; 2 = dashed; 3 = dotted; 4 = dotdash; 5 = longdash; 6 = twodash. If also giving `grporder`, give the line types in the same order. For example, `tracedash=c(1, 2, 1, 2)` for four groups. Default is NA which plots all traces are solid lines.  
+
+**ribboncols**: colours of the ribbon(s). If also giving `grporder`, give the colours in the same order. Default is NA which uses default R colours with 50% transparency.
 
 **linethick**: thickness of the mean trace. Default is 0.4.
 
@@ -235,9 +239,9 @@ Setting will be ignored if `smoothOrNo=FALSE`. Default is 30\*60 = 1800 seconds 
 
 **xstop**: end of the X axis, in hours since 9 AM of day0. Default is 0, which means plot all the timecourse.
 
-**trimstart**: whether to trim some of the data at the start, in number of hours since 9 AM of day0. e.g. trimstart = 24 trims all the data before 9 AM night0 >> day1 transition (i.e. 24 hours after 9 AM day 0). It is slightly different than xstart because xstart leaves a little bit of the data before the start (try to see how it looks without trimming). If you want the trace to start at 24 hours (9 AM day1) sharp, use xstart=24 and trimstart=24 together. Default is 0, i.e. no trimming.
+**trimstart**: whether to trim some of the data at the start, in number of hours since 9 AM of day0. e.g. `trimstart=24` trims all the data before 9 AM night0 >> day1 transition (i.e. 24 hours after 9 AM day 0). It is slightly different than xstart because xstart leaves a little bit of the data before the start (try to see how it looks without trimming). If you want the trace to start at 24 hours (9 AM day1) sharp, use `xstart=24` and `trimstart=24` together. Default is 0, i.e. no trimming.
 
-**trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. trimstart = 72 trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use xstart=72 and trimstart=72 together. Default is 0, i.e. no trimming. Default is 0, which means no trimming.
+**trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. `trimstart=72` trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use `xstart=72` and `trimstart=72` together. Default is 0, i.e. no trimming. Default is 0, which means no trimming.
 
 Note, xstart/xstop & trimstart/trimstop are especially useful to align plots from different experiments, as you probably did not start/stop the experiments at exactly the same times.
 
@@ -247,9 +251,9 @@ Note, xstart/xstop & trimstart/trimstop are especially useful to align plots fro
 
 **nightBgOrNo**: whether or not (TRUE or FALSE) to add grey backgrounds to represent the nights.
 
-**sunlinesOrNo**: whether or not (TRUE or FALSE) to draw vertical dashed lines representing the light transitions. You probably do not need these light transition lines if you are happy with the night backgrounds (when nightBgOrNo=TRUE, see above). However, if for whatever reason you want to add the night backgrounds yourself in Illustrator or else, I recommend exporting the plot once with sunlinesOrNo=TRUE so you can place your grey rectangles correctly, then return to R, export the plot without the sunlines (sunlinesOrNo=FALSE) and replace the file in your graphics software. Default is FALSE.
+**sunlinesOrNo**: whether or not (TRUE or FALSE) to draw vertical dashed lines representing the light transitions. You probably do not need these light transition lines if you are happy with the night backgrounds (when `nightBgOrNo=TRUE`, see above). However, if for whatever reason you want to add the night backgrounds yourself in Illustrator or else, I recommend exporting the plot once with `sunlinesOrNo=TRUE` so you can place your grey rectangles correctly, then return to R, export the plot without the sunlines (`sunlinesOrNo=FALSE`) and replace the file in your graphics software. Default is FALSE.
 
-**markTimes**: specific time(s) to mark as vertical dashed lines. Give them in the format YYYY-MM-DD HH:MM:SS. For example, markTimes=c('2022-01-25 11:40:00', '2022-01-26 12:40:00'). Lines will be in the same style as the sunlines (see setting sunlinesOrNo). To not mark any times, simply skip this setting or give NA. Default is NA.  
+**markTimes**: specific time(s) to mark as vertical dashed lines. Give them in the format YYYY-MM-DD HH:MM:SS. For example, `markTimes=c('2022-01-25 11:40:00', '2022-01-26 12:40:00')`. Lines will be in the same style as the sunlines (see setting sunlinesOrNo). To not mark any times, simply skip this setting or give NA. Default is NA.  
 
 **legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
 
@@ -298,7 +302,7 @@ Plots binned & smoothed sleep traces by group.
 
 **zthr_min**: stands for zzz threshold in minutes, i.e. minimum number of minutes of inactivity to call a period of inactivity a sleep bout. Default is 1.
 
-**inaThr**: the maximum Δpixel to call a frame inactive during sleep bout detection. For example, inaThr=3 means “count any frame below or equal 3 Δpixel as inactive”. The setting is analogous to the Freezing threshold in Zebralab. I do not recommend changing this parameter without a good reason to do so. In my opinion, 1 minute of inactivity should genuinely mean 1 minute of inactivity, i.e. a continuous 1,500 frames which are all 0 Δ pixel. Having said that, if you used a low Sensitivity setting in Zebralab (< 20 on the newer Zebrabox), you may get some false positive Δ pixel detection. A good test is to scroll through the frame-by-frame data (in the _RAWs.csv) of empty wells. If there are some small scattered numbers (e.g. 1–3), it may be justified to set inaThr above 0, for example inaThr=3. Default is 0.
+**inaThr**: the maximum Δpixel to call a frame inactive during sleep bout detection. For example, `inaThr=3` means “count any frame below or equal 3 Δpixel as inactive”. The setting is analogous to the Freezing threshold in Zebralab. I do not recommend changing this parameter without a good reason to do so. In my opinion, 1 minute of inactivity should genuinely mean 1 minute of inactivity, i.e. a continuous 1,500 frames which are all 0 Δ pixel. Having said that, if you used a low Sensitivity setting in Zebralab (< 20 on the newer Zebrabox), you may get some false positive Δ pixel detection. A good test is to scroll through the frame-by-frame data (in the _RAWs.csv) of empty wells. If there are some small scattered numbers (e.g. 1–3), it may be justified to set inaThr above 0, for example `inaThr=3`. Default is 0.
 
 **epo_min**: stands for epoch in minutes, i.e. epoch duration to sum the data. Note, what you choose here will define the unit of the Y axis. For example, 10 minutes would give number of minutes asleep/10 minutes as Y axis unit. Default is 10.
 
@@ -306,17 +310,19 @@ Plots binned & smoothed sleep traces by group.
 
 **smoothOrNo**: whether or not (TRUE or FALSE) to smooth the sleep timecourse data. Note, smoothing is applied on the data after it is summed in epochs. Default is TRUE.
 
-**smooth_npoints**: Number of datapoints in rolling average during smoothing. Higher number gives a smoother trace. Note, smoothing is applied on the data after it is summed in epochs, this is why the setting is in datapoints and not in seconds or minutes. For example, if epo_min=10 and smooth_npoints=5, it means the rolling average will calculate successive means of the previous 5 datapoints = 50 minutes. Setting will be ignored if smoothOrNo=FALSE. Default is 5.
+**smooth_npoints**: Number of datapoints in rolling average during smoothing. Higher number gives a smoother trace. Note, smoothing is applied on the data after it is summed in epochs, this is why the setting is in datapoints and not in seconds or minutes. For example, if `epo_min=10` and `smooth_npoints=5`, it means the rolling average will calculate successive means of the previous 5 datapoints = 50 minutes. Setting will be ignored if `smoothOrNo=FALSE`. Default is 5.
 
 **ribbon**: how ribbon (error bar around mean trace) should be calculated. Options are ‘sd’ for standard deviation or or ‘sem’ for standard error of the mean.
 
-**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which plots all groups present in the data in alphabetical order.
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which plots all groups present in the data in alphabetical order.
 
-**onlyWell**: do you only want to plot some specific well(s)? You can give them here as ‘fX’. Examples: onlyWell='f1' or onlyWell=c('f1', 'f5', 'f7'). You can give well(s) not present in the genotype file, it will plot them in light grey and label them as ‘excluded’ in legend. Default is NA, which plots the larvae present in the genotype file.
+**onlyWell**: do you only want to plot some specific well(s)? You can give them here as ‘fX’. Examples: `onlyWell='f1'` or `onlyWell=c('f1', 'f5', 'f7')`. You can give well(s) not present in the genotype file, it will plot them in light grey and label them as ‘excluded’ in legend. Default is NA, which plots the larvae present in the genotype file.
 
-**tracecols**: colours of the mean trace(s). If also giving grporder, give the colours in the same order. Default is NA which uses default R colours.
+**tracecols**: colours of the mean trace(s). If also giving `grporder`, give the colours in the same order. Default is NA which uses default R colours.
 
-**ribboncols**: colours of the ribbon(s). If also giving grporder, give the colours in the same order. Default is NA which uses default R colours with 50% transparency.
+**tracedash**: line type of the mean trace(s). Options are 0 = blank; 1 = solid; 2 = dashed; 3 = dotted; 4 = dotdash; 5 = longdash; 6 = twodash. If also giving `grporder`, give the line types in the same order. For example, `tracedash=c(1, 2, 1, 2)` for four groups. Default is NA which plots all traces are solid lines.  
+
+**ribboncols**: colours of the ribbon(s). If also giving `grporder`, give the colours in the same order. Default is NA which uses default R colours with 50% transparency.
 
 **linethick**: thickness of the mean trace. Default is 0.4.
 
@@ -336,9 +342,9 @@ Plots binned & smoothed sleep traces by group.
 
 **xstop**: end of the X axis, in hours since 9 AM of day0. Default is 0, which means plot all the timecourse.
 
-**trimstart**: whether to trim some of the data at the start, in number of hours since 9 AM of day0. e.g. trimstart = 24 trims all the data before 9 AM night0 >> day1 transition (i.e. 24 hours after 9 AM day 0). It is slightly different than xstart because xstart leaves a little bit of the data before the start (try to see how it looks without trimming). If you want the trace to start at 24 hours (9 AM day1) sharp, use xstart=24 and trimstart=24 together. Default is 0, i.e. no trimming.
+**trimstart**: whether to trim some of the data at the start, in number of hours since 9 AM of day0. e.g. `trimstart=24` trims all the data before 9 AM night0 >> day1 transition (i.e. 24 hours after 9 AM day 0). It is slightly different than xstart because xstart leaves a little bit of the data before the start (try to see how it looks without trimming). If you want the trace to start at 24 hours (9 AM day1) sharp, use `xstart=24` and `trimstart=24` together. Default is 0, i.e. no trimming.
 
-**trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. trimstart = 72 trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use xstart=72 and trimstart=72 together. Default is 0, i.e. no trimming. Default is 0, which means no trimming.
+**trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. `trimstart=72` trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use xstart=72 and `trimstart=72` together. Default is 0, i.e. no trimming. Default is 0, which means no trimming.
 
 Note, xstart/xstop & trimstart/trimstop are especially useful to align plots from different experiments, as you probably did not start/stop the experiments at exactly the same times.
 
@@ -348,9 +354,9 @@ Note, xstart/xstop & trimstart/trimstop are especially useful to align plots fro
 
 **nightBgOrNo**: whether or not (TRUE or FALSE) to add grey backgrounds to represent the nights.
 
-**sunlinesOrNo**: whether or not (TRUE or FALSE) to draw vertical dashed lines representing the light transitions. You probably do not need these light transition lines if you are happy with the night backgrounds (when nightBgOrNo=TRUE, see above). However, if for whatever reason you want to add the night backgrounds yourself in Illustrator or else, I recommend exporting the plot once with sunlinesOrNo=TRUE so you can place your grey rectangles correctly, then return to R, export the plot without the sunlines (sunlinesOrNo=FALSE) and replace the file in your graphics software. Default is FALSE.
+**sunlinesOrNo**: whether or not (TRUE or FALSE) to draw vertical dashed lines representing the light transitions. You probably do not need these light transition lines if you are happy with the night backgrounds (when `nightBgOrNo=TRUE`, see above). However, if for whatever reason you want to add the night backgrounds yourself in Illustrator or else, I recommend exporting the plot once with `sunlinesOrNo=TRUE` so you can place your grey rectangles correctly, then return to R, export the plot without the sunlines (`sunlinesOrNo=FALSE`) and replace the file in your graphics software. Default is FALSE.
 
-**markTimes**: specific time(s) to mark as vertical dashed lines. Give them in the format YYYY-MM-DD HH:MM:SS. For example, markTimes=c('2022-01-25 11:40:00', '2022-01-26 12:40:00'). Lines will be in the same style as the sunlines (see setting sunlinesOrNo). To not mark any times, simply skip this setting or give NA. Default is NA.
+**markTimes**: specific time(s) to mark as vertical dashed lines. Give them in the format YYYY-MM-DD HH:MM:SS. For example, `markTimes=c('2022-01-25 11:40:00', '2022-01-26 12:40:00')`. Lines will be in the same style as the sunlines (see setting sunlinesOrNo). To not mark any times, simply skip this setting or give NA. Default is NA.
 
 **legendOrNo**: Whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
 
@@ -461,7 +467,7 @@ Calculates multiple behaviour parameters.
 
 **zthr_min**: stands for zzz threshold in minutes, i.e. minimum number of minutes of inactivity to call a period of inactivity a sleep bout. This setting is only used for sleep parameters, it will simply be ignored when calculating an _activity_ or _activebout_ parameters. Default is 1.
 
-**inaThr**: the maximum Δpixel to call a frame inactive during sleep bout detection. For example, inaThr=3 means “count any frame below or equal 3 Δpixel as inactive”. The setting is analogous to the Freezing threshold in Zebralab. I do not recommend changing this parameter without a good reason to do so. In my opinion, 1 minute of inactivity should genuinely mean 1 minute of inactivity, i.e. a continuous 1,500 frames which are all 0 Δ pixel. Having said that, if you used a low Sensitivity setting in Zebralab (< 20 on the newer Zebrabox), you may get some false positive Δ pixel detection. A good test is to scroll through the frame-by-frame data (in the _RAWs.csv) of empty wells. If there are some small scattered numbers (e.g. 1–3), it may be justified to set inaThr above 0, for example inaThr=3. Default is 0.
+**inaThr**: the maximum Δpixel to call a frame inactive during sleep bout detection. For example, `inaThr=3` means “count any frame below or equal 3 Δpixel as inactive”. The setting is analogous to the Freezing threshold in Zebralab. I do not recommend changing this parameter without a good reason to do so. In my opinion, 1 minute of inactivity should genuinely mean 1 minute of inactivity, i.e. a continuous 1,500 frames which are all 0 Δ pixel. Having said that, if you used a low Sensitivity setting in Zebralab (< 20 on the newer Zebrabox), you may get some false positive Δ pixel detection. A good test is to scroll through the frame-by-frame data (in the _RAWs.csv) of empty wells. If there are some small scattered numbers (e.g. 1–3), it may be justified to set inaThr above 0, for example `inaThr=3`. Default is 0.
 
 **dayduration**: how many hours do the days last in your experiment. Default is 14.
 
@@ -478,7 +484,7 @@ For two parallel experiments each of the format night0/day1/night1/day2/night2, 
 Calculations of activebout parameters often throw warnings, you can ignore them.
 
 ###### How are sleep parameters affected by the inaThr setting?
-Again, I do not recommend using an inaThr other than 0, but if you are curious: I have tested on one of my experiments (for one night and N = 3 larvae) how gradually increasing inaThr from 0 to 10 affects each sleep parameter. Slope represents the linear regression of Y = parameter (e.g. total number of hours spent asleep during night2 for sleepHours) vs X = inaThr from 0 to 10.
+Again, I do not recommend using an inaThr other than 0, but if you are curious: I have tested on one of my experiments (for one night and n = 3 larvae) how gradually increasing inaThr from 0 to 10 affects each sleep parameter. Slope represents the linear regression of Y = parameter (e.g. total number of hours spent asleep during night2 for sleepHours) vs X = inaThr from 0 to 10.
 * **sleepHours**: slope ~ 0.14, so increasing inaThr by 1 Δpixel overestimates total sleep time by an additional ~ 8.5 minutes.
 * **sleepNumNaps**: negligible effect for 2 of the 3 larvae tested.
 * **sleepLatency**: negligible effect.
@@ -503,11 +509,11 @@ Plots a scatter plot for one behavioural parameter, from one or multiple paramet
 
 **pa**: parameter table(s), given as Environment object(s) or full path(s) to .csv. If giving as Environment object(s), give the names as strings, e.g. `pa=c('pa1', 'pa2')`.  
 
-**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which plots all groups present in the parameter table(s) in alphabetical order.
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which plots all groups present in the parameter table(s) in alphabetical order.
 
 **skipNight0**: whether or not (TRUE or FALSE) to plot night0’s datapoints. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
 
-**poolExp1**: a set of experiments to pool together. Give them as YYMMDD_BX, e.g. poolExp1=c('220706_16', '220706_17') will pool datapoints into one experiment called pool_1. Note, there is no normalisation of any kind happening. It will effectively behave as if the datapoints from the different experiments were from a single experiment, including when calculating the statistics. Use at your own risk. Default is NA.
+**poolExp1**: a set of experiments to pool together. Give them as YYMMDD_BX, e.g. `poolExp1=c('220706_16', '220706_17')` will pool datapoints into one experiment called pool_1. Note, there is no normalisation of any kind happening. It will effectively behave as if the datapoints from the different experiments were from a single experiment, including when calculating the statistics. Use at your own risk. Default is NA.
 
 **poolExp2**: another set of experiments to pool together in experiment pool_2. See comment above. Default is NA.
 
@@ -516,11 +522,11 @@ Plots a scatter plot for one behavioural parameter, from one or multiple paramet
 **poolDayNight**: whether or not (TRUE or FALSE) to pool all the day datapoints together and all the night datapoints together, i.e. to lose the ‘time window’ resolution. For example, TRUE would pool all day1 and day2 datapoints on the X axis. When multiple experiments are plotted, TRUE keeps experiments separated. Default is FALSE.
 onlyExp: do you want to plot only specific experiment(s) of the parameter tables you gave? Give them here as YYMMDD_BX. If you gave a single parameter table you can skip this setting or give NA. Default is NA, which plots every experiment it was given.
 
-**onlyDayorNight**: do you want to plot only day datapoints or only night datapoints? Options are ‘day’ or ‘night’ or NA. This will keep time windows separated, so for the standard Rihel lab experiment ‘day’ here is equivalent to onlyWin=c('day1', 'day2') below. Most parameters vary a lot between day and night, so you may want one ‘day’ plot and one ‘night’ plot with different Y axes. Default is NA, which plots datapoints from days and nights.
+**onlyDayorNight**: do you want to plot only day datapoints or only night datapoints? Options are ‘day’ or ‘night’ or NA. This will keep time windows separated, so for the standard Rihel lab experiment ‘day’ here is equivalent to `onlyWin=c('day1', 'day2')` below. Most parameters vary a lot between day and night, so you may want one ‘day’ plot and one ‘night’ plot with different Y axes. Default is NA, which plots datapoints from days and nights.
 
-**onlyWin**: do you want to plot only some time windows? Give them here, for example onlyWin='day1' or onlyWin=c('day1', 'night1'). Default is NA, which plots every time window available in the parameter table(s).
+**onlyWin**: do you want to plot only some time windows? Give them here, for example `onlyWin='day1'` or `onlyWin=c('day1', 'night1')`. Default is NA, which plots every time window available in the parameter table(s).
 
-**colours**: colours for the groups (genotypes), either in the same order as grporder or in alphabetical order of the group names if not giving grporder. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
+**colours**: colours for the groups (genotypes), either in the same order as `grporder` or in alphabetical order of the group names if not giving `grporder`. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
 
 **fainterExp**: whether or not TRUE or FALSE to colour replicate experiments with slightly fainter group colours to help distinguish them on the plot. Default is FALSE.  
 
@@ -540,13 +546,13 @@ onlyExp: do you want to plot only specific experiment(s) of the parameter tables
 
 **ynameOrNo**: whether or not (TRUE or FALSE) to write the name of the Y axis. It automatically writes a name depending on the parameter, e.g. “active bout mean (Δ px)”. Default is TRUE.
 
-**yunitOrNo**: whether or not (TRUE or FALSE) to only write the unit of measure on the Y axis, e.g. Δ px for active bout length. It is essentially a simpler version of ynameOrNo. I would recommend yunitOrNo=TRUE if you have the parameter names as titles already (below), otherwise the Y axis name is redundant. Default is FALSE.  
+**yunitOrNo**: whether or not (TRUE or FALSE) to only write the unit of measure on the Y axis, e.g. Δ px for active bout length. It is essentially a simpler version of ynameOrNo. I would recommend `yunitOrNo=TRUE` if you have the parameter names as titles already (below), otherwise the Y axis name is redundant. Default is FALSE.  
 
 **splitBy**: how to split the panel, can be `"window"`, which splits the panel by each day/night of each experiment, or `"experiment"`, which splits the panel by experiment Splitting the panel only means that the horizontal lines of the grid have breaks, it does not affect the order of the dots. Default is `'window'`.  
 
 **titleOrNo**: whether or not (TRUE or FALSE) to write the parameter name as title of the plot.
 
-**blankTitle**: you can probably skip, this is for internal use. TRUE (with titleOrNo=TRUE) writes a blank title. It helps to align the day and night plots properly in ggParameterGrid(). Default is FALSE.
+**blankTitle**: you can probably skip, this is for internal use. TRUE (with `titleOrNo=TRUE`) writes a blank title. It helps to align the day and night plots properly in ggParameterGrid(). Default is FALSE.
 
 **nightBgOrNo**: whether or not (TRUE or FALSE) to add a grey background when night datapoints are plotted. Currently, it only works if `onlyDayorNight='night'`. Default is TRUE.
 
@@ -561,7 +567,7 @@ xtextOrNo. whether or not (TRUE or FALSE) to write the text on the X axis. Defau
 
 **exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf. You can skip giving this parameter entirely if you do not wish to export the plot.
 
-I usually run two Zebraboxes in parallel with one clutch in each to serve both as technical (different Zebraboxes) and biological (different clutches) replicates. Accordingly, I like to plot the two clutches side to side to see whether the results are consistent. However, most parameters vary a lot between day and night so it is not always ideal to have the same Y axis for day and night. To have different Y axes, I usually give the two parameter tables (one for each Zebrabox/clutch) but generate a ‘day’ plot (onlyDayorNight='day') and a ‘night’ plot (onlyDayorNight='night') separately, i.e. two separate ggParameter() calls.
+I usually run two Zebraboxes in parallel with one clutch in each to serve both as technical (different Zebraboxes) and biological (different clutches) replicates. Accordingly, I like to plot the two clutches side to side to see whether the results are consistent. However, most parameters vary a lot between day and night so it is not always ideal to have the same Y axis for day and night. To have different Y axes, I usually give the two parameter tables (one for each Zebrabox/clutch) but generate a ‘day’ plot (`onlyDayorNight='day'`) and a ‘night’ plot (`onlyDayorNight='night'`) separately, i.e. two separate ggParameter() calls.
 
 
 ### ggParameterGrid(...)
@@ -574,7 +580,7 @@ ggParameterGrid() does not currently support parameters calculated on specific w
 
 **statsReport**: whether or not (TRUE or FALSE) to write the report (.csv file) listing all the linear mixed effect models. If TRUE, it will be written as LMEreport.csv in the same folder as exportPath (below).
 
-**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Please read how this setting also affects the LME calculations under LMEdaynight(...) below. Default is NA, which plots all groups present in the parameter table(s) in alphabetical order.
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Please read how this setting also affects the LME calculations under LMEdaynight(...) below. Default is NA, which plots all groups present in the parameter table(s) in alphabetical order.
 
 **skipNight0**: whether or not (TRUE or FALSE) to plot night0’s datapoints. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Please read how this setting also affects the LME calculations under LMEdaynight(...) below.. Default is FALSE.
 
@@ -590,9 +596,9 @@ ggParameterGrid() does not currently support parameters calculated on specific w
 
 **onlyDayorNight**: not currently supported. Let me know if needed.
 
-**onlyWin**: do you want to plot only some time windows? Give them here, for example onlyWin='day1' or onlyWin=c('day1', 'night1'). Default is NA, which plots every time window available in the parameter table(s).
+**onlyWin**: do you want to plot only some time windows? Give them here, for example `onlyWin='day1'` or `onlyWin=c('day1', 'night1')`. Default is NA, which plots every time window available in the parameter table(s).
 
-**colours**: colours for the groups (genotypes), either in the same order as grporder or in alphabetical order of the group names if not giving grporder. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
+**colours**: colours for the groups (genotypes), either in the same order as `grporder` or in alphabetical order of the group names if not giving `grporder`. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
 
 **legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
 
@@ -604,7 +610,7 @@ ggParameterGrid() does not currently support parameters calculated on specific w
 
 **ynameOrNo**: whether or not (TRUE or FALSE) to write the name of the Y axis. It automatically writes a name depending on the parameter, e.g. “active bout mean (Δ px)”. Default is TRUE.
 
-**yunitOrNo**: whether or not (TRUE or FALSE) to only write the unit of measure on the Y axis, e.g. Δ px for active bout length. It is essentially a simpler version of ynameOrNo. I would recommend yunitOrNo=TRUE if you have the parameter names as titles already (below), otherwise the Y axis name is redundant. Default is FALSE.
+**yunitOrNo**: whether or not (TRUE or FALSE) to only write the unit of measure on the Y axis, e.g. Δ px for active bout length. It is essentially a simpler version of ynameOrNo. I would recommend `yunitOrNo=TRUE` if you have the parameter names as titles already (below), otherwise the Y axis name is redundant. Default is FALSE.
 
 **titleOrNo**: whether or not (TRUE or FALSE) to write the parameter name as title of the plot. Default is TRUE.
 
@@ -649,9 +655,9 @@ sleepLatency calculated on window(s) of interest is not currently supported. Let
 **skipNight0**: whether or not (TRUE or FALSE) to plot night0’s sleep latency survival plot. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
 onlyDayorNight: do you want to plot the sleep latency survival plots of only the days or only the nights? Options are ‘day’ or ‘night’ or NA.
 
-**onlyWin**: do you want to plot the sleep latency survival plots of only specific day(s) or night(s)? Give them here, for example onlyWin='day1' or onlyWin=c('day1', 'night1'). Default is NA, which makes the sleep latency survival plot for every time window available in the parameter table(s).
+**onlyWin**: do you want to plot the sleep latency survival plots of only specific day(s) or night(s)? Give them here, for example `onlyWin='day1'` or `onlyWin=c('day1', 'night1')`. Default is NA, which makes the sleep latency survival plot for every time window available in the parameter table(s).
 
-**colours**: colours for the groups (genotypes), either in the same order as grporder or in alphabetical order of the group names if not giving grporder. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
+**colours**: colours for the groups (genotypes), either in the same order as `grporder` or in alphabetical order of the group names if not giving `grporder`. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
 legendOrNo: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
 
 **xtextOrNo**: whether or not (TRUE or FALSE) to write the units on the X axis. Default is TRUE.
@@ -690,11 +696,11 @@ It simply calls ggSleepLatencySurvival() multiple times to build each grid. Read
 sleepLatency calculated on window(s) of interest is not currently supported. Let me know if needed.
 
 **pa**: sleep latency parameter table(s), given as Environment object(s) or full path(s) to .csv.
-grporder: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. The order here will change which group is taken as reference in the Cox Proportional-Hazards Model, e.g. grporder=c('wt', 'ko') will give the results for KO in relation to WT, which is probably what you want. Now, the survival curves typically overlap and the order here will decide which group is plotted on top of the other(s). Accordingly, if you would like a different order for the plot than for the statistics, you can always generate the plot first then re-run the command to get the statistics to care about. Just remember that colours (below) are matched in the same order so I would strongly recommend having legendOrNo=TRUE in the process so you make sure you are interpreting the plots correctly. Default is NA, which will use alphabetical order.
+grporder: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. The order here will change which group is taken as reference in the Cox Proportional-Hazards Model, e.g. `grporder=c('wt', 'ko')` will give the results for KO in relation to WT, which is probably what you want. Now, the survival curves typically overlap and the order here will decide which group is plotted on top of the other(s). Accordingly, if you would like a different order for the plot than for the statistics, you can always generate the plot first then re-run the command to get the statistics to care about. Just remember that colours (below) are matched in the same order so I would strongly recommend having `legendOrNo=TRUE` in the process so you make sure you are interpreting the plots correctly. Default is NA, which will use alphabetical order.
 
 **skipNight0**: whether or not (TRUE or FALSE) to plot night0’s sleep latency survival plot. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
 
-**colours**: colours for the groups (genotypes), either in the same order as grporder or in alphabetical order of the group names if not giving grporder. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
+**colours**: colours for the groups (genotypes), either in the same order as `grporder` or in alphabetical order of the group names if not giving `grporder`. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
 
 **legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
 
@@ -815,11 +821,11 @@ Currently it does not support a situation where one experiment/box has multiple 
 
 **pa**: parameter table(s), either as path(s) or as Environment object(s).
 
-**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA.
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Default is NA.
 
-Giving all groups present in the parameter table(s) but in a different order will only modify the direction of the effect, i.e. the sign of the slope. For example, grporder=c('ko', 'wt') will give the effect of ‘being KO’, compared to WT (reference). Alternatively, grporder=c('wt', 'ko') will just change the sign of the slope because the results will represent the effect of ‘being WT’ compared to KO (reference), the error and the p-value will remain the same. If you have any doubt about the interpretation, just take the scatter plot of a parameter which has a fairly obvious difference between groups and look at which group is higher or lower.
+Giving all groups present in the parameter table(s) but in a different order will only modify the direction of the effect, i.e. the sign of the slope. For example, `grporder=c('ko', 'wt')` will give the effect of ‘being KO’, compared to WT (reference). Alternatively, `grporder=c('wt', 'ko')` will just change the sign of the slope because the results will represent the effect of ‘being WT’ compared to KO (reference), the error and the p-value will remain the same. If you have any doubt about the interpretation, just take the scatter plot of a parameter which has a fairly obvious difference between groups and look at which group is higher or lower.
 
-Excluding groups may modify the slopes and errors, even for the same group-vs-group comparison. For example, say you first run LMEdaynight(...) on a parameter table that has three groups: wt, het, hom. You will get estimates for wt vs het and for het vs hom. Now you decide to exclude the het group by giving `grporder=c('wt', 'hom')`. The wt vs hom comparison is likely different than the one you first obtained when giving all three groups, which may be counterintuitive. This is because you are ‘hiding’ datapoints from the LME model when it models how the different random effects affect the data. Say there were N=25 wt, N=50 het, and N=25 hom. In the first case (all three groups), the LME model estimates how the random effects (e.g. each larva’s age) affect the data on N=100 larvae, while in the second case (only wt and het) it does so on N=50 larvae. Except if you have a good reason to completely exclude a group, I think it is preferable to give the largest possible sample size to the LME model so it models the random effects the best it can. Then you can decide to only report the comparison you/the readers care about. So, in the example: keep all three groups (`grporder=NA` or `grporder=c('wt', 'het', 'hom')`), but report only the wt vs hom estimates.
+Excluding groups may modify the slopes and errors, even for the same group-vs-group comparison. For example, say you first run LMEdaynight(...) on a parameter table that has three groups: wt, het, hom. You will get estimates for wt vs het and for het vs hom. Now you decide to exclude the het group by giving `grporder=c('wt', 'hom')`. The wt vs hom comparison is likely different than the one you first obtained when giving all three groups, which may be counterintuitive. This is because you are ‘hiding’ datapoints from the LME model when it models how the different random effects affect the data. Say there were n=25 wt, n=50 het, and n=25 hom. In the first case (all three groups), the LME model estimates how the random effects (e.g. each larva’s age) affect the data on n=100 larvae, while in the second case (only wt and het) it does so on n=50 larvae. Except if you have a good reason to completely exclude a group, I think it is preferable to give the largest possible sample size to the LME model so it models the random effects the best it can. Then you can decide to only report the comparison you/the readers care about. So, in the example: keep all three groups (`grporder=NA` or `grporder=c('wt', 'het', 'hom')`), but report only the wt vs hom estimates.
 
 Finally, I am not certain what to recommend regarding p-values when excluding groups. Remember each p-value here answers the question “does the genotype (group) affect parameter X”, more precisely it is the probability of being wrong when excluding the null hypothesis which is “the genotype (group) has no effect on parameter X”. When there are two groups, the p-value necessarily represents the comparison between the two groups. However, when there are more than two groups, it is more akin to the interpretation of an ANOVA, i.e. “do genotypes have an effect?”. So it will depend on what your claim is. In the example, you could also try with and without the het group and see if you reach the same conclusion(s) regarding significance.
 
@@ -864,9 +870,9 @@ Please refer to the documentation of LMEdaynight(...) above for explanations abo
 ### calculateFingerprint(...)
 Calculates a behavioural fingerprint for a larva or clutch.
 
-Let’s take a simple example to explain what the code does. Say you have an experiment with N=40 controls and N=20 mutants and two days: day1 and day2; and two nights: night1 and night2. For each parameter, we want to calculate by how much mutants deviate from controls (we assume `singleFish=FALSE` and `avgDayNight=TRUE` below). Let’s start with e.g. parameter activeboutLength; the process is:
+Let’s take a simple example to explain what the code does. Say you have an experiment with n=40 controls and n=20 mutants and two days: day1 and day2; and two nights: night1 and night2. For each parameter, we want to calculate by how much mutants deviate from controls (we assume `singleFish=FALSE` and `avgDayNight=TRUE` below). Let’s start with e.g. parameter activeboutLength; the process is:
 
-1. Calculate the mean and standard deviation of activeBoutLength of the N=40 controls during day1, e.g. 0.3 ± 0.1 sec.  
+1. Calculate the mean and standard deviation of activeBoutLength of the n=40 controls during day1, e.g. 0.3 ± 0.1 sec.  
 From each mutant’s larva activeBoutLength during day1, calculate Z-score from controls. Say mutant larva f5’s activeBoutLength during day1 is 0.5 sec. Z-score formula is:  
 ```math
 Z_{day1} = {x-μ_{con} \over σ_{con}}
@@ -877,7 +883,7 @@ Z_{day1} = {0.5-0.3 \over 0.1} = 2
 ```
 
 
-2. Calculate the mean and standard deviation of activeBoutLength of the N=40 controls during day1, e.g. 0.3 ± 0.1 sec.
+2. Calculate the mean and standard deviation of activeBoutLength of the n=40 controls during day1, e.g. 0.3 ± 0.1 sec.
 
 
 3. Now we repeat for day2, obtaining e.g. $Z_{day2} = 3$.  
@@ -888,7 +894,7 @@ Z_{day1} = {0.5-0.3 \over 0.1} = 2
 Z_{day} = { 2 + 3 \over 2} = 2.5
 ```
 
-5. We repeat the process for every mutant larva to obtain N=20 day activeboutLength Z-scores.
+5. We repeat the process for every mutant larva to obtain n=20 day activeboutLength Z-scores.
 
 6. To summarise these 20 Z-scores, we calculate the mean and standard error of the mean (SEM) of the 20 day activeboutLength Z-scores. The mean of the Z-scores tells us by how much mutant larvae deviate from controls during the day for the parameter activeboutLength. Say it’s +2.3; it means: in average, mutant larvae have activeboutLength that are 2.3 standard deviations greater than controls.
 
@@ -896,9 +902,9 @@ The process is the same for nights and for each behavioural parameter.
 
 **paDir**: directory that stores the parameter tables, typically called bhvparams. For example, `paDir=here('bhvparams/')`. You can have as many experiments/parameters as you want in this directory. You can also give multiple bhvparams directories, e.g. `paDir=c(here('220906_exp1/bhvparams/'), here('220906_exp2/bhvparams/'))`. It will import all the parameter tables it finds in these directories.
 
-**controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').
+**controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example `controlGrp=c('control', 'wt')`.
 
-**mergeExp1**: a set of experiments to merge, each written as YYMMDD_BX. For example, mergeExp1=c('220906_14', '220906_15'). Important note: this pools Z-scores normalised to controls, not raw datapoints. Steps 1–6 (see process above) are executed for each experiment, then the Z-scores for the experiments to merge are pooled to make them look as if they were generated during a single experiment. Step 7 is then executed on the pool of Z-scores. Experiments will be merged into one experiment called “mergeExp_1'' in the results. Default is NA.
+**mergeExp1**: a set of experiments to merge, each written as YYMMDD_BX. For example, `mergeExp1=c('220906_14', '220906_15')`. Important note: this pools Z-scores normalised to controls, not raw datapoints. Steps 1–6 (see process above) are executed for each experiment, then the Z-scores for the experiments to merge are pooled to make them look as if they were generated during a single experiment. Step 7 is then executed on the pool of Z-scores. Experiments will be merged into one experiment called “mergeExp_1'' in the results. Default is NA.
 
 **mergeExp2**: a second set of experiments to merge. See above. Experiments will be merged into one experiment called “mergeExp_2” in the results. Default is NA.
 
@@ -906,7 +912,7 @@ The process is the same for nights and for each behavioural parameter.
 
 **singleFish**: where or not (TRUE or FALSE) to calculate single larva fingerprints. This essentially makes the code stop before executing the last step 7 (see above) so you get for each larva and each parameter (e.g. activeBoutLength during the day) its Z-score normalised to controls.
 
-**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.
 
 **skipNight0**: whether or not (TRUE or FALSE) to remove the night0’s datapoints prior to calculating the fingerprint. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
 
@@ -977,11 +983,11 @@ Calculates the similarity between pairwise behavioural fingerprint and represent
 
 * **simScore**: one of three possible "similarity scores": `correlation` (Pearson correlation), `cosine` (cosine similarity), or `euclidean` (Euclidean distance).  
 
-* **grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give grporder=NA. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.  
+* **grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.  
 
 * **removeControl**: whether (TRUE) or not (FALSE) to remove the controls' fingerprints. I think you should always use TRUE here as the controls' fingerprints are always 0 by definition. Default is TRUE.  
 
-* **controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example controlGrp=c('control', 'wt').  
+* **controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example `controlGrp=c('control', 'wt')`.  
 
 * **minCol**: colour for the start of the colour gradient, i.e. colour assigned to –1 when `correlation` or `cosine` is used or to 0 when `euclidean` is used.  
 
@@ -1005,8 +1011,7 @@ Calculates the similarity between pairwise behavioural fingerprint and represent
 
 If tracking was interrupted (for example because of a powershut) and quickly re-started, this function allows to append the two RAWs.csv files into one. Naturally, it will not magically recover the missing frames, so there will be a gap in the data, but the appended RAWs.csv is compatible with other functions.
 
-Note, it will generate a YYMMDD_BX_lights.csv file using the filename of the first RAWs.csv (first ffpath given). For example, if user gives `ffpaths=c('~/.../230307_17_Pt1_RAWs.csv',
-                     '~/.../230308_17_Pt2_RAWs.csv')`, it will generate a file called _230307_17_lights.csv_. This is likely to overwrite the original YYMMDD_BX_lights.csv.  
+Note, it will generate a YYMMDD_BX_lights.csv file using the filename of the first RAWs.csv (first ffpath given). For example, if user gives `ffpaths=c('~/.../230307_17_Pt1_RAWs.csv', '~/.../230308_17_Pt2_RAWs.csv')`, it will generate a file called _230307_17_lights.csv_. This is likely to overwrite the original YYMMDD_BX_lights.csv.  
 
 * **ffpaths**: full paths to the two _RAWs.csv files to append. Make sure to give them in chronological order.  
 

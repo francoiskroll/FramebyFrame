@@ -16,6 +16,7 @@ ggActivityTraceByGroup(
   grporder = NA,
   onlyWell = NA,
   tracecols,
+  tracedash = NA,
   ribboncols,
   linethick = 0.4,
   xname,

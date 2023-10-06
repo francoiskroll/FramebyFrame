@@ -972,3 +972,6 @@ Minor edits:
 * `genotypeGenerator` was generating file omitted.txt which listed wells labelled as empty or excluded. I never found this file to be useful, so `genotypeGenerator` does not generate it anymore to avoid creating a mess in the user's directory.
 * DOCUMENTATION of `ggFramerate`; `ggActivityTraceGrid`; `ggActivityTraceByGroup`; `ggSleepTraceByGroup`; `multiBehaviourParameter`; `rawToMiddur` were still mentioning parameter `zebpath` but that was deleted a while ago. Note, code for `rawToMiddur` also had the parameter in function definition, but was not used in actual code. Now, only documentation for `vpSorter` mentions `zebpath`, which is correct.
 * `importRAWs` added clear error if the `ffpath` is incorrect.
+
+### v0.13.0
+New setting `linedash` for every `ggTrace` plot. See DOCUMENTATION.  

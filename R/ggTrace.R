@@ -25,6 +25,7 @@
 #' @param bin_nsecs
 #' @param onlyWell
 #' @param tracecols
+#' @param tracedash
 #' @param linethick
 #' @param ymin
 #' @param ymax
@@ -58,6 +59,7 @@ ggActivityTraceGrid <- function (ffpath,
                                  bin_nsecs=10*60,
                                  onlyWell=NA,
                                  tracecols=NA,
+                                 tracedash=NA,
                                  linethick=0.4,
                                  ymin=0,
                                  ymax,
@@ -167,6 +169,7 @@ ggActivityTraceGrid <- function (ffpath,
             grporder=NA,
             onlyWell = wids[w], # here!
             tracecols=grpcol,
+            tracedash=tracedash,
             ribboncols=NA,
             linethick=linethick,
             xname='',
@@ -224,6 +227,7 @@ ggActivityTraceGrid <- function (ffpath,
 #' @param grporder
 #' @param onlyWell
 #' @param tracecols
+#' @param tracedash
 #' @param ribboncols
 #' @param linethick
 #' @param xname
@@ -263,6 +267,7 @@ ggActivityTraceByGroup <- function(ffpath,
                                    grporder=NA,
                                    onlyWell=NA,
                                    tracecols,
+                                   tracedash=NA,
                                    ribboncols,
                                    linethick=0.4,
                                    xname,
@@ -309,6 +314,7 @@ ggActivityTraceByGroup <- function(ffpath,
           grporder=grporder,
           onlyWell=onlyWell,
           tracecols=tracecols,
+          tracedash=tracedash,
           ribboncols=ribboncols,
           linethick=linethick,
           xname=xname,
@@ -353,6 +359,7 @@ ggActivityTraceByGroup <- function(ffpath,
 #' @param grporder
 #' @param onlyWell
 #' @param tracecols
+#' @param tracedash
 #' @param ribboncols
 #' @param linethick
 #' @param xname
@@ -392,6 +399,7 @@ ggSleepTraceByGroup <- function(ffpath,
                                 grporder=NA,
                                 onlyWell=NA,
                                 tracecols,
+                                tracedash=NA,
                                 ribboncols,
                                 linethick=0.4,
                                 xname,
@@ -438,6 +446,7 @@ ggSleepTraceByGroup <- function(ffpath,
           grporder=grporder,
           onlyWell=onlyWell,
           tracecols=tracecols,
+          tracedash=tracedash,
           ribboncols=ribboncols,
           linethick=linethick,
           xname=xname,
@@ -481,6 +490,7 @@ ggSleepTraceByGroup <- function(ffpath,
 #' @param grporder
 #' @param onlyWell
 #' @param tracecols
+#' @param tracedash
 #' @param ribboncols
 #' @param linethick
 #' @param xname
@@ -514,6 +524,16 @@ ggSleepTraceByGroup <- function(ffpath,
 #' @importFrom dplyr summarise_at
 #' @importFrom dplyr group_by
 
+# tracedash
+# 0 = blank
+# 1 = solid
+# 2 = dashed
+# 3 = dotted
+# 4 = dotdash
+# 5 = longdash
+# 6 = twodash
+# given for each grp, e.g. tracedash=c(1, 2, 1, 2)
+
 ggTrace <- function(tc,
                     genopath,
                     dayduration,
@@ -521,6 +541,7 @@ ggTrace <- function(tc,
                     grporder,
                     onlyWell,
                     tracecols,
+                    tracedash,
                     ribboncols,
                     linethick,
                     xname,
@@ -747,6 +768,22 @@ ggTrace <- function(tc,
   if(is.na(ribbon)) {ribbon <- 'none'}
 
 
+  ### deal with dashed lines
+  # setting tracedash
+  # if user gave nothing, default is NA
+  # which should mean solid lines for all
+  # so 1 for each group
+  if(is.na(tracedash[1])) {
+    tracedash <- rep(1, length(unique(sbg$grp)))
+  # if user did gave us some instructions, check they make sense:
+  } else {
+    if(length(tracedash)!=length(unique(sbg$grp)))
+       stop('\t \t \t \t >>> Error ggTrace: check setting tracedash, not the same number of elements as number of groups.\
+            \t \t \t Say you have 4 groups, you should give e.g. tracedash=c(1, 2, 1, 2).\
+            \t \t \t You can also give = NA or delete the setting to get all solid lines. \n')
+  }
+
+
   # main plotting function --------------------------------------------------
 
   # if only one fish, ribbon will throw a Warning
@@ -755,7 +792,7 @@ ggTrace <- function(tc,
 
     sbg %>%
 
-    ggplot(., aes(x=zhrs, y=mean, col=grp)) +
+    ggplot(., aes(x=zhrs, y=mean, col=grp, linetype=grp)) +
 
     # add any horizontal lines now so they appear behind the trace
     {if(sunlinesOrNo) geom_vline(xintercept=suns, linetype=2, size=0.2)} +
@@ -782,6 +819,9 @@ ggTrace <- function(tc,
     # if we were given trace colours/ribbon colours, add them now
     {if(!is.na(tracecols[1])) scale_colour_manual(values=tracecols)} +
     {if(!is.na(ribboncols[1])) scale_fill_manual(values=ribboncols)} +
+
+    # change some lines to dashed or else, according to what user asked for in tracedash
+    scale_linetype_manual(values=tracedash) +
 
     theme_minimal() +
     theme(
