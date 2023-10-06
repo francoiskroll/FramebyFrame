@@ -6,7 +6,7 @@ FramebyFrame is an R package to analyse behavioural trackings of zebrafish larva
 
 Already using the Zebrabox? Read below ([Frame-by-frame manifesto](#The-frame-by-frame-manifesto)) why you should consider doing your analysis on the frame-by-frame data.
 
-Not did your experiment yet? Make sure to read the section ([Experimental design commandments](#Experimental-design-commandments)) for some advice.  
+Not did your experiment yet? Make sure to read [Experimental design commandments](#Experimental-design-commandments) for some advice.  
 
 [![alt text][1.2]][1] [@francois_kroll](https://twitter.com/francois_kroll)
 
@@ -23,7 +23,7 @@ Not did your experiment yet? Make sure to read the section ([Experimental design
 
 
 > —_I do not know anything about R so this package is not for me._    
-I wrote everything with that in mind, I promise. The amount of R (or any coding language) you need to know in order to run a complete analysis is minuscule, and I wrote it all in section **R basics** below.
+I wrote everything with that in mind, I promise. The amount of R (or any coding language) you need to know in order to run a complete analysis is minuscule, and I wrote it all below (see [R basics](#R-basics)).
 
 ___
 
@@ -138,7 +138,9 @@ This last point may be counterintuitive. Imagine a sleep bout that is exactly 1 
 Why is working with the frame-by-frame data better? The FramebyFrame R package detects every sleep bout (period of > 1500 inactive frames) present in the data. In practice, at each frame, it sums the Δ pixels of the previous 1500 frames. Was there any positive Δ pixel in the previous 1500 frames? Then the sum will give some positive number. Were the previous 1500 Δ pixels all 0? Then ${0 + 0 + 0 + … = 0}$.  So, at each frame, we can ask: “prior to this exact frame, had the larva been inactive for a complete minute?”. If yes (the previous 1500 frames were all 0), then the larva had been asleep for exactly 1 minute at that frame. In other words, the larva fell asleep exactly 1 minute ago. We can go back to 1 minute ago and label all these frames as ‘asleep’ and continue until the larva woke up, i.e. until the next positive Δ pixel.
 
 #### We can calculate more behavioural parameters on the frame-by-frame data
-Zebrafish larvae make swimming bouts that last ~ 0.2 second. Using the 1-min binned data (the _middur_ parameter) is a bit like recording at 1 frame-per-minute: one cannot detect single swimming bouts at such slow recording speed. This is a shame, especially as you may already have the data on your drive. Indeed, studying the frame-by-frame data allows to describe the structure of single swimming bouts (see DOCUMENTATION, Behavioural parameters, Active bout parameters).
+Zebrafish larvae make swimming bouts that last ~ 0.2 second. Using the 1-min binned data (the _middur_ parameter) is a bit like recording at 1 frame-per-minute: one cannot detect single swimming bouts at such slow recording speed. This is a shame, especially as you may already have the data on your drive. Indeed, studying the frame-by-frame data allows to describe the structure of single swimming bouts
+
+(see [DOCUMENTATION > Behavioural parameters > Active bout parameters](DOCUMENTATION.md#Behavioural-parameters))
 
 The _middur_ analysis is also blind to the actual number of pixels that changed intensity at each frame transition. For the _middur_ algorithm, a vigorous swimming bout which reached a whooping 100 Δ pixel is the same as a subdued movement which reached 9 Δ pixel, assuming both lasted the same duration. Therefore, using the _middur_ parameter, one can only describe activity in terms of time spent active but cannot describe the _intensity_ of this activity (i.e. how many pixels were moved). Accordingly, a larva which moved constantly but very calmly can, in theory, have the same _middur_ values as a larva which moved constantly and very ‘violently’ (e.g. had seizures). The _middur_ analysis cannot differentiate these two situations even though they are completely different biologically. In this example, we can use the FramebyFrame package to simply sum the Δ pixels, which will differentiate these two cases. We expect the first larva to spend all of its time active but have a low Δ pixel total, while the other larva would also spend all of its time active but its Δ pixel total would also be very high.
 
@@ -151,7 +153,7 @@ ___
 
 Ready? Here is the shortest possible tutorial of a FramebyFrame analysis. The package can do more than what is presented here, so make sure to check the full documentation once you got the gist of it.
 
-I will assume you have R and RStudio installed. If not, have a look at section **R basics** below.
+I will assume you have R and RStudio installed. If not, have a look at [R basics](#R-basics).
 
 ### 1– Get your frame-by-frame data from Zebralab
 
@@ -668,7 +670,7 @@ All this information is recorded in the statistics reports (_LMEreport.csv_ in o
 * `posthocpval` is the p-value of the post-hoc test. This p-value is specific to each comparison, i.e. there is one p-value for wt vs het and one p-value for wt vs hom.
 * `posthocpvalsymbol`, same logic as `pvalsymbol` but for the post-hoc p-value.  
 
-When we plotted the behaviour parameters (see **9– Plot every behaviour parameter**), the asterisks that get added when `statsOrNo=TRUE` are the `pvalsymbol`, i.e. they represent the p-value of the null hypothesis "group assignment has no effect on this behaviour parameter".  
+When we plotted the behaviour parameters (see [9– Plot every behaviour parameter](#9–-Plot-every-behaviour-parameter)), the asterisks that get added when `statsOrNo=TRUE` are the `pvalsymbol`, i.e. they represent the p-value of the null hypothesis "group assignment has no effect on this behaviour parameter".  
 
 ### 12– Calculate a behavioural fingerprint
 
