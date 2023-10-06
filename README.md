@@ -138,9 +138,7 @@ This last point may be counterintuitive. Imagine a sleep bout that is exactly 1 
 Why is working with the frame-by-frame data better? The FramebyFrame R package detects every sleep bout (period of > 1500 inactive frames) present in the data. In practice, at each frame, it sums the Δ pixels of the previous 1500 frames. Was there any positive Δ pixel in the previous 1500 frames? Then the sum will give some positive number. Were the previous 1500 Δ pixels all 0? Then ${0 + 0 + 0 + … = 0}$.  So, at each frame, we can ask: “prior to this exact frame, had the larva been inactive for a complete minute?”. If yes (the previous 1500 frames were all 0), then the larva had been asleep for exactly 1 minute at that frame. In other words, the larva fell asleep exactly 1 minute ago. We can go back to 1 minute ago and label all these frames as ‘asleep’ and continue until the larva woke up, i.e. until the next positive Δ pixel.
 
 #### We can calculate more behavioural parameters on the frame-by-frame data
-Zebrafish larvae make swimming bouts that last ~ 0.2 second. Using the 1-min binned data (the _middur_ parameter) is a bit like recording at 1 frame-per-minute: one cannot detect single swimming bouts at such slow recording speed. This is a shame, especially as you may already have the data on your drive. Indeed, studying the frame-by-frame data allows to describe the structure of single swimming bouts
-
-(see [DOCUMENTATION > Behavioural parameters > Active bout parameters](DOCUMENTATION.md#Behavioural-parameters))
+Zebrafish larvae make swimming bouts that last ~ 0.2 second. Using the 1-min binned data (the _middur_ parameter) is a bit like recording at 1 frame-per-minute: one cannot detect single swimming bouts at such slow recording speed. This is a shame, especially as you may already have the data on your drive. Indeed, studying the frame-by-frame data allows to describe the structure of single swimming bouts (see [DOCUMENTATION > Behavioural parameters > Active bout parameters](DOCUMENTATION.md#Behavioural-parameters)).
 
 The _middur_ analysis is also blind to the actual number of pixels that changed intensity at each frame transition. For the _middur_ algorithm, a vigorous swimming bout which reached a whooping 100 Δ pixel is the same as a subdued movement which reached 9 Δ pixel, assuming both lasted the same duration. Therefore, using the _middur_ parameter, one can only describe activity in terms of time spent active but cannot describe the _intensity_ of this activity (i.e. how many pixels were moved). Accordingly, a larva which moved constantly but very calmly can, in theory, have the same _middur_ values as a larva which moved constantly and very ‘violently’ (e.g. had seizures). The _middur_ analysis cannot differentiate these two situations even though they are completely different biologically. In this example, we can use the FramebyFrame package to simply sum the Δ pixels, which will differentiate these two cases. We expect the first larva to spend all of its time active but have a low Δ pixel total, while the other larva would also spend all of its time active but its Δ pixel total would also be very high.
 
@@ -151,7 +149,7 @@ ___
 
 ## Minimal tutorial
 
-Ready? Here is the shortest possible tutorial of a FramebyFrame analysis. The package can do more than what is presented here, so make sure to check the full documentation once you got the gist of it.
+Ready? Here is the shortest possible tutorial of a FramebyFrame analysis. The package can do more than what is presented here, so make sure to check the full [documentation](DOCUMENTATION.md) once you got the gist of it.
 
 I will assume you have R and RStudio installed. If not, have a look at [R basics](#R-basics).
 
@@ -246,10 +244,9 @@ vpSorter(ffDir="~/.../220531_14_15_rawoutput/",
 * `zt0`: Zeitgeber 0 (ZT0). What is the time of your sunrise?  
 * `dayduration`: how long does the day last in your experiment? By day, we mean lights ON.  
 
-These are only brief notes on the settings, please refer to the documentation for the full explanations, especially if you get stuck. 
+These are only brief notes on the settings, please refer to the [documentation](DOCUMENTATION.md) for the full explanations, especially if you get stuck. 
 
-> Are you getting _Error: vector memory exhausted (limit reached?)_ (or similar)? Please check Troubleshooting section in DOCUMENTATION.md.
-
+> Are you getting _Error: vector memory exhausted (limit reached?)_ (or similar)? Please check the [Troubleshooting](DOCUMENTATION.md#troubleshooting) section in documentation.
 
 `vpSorter` should write _220531_14_RAWs.csv_ in your experiment folder. The format is fairly simple:  
 
@@ -468,7 +465,7 @@ Some notes about the settings we have not encountered yet:
 
 Important: the `epo_min` setting determines the unit of the Y axis. In example above: `epo_min=10` means that each datapoint is the total time spent asleep (in minutes) in each 10-minute epoch, therefore the unit on the Y axis is min/10 min.  
 
-As before, not all possible settings are mentioned here. Read the full documentation to learn about those.  
+As before, not all possible settings are mentioned here. Read the full [documentation](DOCUMENTATION.md) to learn about those.  
 
 ### 8– Calculate behaviour parameters
 FramebyFrame can currently calculate 17 parameters on both day and night, for a total of 32 unique parameters (two parameters are not defined for the day).
@@ -607,12 +604,12 @@ It will also calculate survival statistics using a Cox Proportional-Hazards mode
 ### 11– Statistics on behaviour parameter
 > Any feedback on this section is welcome, especially if you think I got something wrong!
 
-As promised, here are the statistics. It uses linear mixed effects (LME) modelling. Here is a very brief summary of the approach. For more details, please refer to the full documentation.
+As promised, here are the statistics. It uses linear mixed effects (LME) modelling. Here is a very brief summary of the approach. For more details, please refer to the [full documentation](DOCUMENTATION.md#lmedaynight).
 
 Remember here that "unique behaviour parameter" means one value per larva per time window, e.g. number of sleep bouts larva #12 had during night2. For each unique behaviour parameter, the question is whether the group has an effect on the values. Or in other words, the null hypothesis is that the group has no effect on the given behaviour parameter, e.g. which genotype you are (wild-type or heterozygous or homozygous) does not change your number of sleep bouts at night. In LME jargon, the group is the **fixed effect**, i.e. we want to measure how the group affects the parameter. However, we need to take into account a bunch of variables that probably affect our data. For example, it could be that larvae were always less sleepy during the second night of tracking. We do not really care about quantifying how these variables affect our data, we just want to control for them. These are the **random effects**.
 
 The random effects in our LME model are:
-* **the experiment**; _if_ you are analysing multiple replicate experiments at once (which is recommended, this is a big advantage of using LME here). Ideally, each Zebrabox tracked a single clutch of larvae (same parents & same mating), so replicate experiments control for both technical (e.g. light levels not being exactly the same between the Zebraboxes) and biological (different clutches vary a lot in most behavioural parameters) variability. Other experimental designs may work too, so please read the full documentation to adapt the settings.
+* **the experiment**; _if_ you are analysing multiple replicate experiments at once (which is recommended, this is a big advantage of using LME here). Ideally, each Zebrabox tracked a single clutch of larvae (same parents & same mating), so replicate experiments control for both technical (e.g. light levels not being exactly the same between the Zebraboxes) and biological (different clutches vary a lot in most behavioural parameters) variability. Other experimental designs may work too, so please read the [full documentation](DOCUMENTATION.md#lmedaynight) to adapt the settings.
 * **development**, i.e. the larva’s age. If you recorded multiple days/nights (recommended), the larvae were also growing during the experiment, which likely had an effect on their behaviour. For example, we often notice that sleep is slightly lower during night2 (7 dpf for us) vs night1 (6 dpf) so we want to control for this and not simply pool the datapoints from multiple days or nights (this also risks "pseudo-replication", which occurs if, for example, you were analysing your data as if you had _n_=50 larvae when really you had _n_=25 larvae measured on two different days).
 * **the larva's ID** (e.g. larva #12). This is to account for non-independence in the data. Indeed, each larva is typically sampled multiple times during the experiment. For example, larva #12 is sampled once on day1 and once on day2. Or in other words, day1 and day2 are not independent measurements as they include the same animals. This also avoids "pseudo-replication" (see above).
 
@@ -624,7 +621,7 @@ The model provides the slope, i.e. magnitude of the effect (e.g. in average, KO 
 
 We then compare this model with a model that omits the group assignment to obtain a p-value. You will obtain a _single_ p-value for each unique parameter here, regardless of the number of groups. This is because the null hypothesis is "group assignment has no effect on the behaviour parameter", so we do not worry (yet) about which group(s) exactly. The interpretation is like an ANOVA, essentially.
 
-We then run "post-hoc" tests, comparing each group to the reference group, returning one p-value for each comparison (e.g. one p-value for heterozygous vs wild-type and one p-value for homozygous vs wild-type). Please refer to the documentation for more details.  
+We then run "post-hoc" tests, comparing each group to the reference group, returning one p-value for each comparison (e.g. one p-value for heterozygous vs wild-type and one p-value for homozygous vs wild-type). Please refer to the [documentation](DOCUMENTATION.md#lmedaynight) for more details.  
 
 Do not worry if it is a bit confusing. It should make more sense once you see the output.  
 
@@ -674,7 +671,7 @@ When we plotted the behaviour parameters (see [9– Plot every behaviour paramet
 
 ### 12– Calculate a behavioural fingerprint
 
-The "behavioural fingerprint" is a synthesised way of looking at the changes across all the behavioural parameters. For each unique parameter (e.g. number of sleep bouts at night), it is simply the *Z*-score of knockout larvae (or any other genotype/treatment group) from the controls' mean. Please refer to DOCUMENTATION for how exactly this is calculated.
+The "behavioural fingerprint" is a synthesised way of looking at the changes across all the behavioural parameters. For each unique parameter (e.g. number of sleep bouts at night), it is simply the *Z*-score of knockout larvae (or any other genotype/treatment group) from the controls' mean. Please refer to [DOCUMENTATION](DOCUMENTATION.md#calculatefingerprint) for how exactly this is calculated.
 
 We calculate the behavioural fingerprint with:
 
@@ -719,7 +716,7 @@ ggFingerprint(fgp="~/.../fingerprint.csv",
 * `xtextOrNo`: whether (TRUE) or not (FALSE) to write the names of the behavioural parameters as X axis labels.
 * `xParamNum`: whether (TRUE) or not (FALSE) to write numbers instead of parameter names.
 
-There are other ways to calculate/plot behavioural fingerprints, please refer to DOCUMENTATION for more details.
+There are other ways to calculate/plot behavioural fingerprints, please refer to [DOCUMENTATION](DOCUMENTATION.md#ggfingerprint) for more details.
 
 ### 14– Compare behavioural fingerprints
 
@@ -749,7 +746,7 @@ ggPairwiseHeat(fgp="~/.../fingerprint.csv",
 
 `ggPairwiseHeat(...)` will also return in Console the similarity score between fingerprints.  
 
-> And that is all for the minimal tutorial! The FramebyFrame package can do other things, such as analyse different experimental designs, calculate and plot behavioural fingerprints and more. Make sure to check the documentation to make full use of it.  
+> And that is all for the minimal tutorial! The FramebyFrame package can do other things, such as analyse different experimental designs, calculate and plot behavioural fingerprints and more. Make sure to check the [DOCUMENTATION](DOCUMENTATION.md) to make full use of it.  
 
 ___
 
@@ -854,7 +851,7 @@ Yes, this happens when running a Replay on Zebralab, for example. The software (
 
 > _I do short experiments without any light transitions. Can I still use the package to analyse my data?_  
 
-You can use some of it. When calculating behaviour parameters (`multiBehaviourParameter(...)`), please make use of the `woi` setting to define one or more time window(s) within your experiment (see DOCUMENTATION.md).
+You can use some of it. When calculating behaviour parameters (`multiBehaviourParameter(...)`), please make use of the `woi` setting to define one or more time window(s) within your experiment (see [DOCUMENTATION](DOCUMENTATION.md#multibehaviourparameter)).
 
 Currently `ggParameterGrid(...)` and the LME statistics unfortunately expect full days/nights, but it is certainly possible to make them work for short experiments. Get in touch with me so I have some motivation to work on this!
 
@@ -879,7 +876,7 @@ When you place the larvae in the wells, do you know which group each larva belon
 * _**(optional) I shall track a single clutch in each Zebrabox**_  
 Where clutch means offspring from the same parents and (ideally) mating event. The easiest experimental design is one where you have one clutch per Zebrabox/experiment. In other words, I recommend you do not mix multiple clutches in the same Zebrabox.  
 
-**_exception 1_**: if you are lucky enough to have multiple Zebraboxes and a very large clutch, you can track the same clutch in two Zebraboxes. You should mention this when calculating the LME statistics so it can adapt the random effects accordingly (more details in DOCUMENTATION, below `LMEdaynight()`). For example:
+**_exception 1_**: if you are lucky enough to have multiple Zebraboxes and a very large clutch, you can track the same clutch in two Zebraboxes. You should mention this when calculating the LME statistics so it can adapt the random effects accordingly (more details in [DOCUMENTATION](DOCUMENTATION.md#lmedaynight). For example:
 
 ```r
 LMEreport(paDir=c(here('220906_run1', 'bhvparams'),
@@ -912,7 +909,7 @@ multiBehaviourParameter(parameters='all',
                         dayduration=14)
 ```
 – the parameter tables (in folder _bhvparams/_) will now have a new column _clutch_. The clutch number simply corresponds to the order in which the genotype files were given (`genopath=` above), i.e. _clutch1_ are all larvae found in _230302_01genotypeclutch1.txt_, _clutch2_ are all larvae found in _230302_01genotypeclutch2.txt_.  
-– run `ggParameterGrid()` and `LMEreport()` as usual. The formula of the linear mixed effects model will be adapted automatically to control for multiple clutches within the same box (you can read about this in DOCUMENTATION below `LMEdaynight()`).
+– run `ggParameterGrid()` and `LMEreport()` as usual. The formula of the linear mixed effects model will be adapted automatically to control for multiple clutches within the same box (you can read about this in [DOCUMENTATION](DOCUMENTATION.md#lmedaynight)).
 
 ___
 
@@ -934,7 +931,7 @@ First real version (arbitrary).
 
 ### v0.3.0
 16/03/2023  
-Allows analysis of an experiment where there are multiple clutches in the same Zebrabox. Read below _Experimental design commandments_ and in DOCUMENTATION below _LMEdaynight()_ for details about how to proceed.
+Allows analysis of an experiment where there are multiple clutches in the same Zebrabox. Read below [Experimental design commandments](#experimental-design-commandments) _Experimental design commandments_ and in [DOCUMENTATION > LMEdaynight()](DOCUMENTATION.md#lmedaynight) for details about how to proceed.
 
 ### v0.4.0
 11/04/2023  
@@ -943,7 +940,7 @@ Caught small inconsistency when detecting sleep bouts. For an empty well or if t
 I think the main consequence of this change is on parameter sleepLatency. Previously, it was returning ~ 1.0 min for empty wells or if the larva was asleep during the transition. Now it returns 0.0 min (more precisely 0.00067 min, i.e. one frame in minute) which I think is more accurate.  
 
 ### v0.5.0
-New settings `fainterExp` and `faintMax` for ggParameter/ggParameterGrid. See DOCUMENTATION.  
+New settings `fainterExp` and `faintMax` for ggParameter/ggParameterGrid. See DOCUMENTATION.
 
 ### v0.6.0
 New setting `connectMean` for ggParameter/ggParameterGrid. See DOCUMENTATION. Might change default to TRUE once confirmed it behaves as expected.  
