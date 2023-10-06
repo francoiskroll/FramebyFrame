@@ -974,4 +974,4 @@ Minor edits:
 * `importRAWs` added clear error if the `ffpath` is incorrect.
 
 ### v0.13.0
-New setting `linedash` for every `ggTrace` plot. See DOCUMENTATION.  
+New setting `tracedash` for every `ggTrace` plot. See DOCUMENTATION.  
