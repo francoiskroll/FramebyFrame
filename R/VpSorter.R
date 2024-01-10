@@ -1208,7 +1208,7 @@ vpSorter <- function(ffDir,
   bx <- bx %>%
     add_column(zhrs = as.numeric(difftime(bx$fullts, lubridate::ymd_hms(paste(startdate, zt0)), units='hours')),
                .before='exsecs')
-  # zeitgeber is time difference in hours since first ZT0
+  # Zeitgeber is time difference in hours since first ZT0
 
   # tell user about timestamps so can check they look correct
   cat('\t \t \t \t >>> First timestamp is ***', as.character(bx$fullts[1]), '*** \n')

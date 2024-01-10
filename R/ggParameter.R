@@ -249,27 +249,45 @@ ggParameter <- function(pa,
   ### if clutch is not present (standard case)
   } else {
 
-    # first print the order of the plot for the user to check
-    # ! not every date_box_win in the levels is on the plot (e.g. if user has given onlyWin, some datapoints get excluded)
-    # these are the date_box_win plotted, in order of the levels:
-    dbw_onplot <- levels(pal$date_box_win)[which(levels(pal$date_box_win) %in% pal$date_box_win)]
-    cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', dbw_onplot,'\n')
-    # now prepare the X axis labels
-    # we need a named vector, names = original labels (i.e. date_box_win in the data) and values = labels we want
-    # we will now assume that date_box_win is exactly YYMMDD_BX_dayX or YYMMDD_BX_nightX
-    # and we will split into dayX/nightX and YYMMDD_BX so that in two lines
-    # get dayX/nightX:
-    dnx <- strNthSplit(dbw_onplot, split='_', nth=3)
-    # get YYMMDD_BX:
-    yymmdd_bx <- paste0(strNthSplit(dbw_onplot, split='_', nth=1), '_', strNthSplit(dbw_onplot, split='_', nth=2))
-    # now we want each label to be e.g. day1 \n 230214_14 so exp is below on a new line
-    facetlabs <- sapply(1:length(yymmdd_bx), function(i) {
-      paste0(dnx[i], '\n', yymmdd_bx[i])
-    })
-    # now add names
-    names(facetlabs) <- dbw_onplot
-    # ready to be given in ggplot call
+    if(splitBy=='window') {
+      # first print the order of the plot for the user to check
+      # ! not every date_box_win in the levels is on the plot (e.g. if user has given onlyWin, some datapoints get excluded)
+      # these are the date_box_win plotted, in order of the levels:
+      dbw_onplot <- levels(pal$date_box_win)[which(levels(pal$date_box_win) %in% pal$date_box_win)]
+      cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', dbw_onplot,'\n')
+      # now prepare the X axis labels
+      # we need a named vector, names = original labels (i.e. date_box_win in the data) and values = labels we want
+      # we will now assume that date_box_win is exactly YYMMDD_BX_dayX or YYMMDD_BX_nightX
+      # and we will split into dayX/nightX and YYMMDD_BX so that in two lines
+      # get dayX/nightX:
+      dnx <- strNthSplit(dbw_onplot, split='_', nth=3)
+      # get YYMMDD_BX:
+      yymmdd_bx <- paste0(strNthSplit(dbw_onplot, split='_', nth=1), '_', strNthSplit(dbw_onplot, split='_', nth=2))
+      # now we want each label to be e.g. day1 \n 230214_14 so exp is below on a new line
+      facetlabs <- sapply(1:length(yymmdd_bx), function(i) {
+        paste0(dnx[i], '\n', yymmdd_bx[i])
+      })
+      # now add names
+      names(facetlabs) <- dbw_onplot
+      # ready to be given in ggplot call
 
+    } else if(splitBy=='experiment') {
+      # first print the order of the plot for the user to check
+      # ! not every date_box in the levels is on the plot (e.g. if user has given onlyExp, some datapoints get excluded)
+      # these are the date_box plotted, in order of the levels:
+      db_onplot <- levels(pal$date_box)[which(levels(pal$date_box) %in% pal$date_box)]
+      cat('\t \t \t \t >>> Plot', unique(pal$parameter), as.character(unique(pal$daynight)), ': order is', db_onplot,'\n')
+
+      # also give order of windows so user can read plot correctly
+      dbw_onplot <- levels(pal$date_box_win)[which(levels(pal$date_box_win) %in% pal$date_box_win)]
+      cat('\t \t \t \t >>> order by window:', dbw_onplot,'\n')
+
+      # the X axis labels are the YYMMDD_BX, we do not need other edits
+      facetlabs <- db_onplot
+      # add names to the vector
+      names(facetlabs) <- db_onplot
+      # ready to be given in ggplot call
+    }
   }
 
 
