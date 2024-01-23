@@ -170,15 +170,24 @@ summaryActivityCourse <- function(ffpath,
     # by summing within bin
 
     # number of rows inside each bin for binning
-    bin <- bin_nsecs * round(fps)
+    bin <- bin_nsecs * round(fps) # i.e. how many frames in each bin
 
     # number of rows need to divisible by bin size
     # in most cases, probably best to crop from the start as they will usually be hands etc.
     cat('\t \t \t \t >>> Trimming first ***', round((nrow(ffs) %% bin)/fps,0),
         '*** seconds of data to make it divisible by size of bin \n')
-    fscrop <- ffs[- (1:(nrow(ffs) %% bin)) ,]
+
+    # if we need to crop, do it now
+    if( (nrow(ffs) %% bin) != 0) {
+      fscrop <- ffs[- (1:(nrow(ffs) %% bin)) ,]
+    } else {
+      fscrop <<- data.table::copy(ffs)
+    }
     # modulo %% gives 'surplus' of division, eg. 10 %% 3 = 1 (as divide 9 / 3, and left 1)
     # so from ffs, trim the rows before surplus + 1 (= trim from row1 to row surplus+1)
+
+    # need to do within an If condition, because if modulo result is 0 (i.e. we do not need to crop)
+    # it would still remove one row
 
     cat('\t \t \t \t >>> Downsampling in bins of ***', round(bin_nsecs/60,1), '*** minutes each \n')
 
