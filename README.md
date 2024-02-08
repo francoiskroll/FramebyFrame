@@ -22,7 +22,7 @@ Not did your experiment yet? Make sure to read [Experimental design commandments
 [1]: https://twitter.com/francois_kroll
 
 
-> — I do not know anything about R so this package is not for me._    
+> — _I do not know anything about R so this package is not for me._    
 I wrote everything with that in mind, I promise! The amount of R (or any coding language) you need to know in order to run a complete analysis is minuscule, and I wrote it all below (see [R basics](#R-basics)).
 
 ___
