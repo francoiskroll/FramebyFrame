@@ -2,7 +2,7 @@
 
 Francois Kroll, 2022 @Rihel lab, UCL.
 
-FramebyFrame is an R package to analyse behavioural trackings of zebrafish larvae, mainly using the Zebrabox (Viewpoint) in "Quantization" mode.
+FramebyFrame is an R package to analyse behavioural trackings of zebrafish larvae, mainly using the DanioVision (Noldus) or the Zebrabox (Viewpoint) in "Quantization" mode.  
 
 Already using the Zebrabox? Read below ([Frame-by-frame manifesto](#The-frame-by-frame-manifesto)) why you should consider doing your analysis on the frame-by-frame data.
 
