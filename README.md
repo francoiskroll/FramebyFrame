@@ -37,7 +37,7 @@ FramebyFrame builds upon work from Rihel lab members/alumni & collaborators, pri
 
 * Work on analysis of the frame-by-frame data: [Ghosh and Rihel, 2020. _eNeuro_](https://www.eneuro.org/content/7/4/ENEURO.0408-19.2020). The definitions of the "active bout" parameters were taken from there.
 
-* Tahnee Mackensen and Tanita Tzotzolaki kindly contributed sample code & datasets to help FramebyFrame support DanioVision data.
+* Tahnee Mackensen and Tanita Tzotzolaki kindly contributed sample code & datasets to help with the support of DanioVision data.
 
 ___
 
