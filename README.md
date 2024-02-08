@@ -22,8 +22,8 @@ Not did your experiment yet? Make sure to read [Experimental design commandments
 [1]: https://twitter.com/francois_kroll
 
 
-> —_I do not know anything about R so this package is not for me._    
-I wrote everything with that in mind, I promise. The amount of R (or any coding language) you need to know in order to run a complete analysis is minuscule, and I wrote it all below (see [R basics](#R-basics)).
+> — I do not know anything about R so this package is not for me._    
+I wrote everything with that in mind, I promise! The amount of R (or any coding language) you need to know in order to run a complete analysis is minuscule, and I wrote it all below (see [R basics](#R-basics)).
 
 ___
 
@@ -37,11 +37,13 @@ FramebyFrame builds upon work from Rihel lab members/alumni & collaborators, pri
 
 * Work on analysis of the frame-by-frame data: [Ghosh and Rihel, 2020. _eNeuro_](https://www.eneuro.org/content/7/4/ENEURO.0408-19.2020). The definitions of the "active bout" parameters were taken from there.
 
+* Tahnee Mackensen and Tanita Tzotzolaki kindly contributed sample code & datasets to help FramebyFrame support DanioVision data.
+
 ___
 
 ## Installation
 
-Installation requires the package `devtools`. If you do not have it already, first run in R:
+Installation requires the package `devtools`. To install it, run in R:
 
 ```r
 install.packages("devtools")
@@ -80,7 +82,7 @@ library(FramebyFrame)
 
 And you should be good to go!
 
-To be clear, you do not need to re-install the package every time you open R. Next time, just load it with `library(FramebyFrame)`.
+You do not need to re-install the package every time you open R. Next time, just load it with `library(FramebyFrame)`.
 
 But I recommend that you run the installation again once in a while so I can update things.
 
@@ -88,14 +90,14 @@ ___
 
 ## The frame-by-frame manifesto
 
-Already using the Zebrabox or similar? Here is why you should consider doing the analysis on the frame-by-frame data.
+Already using the Zebrabox or similar set-up (e.g. DanioVision)? Here is why you should consider doing the analysis on the frame-by-frame data.
 
 #### How Zebralab actually works
 At its core, the Zebrabox in "Quantization" mode records, at each frame transition and for each well, the number of pixels that changed grey pixel value above the Sensitivity threshold set by the user. The Sensitivity threshold is in grey pixel value (0 for black to 255 for white). On the new generation of Zebraboxes, we typically use Sensitivity = 20 when tracking 5–8 dpf larvae in 96-well plates.
 
 Precisely, my understanding of how Zebrabox works is: at frame $f$, it asks: “in this well, how many pixels changed intensity between frame ${f−1}$ and frame $f$”. To decide whether _one_ pixel counts as having changed intensity it asks “did that pixel’s grey value change by more than _Sensitivity_”. For example, say the larva swam over pixel X at frame $f$. The grey value of pixel X was 220 (almost white) at frame ${f−1}$ and became 11 (almost black) at frame $f$ as the larva covered it. Therefore, pixel X changed intensity by ${220−11 = 209}$ grey values, which is above the _Sensitivity_ threshold. Pixel X is thus counted as having changed intensity at frame f. The number of pixels that changed intensity between two successive frames is called Δ pixel.
 
-Therefore, the frame-by-frame data is, for each well, a long list of pixel counts. Each row representing the number of pixels which changed intensity vs. the previous frame. Something like:
+Therefore, the frame-by-frame data is, for each well, a long list of pixel counts. Each value represents the number of pixels which changed intensity vs. the previous frame. Something like:
 
 | frame | Δ pixel |
 |:---|:---|
@@ -106,19 +108,19 @@ Therefore, the frame-by-frame data is, for each well, a long list of pixel count
 |frame 5|0 px|
 
 
-Looking at the larval behaviour in this way, zebrafish larvae are inactive the great majority of the time (i.e. most of the Δ pixels are 0) interrupted frequently by swimming bouts which appear as ‘peaks’ in the Δ pixel values, e.g. `0 0 0 0 0 0 2 4 11 18 20 5 0 0 0 0 0`…
+Looking at the larval behaviour in this way, zebrafish larvae are inactive the great majority of the time (i.e. most of the Δ pixels are 0) interrupted by frequent swimming bouts which appear as ‘peaks’ in the Δ pixel values, e.g. `0 0 0 0 0 0 2 4 11 18 20 5 0 0 0 0 0`…
 
 #### What is the _middur_ parameter
 
-Many users of the Zebrabox analyse the _middur_ parameter, typically binned in 1-minute epochs. _middur_ stands for "duration in mid-activity". Precisely, it is the number of seconds the larva spent in "mid-activity" during a given minute.
+Many Zebrabox users analyse the _middur_ parameter, often binned in 1-minute epochs. _middur_ stands for "duration in mid-activity". Precisely, it is the number of seconds the larva spent in "mid-activity" during a given minute.
 
 How does Zebralab (the software) calculates _middur_ exactly?
 
-Let us assume the frame rate is 25 frames-per-second and the integration period is 1 minute. Zebralab takes the first 1 minute of frame-by-frame data, i.e. 25 frames-per-second × 60 seconds = 1500 frames or Δ pixel values. Of these 1500 frames, it counts those which were above or equal to the _Freezing_ threshold (set by the user, we use _Freezing_ = 3 Δ pixel) but below or equal to the _Burst_ threshold (set by the user, we use _Burst_ = 200 Δ pixel). This is the number of frames spent in "mid-activity", which Zebralab then converts into a "number of seconds in mid-activity" assuming 25 frames-per-second.
+Let us assume the frame rate is 25 frames-per-second and the integration period is 1 minute. Zebralab takes the first 1 minute of frame-by-frame data, i.e. 25 frames-per-second × 60 seconds = 1500 frames or Δ pixel values. Of these 1500 frames, it counts those which were above or equal to the _Freezing_ threshold (set by the user, we use _Freezing_ = 3 Δ pixel) but below or equal to the _Burst_ threshold (set by the user, we use _Burst_ = 200 Δ pixel). This is the number of frames spent in "mid-activity", i.e. above _Freezing_ and below _Burst_. To calculate the _middur_ value for that minute, Zebralab then converts the number of frames in "mid-activity" into "number of seconds in mid-activity" assuming 25 frames-per-second.
 
 For example, of the first 1500 frames, 400 were below _Freezing_ (i.e. they were 0 or 1 or 2 Δ pixel) and 100 were above _Burst_ (i.e. they were 201 or 202 or … Δ pixel). We are left with 1000 frames, i.e. ⅔ of one minute. So, during the first minute, the larva spent _middur_ = 40 seconds active.
 
-However, analysing the **frame-by-frame data** (i.e. the Δ pixels) is more accurate and more interesting than analysing the _middur_ datapoints. Here are a few reasons.
+Analysing the **frame-by-frame data** (i.e. the Δ pixels) is more accurate and more interesting than analysing the _middur_ datapoints. Here are a few arguments.
 
 #### Sleep detection on the frame-by-frame data is more accurate
 
@@ -126,36 +128,36 @@ A bunch of labs use the Zebrabox to monitor sleep in zebrafish larvae. To detect
 
 Unfortunately, this approach misses many sleep bouts. Here is why.
 
-The _middur_ algorithm runs on **non-overlapping** chunks of 1 minute of data (~ 1500 frames), i.e. the first minute runs from frame #1 to #1500, the second minute is from frame #1501 to #3000, etc. This is not ideal for detection of sleep bouts. Consider the following example: the larva stops moving at frame #1000 then starts moving again at frame #2900, for a total of 1900 inactive frames. Zebralab calculates the _middur_ value for the first minute (frame #1 to #1500): the larva was active during this period, as it only stopped moving at frame #1000. It then calculates the middur value for the second minute (frame #1501 to #3000): the larva was also active during this period, as it started moving at frame #2900. Result: we get two middur values > 0, i.e. no sleep is detected. But the larva was inactive for 1900 frames = 1.26 minutes, which should count as a sleep bout!
+The _middur_ algorithm runs on **non-overlapping** chunks of 1 minute of data (~ 1500 frames), i.e. the first minute runs from frame #1 to #1500, the second minute is from frame #1501 to #3000, etc. This is not ideal for detection of sleep bouts. Consider the following example: the larva stops moving at frame #1000 then starts moving again at frame #2900, for a total of 1900 inactive frames. Zebralab calculates the _middur_ value for the first minute (frame #1 to #1500): the larva was active during this period, as it only stopped moving at frame #1000. It then calculates the middur value for the second minute (frame #1501 to #3000): the larva was also active during this period, as it started moving at frame #2900. Result: we get two middur values > 0, so no sleep is detected. This is incorrect. Indeed, the larva was inactive for 1900 frames = 1.26 minutes, which should count as a sleep bout. To see another example, see [Fig. 2–suppl. 2](https://www.biorxiv.org/content/10.1101/2023.11.28.568940v1.full.pdf).
 
 This is why analysing _middur_ datapoints binned in 1-minute epochs misses sleep bouts. For a typical 10-hr night, the _middur_ analysis:
-* underestimates total sleep time by 1.2 ± 0.4 hr.
-* underestimates the number of sleep bouts by 38 ± 16 sleep bouts.
-* overestimates sleep bout duration by 0.4 ± 0.6 min.
+* underestimates total sleep time by 2.3 ± 0.4 hr.
+* underestimates the number of sleep bouts by 35 ± 14 sleep bouts.
+* underestimates sleep bout duration by 0.2 ± 0.2 min.  
 
-This last point may be counterintuitive. Imagine a sleep bout that is exactly 1 minute. To detect this sleep bout, we would need the larva to fall asleep exactly at frame #1501 and wake up exactly at frame #3000, for example. This is very unlikely. Therefore, with the _middur_ analysis: the longer the sleep bout, the more likely it is detected. In other words, the detection is biased _against_ the detection of shorter sleep bouts, so it overestimates the typical sleep bout duration.
+For more information, see [Fig. 2–suppl. 2](https://www.biorxiv.org/content/10.1101/2023.11.28.568940v1.full.pdf).
 
-Why is working with the frame-by-frame data better? The FramebyFrame R package detects every sleep bout (period of > 1500 inactive frames) present in the data. In practice, at each frame, it sums the Δ pixels of the previous 1500 frames. Was there any positive Δ pixel in the previous 1500 frames? Then the sum will give some positive number. Were the previous 1500 Δ pixels all 0? Then ${0 + 0 + 0 + … = 0}$.  So, at each frame, we can ask: “prior to this exact frame, had the larva been inactive for a complete minute?”. If yes (the previous 1500 frames were all 0), then the larva had been asleep for exactly 1 minute at that frame. In other words, the larva fell asleep exactly 1 minute ago. We can go back to 1 minute ago and label all these frames as ‘asleep’ and continue until the larva woke up, i.e. until the next positive Δ pixel.
+Why is working with the frame-by-frame data better? The FramebyFrame R package detects _every_ sleep bout (period of > 1500 inactive frames) present in the data. In practice, at each frame, it sums the Δ pixels of the previous 1500 frames. Was there any positive Δ pixel in the previous 1500 frames? Then the sum will give some positive number. Were the previous 1500 Δ pixels all 0? Then ${0 + 0 + 0 + … = 0}$.  So, at each frame, we can ask: “prior to this exact frame, had the larva been inactive for a complete minute?”. If yes (the previous 1500 frames were all 0), then the larva had been asleep for exactly 1 minute at that frame. In other words, the larva fell asleep exactly 1 minute ago. We can go back to 1 minute ago and label all these frames as ‘asleep’ and continue until the larva woke up, i.e. until the next positive Δ pixel.
 
 #### We can calculate more behavioural parameters on the frame-by-frame data
-Zebrafish larvae make swimming bouts that last ~ 0.2 second. Using the 1-min binned data (the _middur_ parameter) is a bit like recording at 1 frame-per-minute: one cannot detect single swimming bouts at such slow recording speed. This is a shame, especially as you may already have the data on your drive. Indeed, studying the frame-by-frame data allows to describe the structure of single swimming bouts (see [DOCUMENTATION > Behavioural parameters > Active bout parameters](DOCUMENTATION.md#Behavioural-parameters)).
+Zebrafish larvae make swimming bouts that last ~ 0.2 second. Using the 1-min binned data (the _middur_ parameter) is a bit like recording at 1 frame-per-minute: one cannot detect single swimming bouts at such slow recording speed. This is a shame, especially as you may already have the datasets on your drive. Instead, studying the frame-by-frame data allows to describe the structure of single swimming bouts (see [DOCUMENTATION > Behavioural parameters > Active bout parameters](DOCUMENTATION.md#Behavioural-parameters)). You can learn more about the FramebyFrame behavioural parameters in [Fig. 2 & Fig. 2–suppl. 1](https://www.biorxiv.org/content/10.1101/2023.11.28.568940v1.full.pdf).
 
-The _middur_ analysis is also blind to the actual number of pixels that changed intensity at each frame transition. For the _middur_ algorithm, a vigorous swimming bout which reached a whooping 100 Δ pixel is the same as a subdued movement which reached 9 Δ pixel, assuming both lasted the same duration. Therefore, using the _middur_ parameter, one can only describe activity in terms of time spent active but cannot describe the _intensity_ of this activity (i.e. how many pixels were moved). Accordingly, a larva which moved constantly but very calmly can, in theory, have the same _middur_ values as a larva which moved constantly and very ‘violently’ (e.g. had seizures). The _middur_ analysis cannot differentiate these two situations even though they are completely different biologically. In this example, we can use the FramebyFrame package to simply sum the Δ pixels, which will differentiate these two cases. We expect the first larva to spend all of its time active but have a low Δ pixel total, while the other larva would also spend all of its time active but its Δ pixel total would also be very high.
+The _middur_ analysis is also blind to the actual number of pixels that changed intensity at each frame transition. For the _middur_ algorithm, a vigorous swimming bout which reached a whooping 100 Δ pixel is the same as a subdued movement which reached 9 Δ pixel, assuming both lasted the same duration. Therefore, using the _middur_ parameter, one can only describe activity in terms of time spent active but cannot describe the _intensity_ of this activity (how many pixels were moved). Accordingly, a larva which moved constantly but very calmly can, in theory, have the same _middur_ values as a larva which moved constantly and very ‘violently’ (e.g. had seizures). The _middur_ analysis cannot differentiate these two situations even though they are completely different biologically. In this example, we can use the FramebyFrame package to simply sum the Δ pixels, which will differentiate these two cases. We expect the first larva to spend all of its time active but have a low Δ pixel total, while the second larva would also spend all of its time active but its Δ pixel total would also be very high.
 
 #### One slight point of caution
-I can think of one potential drawback of using the frame-by-frame data: as it actually takes the Δ pixels into account, I would expect it to be more biased in situations where there is a difference in pigmentation or size between larvae. For example, say the mutant larvae are less pigmented than their wild-type siblings. In this case, you would expect the mutant larva to trigger fewer pixels when doing the exact same movement as the wild-type larva, i.e. you may underestimate the activity of the mutant larva. If you think this is the case in your experiment, give more weight to parameters which do not take the Δ pixel values into account, i.e. are given in a different unit than pixels. Those should be fairly robust to differences in size or pigmentation.
+I can think of one potential drawback of using the frame-by-frame data: as it actually takes the Δ pixels into account, I would expect it to be more biased in situations where there is a difference in pigmentation or size between larvae. For example, say the mutant larvae are less pigmented than their wild-type siblings. In this case, you would expect the mutant larva to trigger fewer pixels when doing the exact same movement as the wild-type larva, which would underestimate the activity of the mutant larva. If you think this is the case in your experiment, give more weight to parameters which are given in a different unit than pixels. Those parameters do not take the Δ pixel values into account and so should be fairly robust to differences in size or pigmentation. You can also use the [adjustPixel](DOCUMENTATION.md#adjustpixel) command to attempt to counteract the bias caused by the difference in size or pigmentation.
 
 ___
 
 ## Minimal tutorial
 
-Ready? Here is the shortest possible tutorial of a FramebyFrame analysis. The package can do more than what is presented here, so make sure to check the full [documentation](DOCUMENTATION.md) once you got the gist of it.
+Ready? Here is the shortest possible tutorial of a FramebyFrame analysis. The package can do more than what is presented here, so make sure to check the full [DOCUMENTATION](DOCUMENTATION.md) once you got the gist of it.
 
 I will assume you have R and RStudio installed. If not, have a look at [R basics](#R-basics).
 
 ### 1– Get your frame-by-frame data from Zebralab
 
-> "_What the hell is Zebralab?_" – if you are thinking this, please read FAQ below, you may still be able to use the FramebyFrame package.  
+> FramebyFrame also accepts DanioVision data! For other data formats, get in touch with me.
 
 During your experiment, Zebralab stored all the frame-by-frame data in a .raw file (a Viewpoint-proprietary format). For a typical ~ 65 hours experiment at 25 frames-per-second it is 25–30 Gb.  
 
@@ -173,20 +175,22 @@ Go to Raw Data > Export…
 Pick the .raw file of your experiment.  
 Zebralab will now write a bunch of .xls files in the folder where the .raw file is.  
 Zebralab may act like it froze but you can check it is writing files in the folder.  
-For a typical ~ 65 hours experiment, you expect ~ 1000–1500 .xls files in the folder.  
-This takes a few hours and you will not be able to run Zebralab on this computer on the meanwhile.  
+For a typical ~ 65 hours experiment, you expect ~ 1,000–1,500 .xls files in the folder.  
+The export takes a few hours and you will not be able to run Zebralab on this computer on the meanwhile.  
 Each file will contain 1 million rows of frame-by-frame data.
 
 ###### Transfer the .xls files
-Once the raw export is done, get all the .xls files in one folder called _YYMMDD_BX1_BX2_…_rawoutput_, e.g. _220531_14_15_myexp_rawoutput_. If you have a single box connected to the computer: _YYMMDD_BX1_..._rawoutput_.  
+Once the raw export is done, get all the .xls files in one folder called _YYMMDD_BX1_BX2_…_rawoutput_, e.g. _220531_14_15_myexp_rawoutput_.
 
-Check how many .xls raw files you have by selecting all the files and looking at the bottom of the window. Check that th  total number of files matches the number in the name of the last file. Example: if I have 1201 files, last .xls file should be called _YYMMDD_BX1_BX2_…_rawoutput_1201.xls_.
+If you have a single box connected to the computer: _YYMMDD_BX1_..._rawoutput_, e.g. _220531_01_myexp_rawoutput_.  
+
+It is a good idea to check how many .xls raw files you have by selecting all the files and looking at the bottom of the window. Check that the total number of files matches the number in the name of the last file. Example: if I have 1,201 files, last .xls file should be called _YYMMDD_BX1_BX2_…_rawoutput_1201.xls_.
 
 Zip this folder by right click > Send to > Compressed (zipped) folder. You should get _YYMMDD_BX1_BX2_…_rawoutput.zip_. The zip is now ~ 2–3 Gb which makes it easier to transfer or archive.  
 
 Delete the original rawoutput folder **now** (the unzipped version). Do not let it clog the drive. Even if you have an issue later, you can just do the raw export again from the .raw.
 
-Transfer the zip archive to the computer when you will do the analysis. You will also need the Zebralab .xls results file, so transfer it now too. It should be called _YYMMDD_BX1_BX2_….xls_ or _YYMMDD_BX1_….xls_ for a single Zebrabox.   
+Transfer the zip archive to the computer when you will do the FramebyFrame analysis. You will also need the Zebralab .xls results file, so transfer it now too. It should be called _YYMMDD_BX1_BX2_….xls_ or _YYMMDD_BX1_….xls_ for a single Zebrabox.   
 
 
 ### 2– Sort the frame-by-frame data
@@ -201,10 +205,11 @@ frame1 – well 96 – 0 px
 frame2 – well 1 – 1 px  
 ...  
 
-
 This is in theory. In practice, Zebralab makes various ordering errors, for example shuffling the order of the wells or not giving frames in the chronological order.
 
-We will now fix this and get our frame-by-frame data in a simple format.  
+DanioVision users: each Track-....txt file contains all the frames for one well (File1 has all the data for well1, etc.) and the data seems much more orderly.
+
+We will now fix any Zebralab errors and get our frame-by-frame data in a simple format.  
 
 Create a new folder for your experiment, e.g. _YYMMDD_myexp_. Move your _..._rawoutput.zip_ in there.  
 
@@ -212,15 +217,14 @@ Unzip _..._rawoutput.zip_.
 > on Windows: click once > Extract (at the top) > Extract all > Extract  
 > on Mac: double-click
 
-Fire up RStudio. See also **R tips** below for a nicer experience.  
+Fire up RStudio. See also [R tips](README.md#r-tips) below for a nicer experience.  
 
 Create a new R script (File > New File > RScript) or Cmd/Ctrl + ↑ + N.  
 
-Install and load the FramebyFrame package (see **Installation** above).  
+Install and load the FramebyFrame package (see [Installation](README.md#installation) above).  
 
+#### Zebralab users:
 We then run the `vpSorter` command to sort our raw .xls files.  
-
-Our script so far:  
 
 ```r
 ## do not forget to load the package first...
@@ -236,19 +240,41 @@ vpSorter(ffDir="~/.../220531_14_15_rawoutput/",
          dayduration=14)
 ```
 
-
-* `ffDir`: path to the folder with your raw .xls/xlsx files.  
+* `ffDir`: path to the folder containing your raw .xls/xlsx files.  
 * `zebpath`: path to the Zebralab results file (.xls/xlsx).  
 * `boxGen`: 2 if you are using the newer version of Zebralab (post circa 2020), 1 for previous versions.
 > Note sure which one? Open one of the raw .xls/xlsx files, are the Δ pixel values (typically in column _data1_) mostly 1s or mostly 0s? If mostly 1s: `boxGen=1`; if mostly 0s: `boxGen=2`
 * `zt0`: Zeitgeber 0 (ZT0). What is the time of your sunrise?  
 * `dayduration`: how long does the day last in your experiment? By day, we mean lights ON.  
 
-These are only brief notes on the settings, please refer to the [documentation](DOCUMENTATION.md) for the full explanations, especially if you get stuck. 
+These are only brief notes on the settings, please refer to the [DOCUMENTATION](DOCUMENTATION.md) for the full explanations, especially if you get stuck. 
 
-> Are you getting _Error: vector memory exhausted (limit reached?)_ (or similar)? Please check the [Troubleshooting](DOCUMENTATION.md#troubleshooting) section in documentation.
+#### DanioVision users:
+> DanioVision support is new, so please do not hesitate to get in touch if you find any glitches!
 
-`vpSorter` should write _220531_14_RAWs.csv_ in your experiment folder. The format is fairly simple:  
+We then run the `dvSorter` command to sort our .txt files:
+
+```r
+## do not forget to load the package first...
+library(FramebyFrame)
+
+## dvSorter
+dvSorter(ffDir='~/.../220531_14_rawoutput/',
+         zt0='09:00:00',
+         dayduration=14)
+```
+
+* `ffDir`: path to the folder containing your raw .txt files.  
+* `zt0`: Zeitgeber 0 (ZT0). What is the time of your sunrise?  
+* `dayduration`: how long does the day last in your experiment? By day, we mean lights ON.  
+
+Important: are you on DanioVision and _not_ recording from a 96-square well plate? Please read the [DOCUMENTATION](DOCUMENTATION.md#dvSorter) to run `dvSorter` correctly.
+
+From here onwards, you can treat your RAWs.csv as if it was from Zebrabox/Zebralab.  
+
+> Are you getting _Error: vector memory exhausted (limit reached?)_ (or similar)? Please check the [Troubleshooting](DOCUMENTATION.md#troubleshooting) section in DOCUMENTATION.
+
+`vpSorter` or `dvSorter` should write _220531_14_RAWs.csv_ in your experiment folder. The format is fairly simple:  
 
 | fullts              | zhrs        | exsecs     | f1     | f2     | ...    |
 |:--------------------|:------------|:-----------|:-------|:-------|:-------|
@@ -283,7 +309,7 @@ genotypeGenerator(plateMap="~/.../220531_14_genotypeMap.xlsx")
 
 `genotypeGenerator` should write _220531_14genotype.txt_ in your experiment folder, which lists the number of the wells belonging to each group.  
 
-Tip: it also generates _220531_14_README.txt_ which I find especially useful to quickly get the sample sizes (`N = `) when preparing figures.  
+Tip: it also generates _220531_14_README.txt_ which I find useful to get the sample sizes (`N = `) when preparing figures.  
 
 ### 4– Quality check: frame rate
 It is a good idea to check that the frame rate was fairly stable throughout our experiment.  
@@ -314,10 +340,9 @@ Minimal explanations of the important settings:
 
 * `ffpath`: full path to the RAWs.csv file.  
 
-Plotting every instantaneous frame rates would take a while and is completely unnecessary, so instead we only plot a subset of them:  
+Plotting every instantaneous frame rate would take a while and is unnecessary, so instead we only plot a subset of them:  
 * `subsample`: whether to plot only a subset of the instantaneous frame rates (`TRUE` strongly recommended).
 * `subsample_by`: e.g. 1000 means we only plot every 1000th instantaneous frame rate.  
-
 
 * `exportOrNo`: whether to export the plot to a .pdf file.  
 * `width`: width of the plot pdf in mm.  
@@ -465,15 +490,17 @@ Some notes about the settings we have not encountered yet:
 
 Important: the `epo_min` setting determines the unit of the Y axis. In example above: `epo_min=10` means that each datapoint is the total time spent asleep (in minutes) in each 10-minute epoch, therefore the unit on the Y axis is min/10 min.  
 
-As before, not all possible settings are mentioned here. Read the full [documentation](DOCUMENTATION.md) to learn about those.  
+As before, not all possible settings are mentioned here. Read the full [DOCUMENTATION](DOCUMENTATION.md#ggsleeptracebygroup) to learn about those.  
 
 ### 8– Calculate behaviour parameters
-FramebyFrame can currently calculate 17 parameters on both day and night, for a total of 32 unique parameters (two parameters are not defined for the day).
+FramebyFrame can currently calculate 17 parameters for day and night, for a total of 32 unique parameters (two parameters are not defined for the day).
 
 A few examples:  
 * _activityPercentageTimeActive_: the percentage of time spent active per larva per time window. For example, larva #5 spent 10% during day2.  
 * _activeboutNum_: the total number of active bouts one larva performed during one time window. For example, larva #22 performed 34,736 swimming bouts (active bouts) during day1.
 * _sleepHours_: the total number of hours one larva slept during one time window. It is 0 hours if the larva had no sleep bout. For example, larva #2 slept a total of 3.54 hours during night2.
+
+See [Fig. 2 & Fig. 2–suppl. 1](https://www.biorxiv.org/content/10.1101/2023.11.28.568940v1.full.pdf) for a graphical explanation of each behavioural parameter and [DOCUMENTATION](DOCUMENTATION.md#behavioural-parameters) for the precise definitions.  
 
 > Any idea for a new behaviour parameter? I want to hear it! Raise an issue on Github (tab `Issues`) or get in touch (francois@kroll.be). The main criterion of a good parameter is: it should be calculable on the Δ px timecourse of one larva for a complete day or night and return a single value.  
 
@@ -567,9 +594,9 @@ The parameter grid will not display in RStudio, do not be alarmed. It is relativ
 
 ### 10– Sleep latency survival plot
 
-Sleep latency is, for each larva, the amount of time before first sleep bout once lights switched off, i.e. how long each larva took to fall asleep.
+Sleep latency is, for each larva, the amount of time before the first sleep bout after lights switched off, i.e. how long each larva took to fall asleep.
 
-In addition to its scatterplot drawn above, the sleep latency parameter can also be represented as a survival curve. The idea is: when lights just switched off (start of the night), 100% of the larvae did not sleep yet. As the night goes by, larvae start falling asleep one after the other. Each time a larva falls asleep for the first time, we say it "died" (not actually, but in survival statistics terms), so it is removed from the curve. The result is a survival curve when the proportion of larvae that did not sleep yet (Y axis) decreases in a step-wise fashion as the night goes by (X axis).
+In addition to its scatterplot drawn above, the sleep latency parameter can also be represented as a survival curve. The idea is: when lights just switched off (start of the night), 100% of the larvae did not sleep yet. As the night goes by, larvae start falling asleep one after the other. Each time a larva falls asleep for the first time, we say it "died" (in survival statistics jargon), so it is removed from the curve. The result is a survival curve where the proportion of larvae that did not sleep yet (Y axis) decreases in a step-wise fashion as the night goes by (X axis).
 
 ```R
 ## sleep latency survival plot
@@ -604,12 +631,12 @@ It will also calculate survival statistics using a Cox Proportional-Hazards mode
 ### 11– Statistics on behaviour parameter
 > Any feedback on this section is welcome, especially if you think I got something wrong!
 
-As promised, here are the statistics. It uses linear mixed effects (LME) modelling. Here is a very brief summary of the approach. For more details, please refer to the [full documentation](DOCUMENTATION.md#lmedaynight).
+As promised, here are the statistics. It uses linear mixed effects (LME) modelling. Here is a very brief summary of the approach. For more details, please refer to the [DOCUMENTATION](DOCUMENTATION.md#lmedaynight).
 
 Remember here that "unique behaviour parameter" means one value per larva per time window, e.g. number of sleep bouts larva #12 had during night2. For each unique behaviour parameter, the question is whether the group has an effect on the values. Or in other words, the null hypothesis is that the group has no effect on the given behaviour parameter, e.g. which genotype you are (wild-type or heterozygous or homozygous) does not change your number of sleep bouts at night. In LME jargon, the group is the **fixed effect**, i.e. we want to measure how the group affects the parameter. However, we need to take into account a bunch of variables that probably affect our data. For example, it could be that larvae were always less sleepy during the second night of tracking. We do not really care about quantifying how these variables affect our data, we just want to control for them. These are the **random effects**.
 
 The random effects in our LME model are:
-* **the experiment**; _if_ you are analysing multiple replicate experiments at once (which is recommended, this is a big advantage of using LME here). Ideally, each Zebrabox tracked a single clutch of larvae (same parents & same mating), so replicate experiments control for both technical (e.g. light levels not being exactly the same between the Zebraboxes) and biological (different clutches vary a lot in most behavioural parameters) variability. Other experimental designs may work too, so please read the [full documentation](DOCUMENTATION.md#lmedaynight) to adapt the settings.
+* **the experiment**; _if_ you are analysing multiple replicate experiments at once (which is recommended, this is a big advantage of using LME here). Ideally, each Zebrabox tracked a single clutch of larvae (same parents & same mating), so replicate experiments control for both technical (e.g. light levels not being exactly the same between the Zebraboxes) and biological (different clutches vary a lot in most behavioural parameters) variability. Other experimental designs may work too, so please read the [DOCUMENTATION](DOCUMENTATION.md#lmedaynight) to adapt the settings.
 * **development**, i.e. the larva’s age. If you recorded multiple days/nights (recommended), the larvae were also growing during the experiment, which likely had an effect on their behaviour. For example, we often notice that sleep is slightly lower during night2 (7 dpf for us) vs night1 (6 dpf) so we want to control for this and not simply pool the datapoints from multiple days or nights (this also risks "pseudo-replication", which occurs if, for example, you were analysing your data as if you had _n_=50 larvae when really you had _n_=25 larvae measured on two different days).
 * **the larva's ID** (e.g. larva #12). This is to account for non-independence in the data. Indeed, each larva is typically sampled multiple times during the experiment. For example, larva #12 is sampled once on day1 and once on day2. Or in other words, day1 and day2 are not independent measurements as they include the same animals. This also avoids "pseudo-replication" (see above).
 
@@ -621,7 +648,7 @@ The model provides the slope, i.e. magnitude of the effect (e.g. in average, KO 
 
 We then compare this model with a model that omits the group assignment to obtain a p-value. You will obtain a _single_ p-value for each unique parameter here, regardless of the number of groups. This is because the null hypothesis is "group assignment has no effect on the behaviour parameter", so we do not worry (yet) about which group(s) exactly. The interpretation is like an ANOVA, essentially.
 
-We then run "post-hoc" tests, comparing each group to the reference group, returning one p-value for each comparison (e.g. one p-value for heterozygous vs wild-type and one p-value for homozygous vs wild-type). Please refer to the [documentation](DOCUMENTATION.md#lmedaynight) for more details.  
+We then run "post-hoc" tests, comparing each group to the reference group, returning one p-value for each comparison (e.g. one p-value for heterozygous vs wild-type and one p-value for homozygous vs wild-type). Please refer to the [DOCUMENTATION](DOCUMENTATION.md#lmedaynight) for more details.  
 
 Do not worry if it is a bit confusing. It should make more sense once you see the output.  
 
@@ -821,10 +848,6 @@ ___
 
 ## FAQ
 
-> _I use DanioVision from Noldus (or else). Can I still use your amazing package?_  
-
-Yes, it is possible. Get in touch with me. At least one person has used it successfully with data from DanioVision's Noldus, but the conversion is not yet integrated in the package. I could work on it if there is demand.
-
 > _I do not have a Zebralab .xls results file!_
 
 No problem. The only information we get from the Zebralab file is the date and time when your experiment started. You can give that information manually to `vpSorter()` instead:
@@ -921,7 +944,7 @@ packageVersion("FramebyFrame")
 ```
 
 ### v0.1.0
-14/02/2023
+14/02/2023  
 First real version (arbitrary).
 
 ### v0.2.0
@@ -931,12 +954,12 @@ First real version (arbitrary).
 
 ### v0.3.0
 16/03/2023  
-Allows analysis of an experiment where there are multiple clutches in the same Zebrabox. Read below [Experimental design commandments](#experimental-design-commandments) _Experimental design commandments_ and in [DOCUMENTATION > LMEdaynight()](DOCUMENTATION.md#lmedaynight) for details about how to proceed.
+Allows analysis of an experiment where there are multiple clutches in the same Zebrabox. Read in [Experimental design commandments](#experimental-design-commandments) and in [DOCUMENTATION > LMEdaynight](DOCUMENTATION.md#lmedaynight) for details about how to proceed.
 
 ### v0.4.0
 11/04/2023  
 (Issuing as new version as it will affect slighly existing results, mainly of parameter sleep latency).  
-Caught small inconsistency when detecting sleep bouts. For an empty well or if the larvae was asleep throughout the light transition, the first asleep frame was #1500 (assuming `zthr_min`=1 and framerate 25 fps). However, in this situation, first asleep frame should #1, as definition of sleep is retroactive, e.g. if at frame #1500, the larva had been asleep for 1 minute, this means the sleep bout started exactly one minute earlier, i.e. at frame #1. In this situation, the first asleep frame is now correctly marked as #1. See comments in function detectNaps() for more details.  
+Caught small inconsistency when detecting sleep bouts. For an empty well or if the larvae was asleep throughout the light transition, the first asleep frame was #1500 (assuming `zthr_min=1` and framerate 25 fps). However, in this situation, first asleep frame should #1, as definition of sleep is retroactive, e.g. if at frame #1500, the larva had been asleep for 1 minute, this means the sleep bout started exactly one minute earlier, i.e. at frame #1. In this situation, the first asleep frame is now correctly marked as #1. See comments in function detectNaps() for more details.  
 I think the main consequence of this change is on parameter sleepLatency. Previously, it was returning ~ 1.0 min for empty wells or if the larva was asleep during the transition. Now it returns 0.0 min (more precisely 0.00067 min, i.e. one frame in minute) which I think is more accurate.  
 
 ### v0.5.0
@@ -958,13 +981,13 @@ Better definition of parameter **activitySunsetStartle**. It now looks for the m
 
 ### v0.10.0
 25/04/2023
-* New function **adjustPixel** to increase or decrease all Δ px of some larvae to counteract bias due to difference in size and/or pigmentation. See DOCUMENTATION.  
+* New function **adjustPixel** to increase or decrease all Δ px of some larvae to counteract bias due to difference in size and/or pigmentation. See [DOCUMENTATION](DOCUMENTATION.md#adjustpixel)).  
 * ggParameter: new setting `violinWidth` to control spread of dots in X.  
 
 ### v0.11.0
 10/05/2023  
 Caught error which affected results when analysing by windows-of-interests and ZT0 was _not_ 9 AM. In such case, it was incorrectly assuming that ZT0 was 9 AM.  
-Now, it back-calculates ZT0 from the timestamps in the RAWs.csv data, which should return exactly what the user gave as `zt0` when running `vpSorter`. This is to avoid asking ZT0 to the user repeatedly, which also prevents the user making a mistake (i.e. giving a different ZT0 than they gave to `vpSorter`). It returns the result of this calculation to Console so user can check.  
+Now, it back-calculates ZT0 from the timestamps in the RAWs.csv data, which should return exactly what the user gave as `zt0` when running `vpSorter`. This is to avoid asking ZT0 to the user repeatedly, which also prevents the user from making a mistake (i.e. giving a different ZT0 than they gave to `vpSorter`). It returns the result of this calculation to Console so user can check.  
 
 ### v0.12.0
 05/10/2023  
@@ -974,4 +997,8 @@ Minor edits:
 * `importRAWs` added clear error if the `ffpath` is incorrect.
 
 ### v0.13.0
-New setting `tracedash` for every `ggTrace` plot. See DOCUMENTATION.  
+New setting `tracedash` for every `ggTrace` plot. See [DOCUMENTATION](DOCUMENTATION.md)).
+
+### v1.0.0
+07/02/2024  
+FramebyFrame now supports DanioVision data! Please see function `dvSorter` in [TUTORIAL](README.md#2–-sort-the-frame-by-frame-data) and [DOCUMENTATION](DOCUMENTATION.md#dvsorter).

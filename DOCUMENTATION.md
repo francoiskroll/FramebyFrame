@@ -41,9 +41,9 @@ ___
 
 ### vpSorter(...)
 
-Sorts the Δ pixel data from a bunch of raw .xls/xlsx files and generates files _RAWs.csv and _lights.csv.
+Sorts the Δ pixel data from a bunch of Zebralab raw .xls/xlsx files and generates files _RAWs.csv and _lights.csv.
 
-**ffDir**: full path to folder which stores all the raw .xls/xlsx files from Zebralab's raw export.  
+**ffDir**: full path to the folder which stores all the raw .xls/xlsx files from Zebralab's raw export.  
 
 **zebpath**: full path to Zebralab .xls/xlsx results file. In practice, vpSorter only looks at the first row to obtain the start time/date of the experiment. Default is NA.  
 
@@ -66,6 +66,30 @@ Sorts the Δ pixel data from a bunch of raw .xls/xlsx files and generates files 
 **dayduration**: during your experiment, how long did the days (lights ON) last? FramebyFrame currently assumes 24-hr cycles, so e.g. if `dayduration=14`, it will understand this as: days last 14 hr, nights last 10 hr. Default is 14.  
 
 **exportXlsOrNo**: you probably do not need to worry about this. TRUE will attempt to export all the .xls files after correcting the errors, essentially as if Zebralab did not make any error. Default is FALSE.
+
+### dvSorter(...)
+
+Sorts the Δ pixel data from a bunch of DanioVision .txt files and generates files _RAWs.csv and _lights.csv.  
+
+DanioVision gives the frame-by-frame data as % of pixels in each well which changed intensity vs. the previous frame. `dvSorter` will convert these values to Δ pixels like so:
+
+${Δpx = (\%px × px_{well}) / 100}$
+
+where ${px_{well}} is the total number of pixels in each well (see below).
+
+If `date0` and `time0` are not given or NA, `dvSorter` will read the experiment's start time from the header of the first DanioVision .txt file. If for some reason this fails or is incorrect, you can enter `date0` and `time0` to give the start time manually.  
+
+**ffDir**: full path to the folder which stores all the .txt files from DanioVision. `dvSorter` will only import .txt files whose names start with 'Track'. If your file names are different, please get in touch so I can correct. 
+
+**zt0**: what time do you want to take as reference Zeitgeber? Given as HH:MM:SS. This is typically the lights ON time. Default is '09:00:00'.  
+
+**date0**: if needed, you can give the date at which the experiment started manually, in the format DD/MM/YYYY, e.g. `date0="17/05/2022"`. Default is NA.  
+
+**time0**: if needed, you can give the time at which the experiment started manually, in the format HH:MM:SS, e.g. `time0="13:02:25"`. Default is NA.  
+
+**dayduration**: during your experiment, how long did the days (lights ON) last? FramebyFrame currently assumes 24-hr cycles, so e.g. if `dayduration=14`, it will understand this as: days last 14 hr, nights last 10 hr. Default is 14.  
+
+**pxwell**: total number of pixels in each well. Default is `pxwell=8280.75` (thanks [Tahnee Mackensen](https://github.com/TahneeMa/DanioBehaviour) for the measurement).
 
 ___
 
