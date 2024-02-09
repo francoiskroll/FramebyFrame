@@ -155,9 +155,11 @@ Ready? Here is the shortest possible tutorial of a FramebyFrame analysis. The pa
 
 I will assume you have R and RStudio installed. If not, have a look at [R basics](#R-basics).
 
-### 1– Get your frame-by-frame data from Zebralab
+### 1– Get your frame-by-frame data
 
-> FramebyFrame also accepts DanioVision data! For other data formats, get in touch with me.
+> FramebyFrame accepts Zebralab or DanioVision data! For other data formats, get in touch with me.
+
+#### Zebralab users:
 
 During your experiment, Zebralab stored all the frame-by-frame data in a .raw file (a Viewpoint-proprietary format). For a typical ~ 65 hours experiment at 25 frames-per-second it is 25–30 Gb.  
 
@@ -192,10 +194,33 @@ Delete the original rawoutput folder **now** (the unzipped version). Do not let 
 
 Transfer the zip archive to the computer when you will do the FramebyFrame analysis. You will also need the Zebralab .xls results file, so transfer it now too. It should be called _YYMMDD_BX1_BX2_….xls_ or _YYMMDD_BX1_….xls_ for a single Zebrabox.   
 
+#### DanioVision users:
+
+You can export the frame-by-frame data files directly at the end the experiment. Alternatively, if you closed the experiment already, re-open the saved experiment (.evxt file) in EthoVisionXT as you would normally.
+
+Go to Export > Raw Data.   
+* Check that `Track` & dependent variables is ticked ON; `Trial Control log` is OFF; `Hardware log` is OFF (default).  
+* Choose a destination software. By default, this is "Export Files" folder of your data.  
+* File format: choose "Unicode text – default (*.txt)".
+* `Missing value representation`is "-"
+* `Delimiter` is ";"
+
+Click "Start Export".
+
+DanioVision will now write one .txt per arena (well) in the folder specified above. The export takes a few hours and you will not be able to run DanioVision on the computer in the meantime.
+
+The files will be named "Track-{Experiment Name}-{Spaces}-{Trial number}-{Well name}-Subject 1.txt". The well names may differ dependent on how you called the arenas, e.g. 1, 2, 3, ... or A1, A2, A3, ...
+
+It it recommended to create a back-up of your experiment using File > Make Backup. You may want to use:
+* `Include Export Files` ticked ON
+* `Make Backup Read Only` ticked OFF  
+
+You can then delete the original file. Before deleting, check that you can start the experiment from the backup.
+
 
 ### 2– Sort the frame-by-frame data
 
-The general structure of each raw .xls file in rawoutput is: first frame, data for every well; second frame, data for every well, etc. All one below the other in a tall format. Something like:
+**Zebralab users**: The general structure of each raw .xls file in rawoutput is: first frame, data for every well; second frame, data for every well, etc. All one below the other in a tall format. Something like:
 
 > frame1 – well 1 – 0 px  
 frame1 – well 2 – 12 px  
@@ -207,7 +232,7 @@ frame2 – well 1 – 1 px
 
 This is in theory. In practice, Zebralab makes various ordering errors, for example shuffling the order of the wells or not giving frames in the chronological order.
 
-DanioVision users: each Track-....txt file contains all the frames for one well (File1 has all the data for well1, etc.) and the data seems much more orderly.
+**DanioVision users**: each Track-....txt file contains all the frames for one well (File1 has all the data for well1, etc.) and the data seems much more orderly.
 
 We will now fix any Zebralab errors and get our frame-by-frame data in a simple format.  
 
@@ -224,7 +249,7 @@ Create a new R script (File > New File > RScript) or Cmd/Ctrl + ↑ + N.
 Install and load the FramebyFrame package (see [Installation](README.md#installation) above).  
 
 #### Zebralab users:
-We then run the `vpSorter` command to sort our raw .xls files.  
+We then run the `vpSorter` command to sort our raw .xls files (`vp` stands for Viewpoint).    
 
 ```r
 ## do not forget to load the package first...
@@ -252,7 +277,7 @@ These are only brief notes on the settings, please refer to the [DOCUMENTATION](
 #### DanioVision users:
 > DanioVision support is new, so please do not hesitate to get in touch if you find any glitches!
 
-We then run the `dvSorter` command to sort our .txt files:
+We run the `dvSorter` command to sort our .txt files (`dv` stands for DanioVision):
 
 ```r
 ## do not forget to load the package first...
