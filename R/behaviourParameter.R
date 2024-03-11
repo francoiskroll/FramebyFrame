@@ -352,8 +352,6 @@ paramReadPivot <- function(pa,
   # however, I think better to respect the order given by the user
   # as the user may want to plot exp2 first, exp1 second
 
-  print(pal)
-
   ### date ###
   # convert to factor, respecting order in which users gave pa
   pal$date <- factor(pal$date, levels=unique(pal$date))

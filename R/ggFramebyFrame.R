@@ -505,6 +505,8 @@ ggFramerate <- function(ffpath,
 
 # expects sleepLatency parameter dataframe(s)
 
+# 11/03/2024: deleted onlyDayorNight setting as sleepLatency is only defined for nights
+
 #' Title
 #'
 #' @param pa
@@ -513,7 +515,6 @@ ggFramerate <- function(ffpath,
 #' @param poolExp1
 #' @param poolExp2
 #' @param poolExp3
-#' @param onlyDayorNight
 #' @param onlyWin
 #' @param colours
 #' @param legendOrNo
@@ -543,7 +544,6 @@ ggSleepLatencySurvival <- function(pa,
                                    poolExp1=NA,
                                    poolExp2=NA,
                                    poolExp3=NA,
-                                   onlyDayorNight=NA,
                                    onlyWin=NA,
                                    colours=NA,
                                    legendOrNo=TRUE,
@@ -563,29 +563,18 @@ ggSleepLatencySurvival <- function(pa,
   ### check export settings ###
 
   if (exportOrNo) {
-
     # check if output folder exists
     if(!dir.exists(exportDir))
       stop('\n \t \t \t \t >>> Error exportDir: output folder does not exist. \n')
-
   }
 
   # check that settings make sense
 
-  # check onlyDayorNight
-  if (!is.na(onlyDayorNight) & onlyDayorNight!='day' & onlyDayorNight!='night')
-    stop('\t \t \t \t >>> Error: onlyDayorNight can only be day, night, or NA. \n')
+  # 11/03/2024 deleted check onlyDayorNight
 
   # cannot skipNight0 AND ask to plot only night0
   if(!is.na(onlyWin)) {
     if (skipNight0 & onlyWin=='night0') stop('\t \t \t \t >>> Error: cannot skipNight0 AND ask to only plot night0. \n')
-  }
-
-  # if only day or night, needs to be consistent with which win to plot
-  if (!is.na(onlyWin) & !is.na(onlyDayorNight)) {
-    if(substr(onlyDayorNight, 1, 3)!=unique(substr(onlyWin, 1, 3)))
-      stop('\t \t \t \t >>> Error: onlyDayorNight and onlyWin settings not compatible,
-           probably asking to plot individual night(s) while asking for only day, or vice-versa. \n')
   }
 
   # if given colours, need to be same number as grporder
@@ -618,16 +607,14 @@ ggSleepLatencySurvival <- function(pa,
 
   # exclude some datapoints if needed, as per the settings
 
-  # if onlyDay is given...
-  if (!is.na(onlyDayorNight)) {
-    pal <- pal %>%
-      subset(daynight==onlyDayorNight)
-  }
+  # 11/03/2024 deleted filtering based on onlyDayorNight
 
   # if onlyWin is given...
   if (!is.na(onlyWin[1])) {
     pal <- pal %>%
       subset(win==onlyWin)
+    # reset the levels of date_box_win here, otherwise will keep the other date_box_win which are not observed in pal anymore
+    pal$date_box_win <- factor(pal$date_box_win) # we know there is only date_box_win here so order does not matter
   }
 
   # ! important *not* to remove NA data points here, they represent larvae which never slept
@@ -652,23 +639,21 @@ ggSleepLatencySurvival <- function(pa,
     # take these data, will be easier for referring to it below
     paw <- palW[[ew]]
 
-    cat('\n \n \t \t \t \t >>> Preparing sleepLatency survival plot for ***', winn, '*** \n')
-
-    ## are we analysing by day/night or windows of interest?
-    # if by day/night
+    ### are we analysing by day/night or windows of interest?
+    ## if by day/night
     if(!is.na(dayduration)) {
       # are we currently looking at day data or night data?
       dayornight <- unique(paw$daynight)
-
-      # we will need to tell timestampsToSurvival the last timepoint, i.e. how long the day/night lasted in minutes
-
+      # if looking at day data: break
+      # as sleepLatency is not defined for days!
       if(dayornight=='day') {
-        lastt <- dayduration * 60 # typically 14 hours * 60 minutes
+        next # will return to for loop, i.e. skip to next window
       } else if(dayornight=='night') {
+        # we will need to tell timestampsToSurvival the last timepoint, i.e. how long the day/night lasted in minutes
         lastt <- (24-dayduration) * 60 # typically 10 hours * 60 minutes
       }
 
-    # if by windows of interest
+    ## if by windows of interest
     } else if(!is.na(woi)) {
 
       # woi should be an even number of elements as start/end, start/end, etc.
@@ -697,6 +682,8 @@ ggSleepLatencySurvival <- function(pa,
       #          '17/02/2023 10:00:00', '17/02/2023 20:00:00')
 
     }
+    # can now tell user which plot we are doing
+    cat('\n \n \t \t \t \t >>> Preparing sleepLatency survival plot for ***', winn, '*** \n')
 
     # now split this window's `pal` by group
     # creates a list, each slot one 'slice' of the dataframe
