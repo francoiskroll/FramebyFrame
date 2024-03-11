@@ -9,14 +9,6 @@
 
 
 # function LMEdaynight(...) -----------------------------------------------
-# expects parameter across day/night for two clutches
-# will perform linear mix effects model
-
-# ! assumes column grp and column fish
-# parameter is given by param below, needs to be exactly the column name
-
-# Note; mostly from https://bodowinter.com/tutorial/bw_LME_tutorial.pdf
-# some also from https://ourcodingclub.github.io/tutorials/mixed-models/
 
 #' Title
 #'
@@ -122,6 +114,29 @@ LMEdaynight <- function(pa,
     }
   } else {
     sameClutchMode <- FALSE
+  }
+
+
+
+  # check for empty win -----------------------------------------------------
+  # sometimes an entire window is NA
+  # e.g. day for sleepLatency
+  # or night0 for transitionDelta
+  # we keep them some that all parameter tables have the same number of columns
+  # but can become an issue here
+
+  # put back in wide format
+  palw <- pal %>%
+    pivot_wider(id_cols=fish,
+                names_from='date_box_win',
+                values_from='param')
+  # any date_box_win which is all NA?
+  naWin <- names(palw)[which(colSums(is.na(palw))==nrow(palw))]
+
+  # if any, remove them from pal
+  if(length(naWin)>0) {
+    pal <- pal %>%
+      filter(date_box_win!=naWin)
   }
 
 
@@ -620,6 +635,7 @@ LMEmodel <- function(pdn,
         # null model
         lmnull <- lm(param ~ 1, data=pdn)
 
+      # if multiple day/night
       } else {
         # full model
         cat('\t \t \t \t >>> LME formula:', unique(pdn$parameter), '~ group + (1|larva ID) + (1|larva age) \n')

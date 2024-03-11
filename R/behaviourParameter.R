@@ -216,6 +216,14 @@ paramReadPivot <- function(pa,
     }
   }
 
+  # potential solution to avoid importing empty columns...
+  # but creates issue with rbindlist below
+  # unfortunately best at this point to put exceptions where needed
+  # lapply(paL, function(pa) {
+  #   # names of NA columns:
+  #   naCols <- colnames(pa)[apply(is.na(pa), 2, all)]
+  #   return( pa[, (naCols) := NULL] )
+  # })
 
   # rbind the list
   # source is recorded through date and box columns
