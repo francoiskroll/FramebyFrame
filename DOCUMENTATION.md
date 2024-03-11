@@ -679,10 +679,11 @@ sleepLatency calculated on window(s) of interest is not currently supported. Let
 **skipNight0**: whether or not (TRUE or FALSE) to plot night0’s sleep latency survival plot. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
 onlyDayorNight: do you want to plot the sleep latency survival plots of only the days or only the nights? Options are ‘day’ or ‘night’ or NA.
 
-**onlyWin**: do you want to plot the sleep latency survival plots of only specific day(s) or night(s)? Give them here, for example `onlyWin='day1'` or `onlyWin=c('day1', 'night1')`. Default is NA, which makes the sleep latency survival plot for every time window available in the parameter table(s).
+**onlyWin**: do you want to plot the sleep latency survival plots of only specific night(s)? Give them here, for example `onlyWin='night1'` or `onlyWin=c('night0', 'night1')`. Default is NA, which makes the sleep latency survival plot for every time window available in the parameter table(s).
 
 **colours**: colours for the groups (genotypes), either in the same order as `grporder` or in alphabetical order of the group names if not giving `grporder`. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.
-legendOrNo: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
+
+**legendOrNo**: whether or not (TRUE or FALSE) to make the legend. I would recommend first generating the plot with the legend so you can check that the groups and colours are correctly matched. Default is TRUE.
 
 **xtextOrNo**: whether or not (TRUE or FALSE) to write the units on the X axis. Default is TRUE.
 
@@ -690,9 +691,9 @@ legendOrNo: whether or not (TRUE or FALSE) to make the legend. I would recommend
 
 **ynameOrNo**: whether or not (TRUE or FALSE) to write the name of the Y axis. TRUE will write “% larvae which have not slept yet”. Default is TRUE.
 
-**nightBgOrNo**: whether or not (TRUE or FALSE) to add a grey background when we are making the sleep latency survival plot for a night. Default is TRUE.
+**nightBgOrNo**: whether or not (TRUE or FALSE) to add a grey background to indicate we are looking at data collected at night. Default is TRUE.
 
-**xmaxh**: end of X axis, in hours after the light transition. Default is the total duration (in hours) of that time window, typically 14 hours if day, 10 hours if night.
+**xmaxh**: end of X axis, in hours after the light transition. Default is the total duration (in hours) of that time window, typically 10 hours for the night.
 
 **detailsOrNo**: whether or not (TRUE or FALSE) to print in Console the details of each Cox Proportional-Hazards model.
 
@@ -708,9 +709,9 @@ legendOrNo: whether or not (TRUE or FALSE) to make the legend. I would recommend
 
 ### ggSleepLatencyGrid(...)
 
-Makes two grids: one with the day sleep latency survival plots and one with the night sleep latency survival plots. Within each grid, each column is one window and each row is one experiment. For example, the day grid could be structured as:
+Makes a grid of sleep latency survival plots. Within each grid, each column is one time window and each row is one experiment. For example, the grid could be structured as:
 
-|      | Day1      | Day2     |
+|      | Night1      | Night2     |
 |:-----|:----------|:---------|
 | **Exp1** | _plot_  | _plot_ |
 | **Exp2** | _plot_  | _plot_ |
@@ -720,7 +721,8 @@ It simply calls ggSleepLatencySurvival() multiple times to build each grid. Read
 sleepLatency calculated on window(s) of interest is not currently supported. Let me know if needed.
 
 **pa**: sleep latency parameter table(s), given as Environment object(s) or full path(s) to .csv.
-grporder: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. The order here will change which group is taken as reference in the Cox Proportional-Hazards Model, e.g. `grporder=c('wt', 'ko')` will give the results for KO in relation to WT, which is probably what you want. Now, the survival curves typically overlap and the order here will decide which group is plotted on top of the other(s). Accordingly, if you would like a different order for the plot than for the statistics, you can always generate the plot first then re-run the command to get the statistics to care about. Just remember that colours (below) are matched in the same order so I would strongly recommend having `legendOrNo=TRUE` in the process so you make sure you are interpreting the plots correctly. Default is NA, which will use alphabetical order.
+
+**grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. The order here will change which group is taken as reference in the Cox Proportional-Hazards Model, e.g. `grporder=c('wt', 'ko')` will give the results for KO in relation to WT, which is probably what you want. Now, the survival curves typically overlap and the order here will decide which group is plotted on top of the other(s). Accordingly, if you would like a different order for the plot than for the statistics, you can always generate the plot first then re-run the command to get the statistics to care about. Just remember that colours (below) are matched in the same order so I would strongly recommend having `legendOrNo=TRUE` in the process so you make sure you are interpreting the plots correctly. Default is NA, which will use alphabetical order.
 
 **skipNight0**: whether or not (TRUE or FALSE) to plot night0’s sleep latency survival plot. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
 
@@ -736,15 +738,13 @@ grporder: do you have a preferred order for the groups (genotypes)? If yes, ment
 
 **nightBgOrNo**: whether or not (TRUE or FALSE) to add a grey background when we are making the sleep latency survival plot for a night. Default is TRUE.
 
-**xmaxDay**: end of X axis to be used for the day plots, in hours after the light transition. Default is the total duration (in hours) of the day, typically 14 hours.
-
-**xmaxNight**: end of X axis to be used for the night plots, in hours after the light transition. Default is the total duration (in hours) of the night, typically 10 hours.
+**xmaxNight**: end of X axis, in hours after the light transition. Default is the total duration (in hours) of the night, typically 10 hours.
 
 **detailsOrNo**: whether or not (TRUE or FALSE) to print in Console the details of each Cox Proportional-Hazards model.
 
 **exportOrNo**: you can skip, it is used internally to avoid exporting every single plot when making the grid in ggSleepLatencyGrid(). Whether or not (TRUE or FALSE) to export the plots. Default is TRUE.
 
-**exportDir**: directory where we will export the grids. It will generally make two grids: sleepLatency_day.pdf and sleepLatency_night.pdf.
+**exportDir**: directory where we will export the grid, typically sleepLatency_night.pdf.
 
 **width**: width of each pdf in mm. Default is 150.
 

@@ -741,6 +741,7 @@ ggSleepLatencySurvival <- function(pa,
         axis.text.y=element_text(size=7),
         axis.title.y=element_text(size=9),
         axis.title.x=element_text(size=9),
+        legend.title=element_blank()
       ) +
 
       {if(!legendOrNo) theme(legend.position='none')} +
@@ -799,7 +800,6 @@ ggSleepLatencySurvival <- function(pa,
 #' @param xnameOrNo
 #' @param ynameOrNo
 #' @param nightBgOrNo
-#' @param xmaxDay
 #' @param xmaxNight
 #' @param detailsOrNo
 #' @param exportDir
