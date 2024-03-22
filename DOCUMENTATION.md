@@ -73,7 +73,7 @@ Sorts the Δ pixel data from a bunch of DanioVision .txt files and generates fil
 
 DanioVision gives the frame-by-frame data as % of pixels in each well which changed intensity vs. the previous frame. `dvSorter` will convert these values to Δ pixels like so:
 
-$Δpx = (%px × px_{well}) / 100$
+$Δpx = (\\%px × px_{well}) / 100$
 
 where $px_{well}$ is the total number of pixels in each well (see below).
 
