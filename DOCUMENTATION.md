@@ -1090,13 +1090,27 @@ If that was not the solution, check carefully that the `exportPath` is correct. 
 > Error in data.table::fwrite(paL[[i]], file = paste0(beforeLastSlash(ffpath[1]),  :
   Permission denied: 'D:/.../.csv'. Failed to open existing file for writing. Do you have write permission to it? Is this Windows and does another process such as Excel have it open?  
 
-Error is self-explanatory here. On Windows, R cannot overwrite a CSV that is open, for example in Excel. Close Excel (or else) and run the command again.
+On Windows, R cannot overwrite a CSV that is open, for example in Excel. Close Excel (or else) and run the command again.
 
 > Error: vector memory exhausted (limit reached?)  
 
-Are you on a Mac? Please follow [this answer on StackOverflow](https://stackoverflow.com/questions/51295402/r-on-macos-error-vector-memory-exhausted-limit-reached).
+_Are you on a Mac?_ Following [this answer on StackOverflow](https://stackoverflow.com/questions/51295402/r-on-macos-error-vector-memory-exhausted-limit-reached) seems to work.
 
-Are you on a Windows? Please try the following:
+Open Terminal, then run:  
+```
+cd ~
+touch .Renviron
+open .Renviron
+```
+
+In the file, write e.g.
+```
+R_MAX_VSIZE=999Gb
+```
+
+Save (Cmd + S), close Terminal & RStudio, then try again.
+
+_Are you on a Windows?_ Please try the following:
 
 1- Increase memory in R settings file
 
