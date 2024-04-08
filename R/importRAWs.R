@@ -92,6 +92,7 @@ findLightTransitionFrame <- function(Zeitgeberdurations, transitionHour) {
 #' @param ffpath
 #'
 #' @return
+#' @export
 #'
 #' @examples
 

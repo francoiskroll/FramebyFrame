@@ -11,7 +11,6 @@ ggSleepLatencySurvival(
   poolExp1 = NA,
   poolExp2 = NA,
   poolExp3 = NA,
-  onlyDayorNight = NA,
   onlyWin = NA,
   colours = NA,
   legendOrNo = TRUE,
