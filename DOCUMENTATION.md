@@ -654,6 +654,7 @@ ggParameterGrid() does not currently support parameters calculated on specific w
 
 **exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf. You can skip giving this parameter entirely if you do not wish to export the plot.
 
+## Sleep latency
 
 ### ggSleepLatencySurvival(...)
 
@@ -751,6 +752,8 @@ sleepLatency calculated on window(s) of interest is not currently supported. Let
 **height**: height of each pdf in mm. Default is 100.
 
 **dayduration**: how many hours do the days last in your experiment. Default is 14.
+
+## Statistics by linear-mixed effects models
 
 ### LMEdaynight(...)
 Runs linear mixed effects (LME) models as statistical tests on a behavioural parameter. Day data and night data are analysed separately. It prints in Console a summary in the form:
@@ -890,6 +893,7 @@ Please refer to the documentation of LMEdaynight(...) above for explanations abo
 
 **exportPath**: full path to export file. It will create a csv. Accordingly, exportPath must finish with .csv.  
 
+## Behavioural fingerprints
 
 ### calculateFingerprint(...)
 Calculates a behavioural fingerprint for a larva or clutch.
@@ -1031,6 +1035,38 @@ Calculates the similarity between pairwise behavioural fingerprint and represent
 
 * **exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf.  
 
+## Miscellaneous
+
+### ggDeltaPx
+
+Plots the Δ pixel timecourse for one well.
+
+* **ffpath**: full path to the _RAWs.csv file to append.  
+
+* **well**: which well to plot. This should match one of the column names in the _RAWs.csv file, e.g. "f85".  
+
+* **zhstart**: start of X axis, in hours since 9 AM of day0.  
+
+* **zhstop**: stop of X axis, in hours since 9 AM of day0.  
+
+Alternatively, you can start & stop in frame indices, instead of number of hours:
+
+* **frstart**: start of X axis, in frame index (recording starts at frame 1).  
+
+* **frstop**: stop of X axis, in frame index (recording starts at frame 1).  
+
+* **colour**: colour of the trace. It understands a bunch of colour words like ‘red’ or ‘blue’ or you can give them as HEX codes (can use Eyedropper tool in Illustrator to get HEX colour code, for example). Default is NA, which will colour groups with default R colours, which actually look good.  
+
+* **ymax**: end of Y axis, in Δ px.  
+
+* **xnsecs**: interval of breaks on X axis, in number of seconds. Default is 10 sec.  
+
+* **width**: width of pdf in mm. Default is 100 mm.  
+
+* **height**: height of pdf in mm. Default is 50 mm.  
+
+* **exportPath**: full path to export file. It will create a pdf. Accordingly, exportPath must finish with .pdf.  
+
 ### appendRAWs(...)
 
 If tracking was interrupted (for example because of a powershut) and quickly re-started, this function allows to append the two RAWs.csv files into one. Naturally, it will not magically recover the missing frames, so there will be a gap in the data, but the appended RAWs.csv is compatible with other functions.
@@ -1076,6 +1112,12 @@ Beware, adjusting the data will make you lose parameter activitySunsetStartle. W
 **scale**: scaling ratio. For example, `scale=0.9` will multiply every Δ px datapoints of larvae of group `grpL` by 0.9 (i.e. reduce them a bit). If you do not give this setting (or `scale=NA`), adjustPixel will analyse parameter activitySunsetStartle as a proxy for the size/darkness of each larva. The logic is that the startle response at lights OFF should be fairly close to the maximum number of pixels each larva can move in a single frame, which should be directly proportional to its size/darkness. To get as close as possible to the maximum number of pixels each larva can move, adjustPixel takes the maximum startle response across all nights available in the data. For example, say larva #5 moved 55 px at the start of night0, 73 px at the start of night1, 65 at the start of night2; adjustPixel keeps 73 px at the maximum startle response for this larva. The scale setting is then calculated as the ratio of the means (mean of all maximum startle response of larvae from grpS / mean of all maximum startle response of larvae from grpS), which essentially says how much fainter/smaller the larvae of grpS are compared to the larvae of grpL.  
 
 **round**: multiplying by `scale` likely give a decimal number, but Δ px values should be integers. Do you want to round them `up` (e.g. 0.9 becomes 1) or `down` (e.g. 0.9 becomes 0)? Default is `down`, which you should probably use too. My logic is that a partial pixel does not exist, if it is below detection it would not be counted, so I think we should round down.  
+
+### replacePulses
+
+TODO
+
+* **xxx**: xxx.  
 
 # Troubleshooting
 

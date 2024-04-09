@@ -1027,3 +1027,8 @@ New setting `tracedash` for every `ggTrace` plot. See [DOCUMENTATION](DOCUMENTAT
 ### v1.0.0
 07/02/2024  
 FramebyFrame now supports DanioVision data! Please see function `dvSorter` in [TUTORIAL](README.md#2–-sort-the-frame-by-frame-data) and [DOCUMENTATION](DOCUMENTATION.md#dvsorter).
+
+### v1.1.0
+09/04/2024  
+* New function `ggDeltaPx` to plot small plot of Δ pixel timecourse for one well. See [DOCUMENTATION](DOCUMENTATION.md#ggdeltapx)).  
+* (BETA) New function `replacePulses` to replace frames during which a sentinel well moves. Collaboration with Leah Elias, Johns Hopkins University.
