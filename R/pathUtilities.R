@@ -311,6 +311,7 @@ levelUpPath <- function(paths,
 #' @param slash
 #'
 #' @return
+#' @export
 #'
 #' @examples
 parentFolder <- function(paths,

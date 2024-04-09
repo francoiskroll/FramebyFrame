@@ -500,7 +500,7 @@ activeboutMax_onefish <- function(ffc,
   # ** THIRD sapply to loop through the active bouts of that fish
 
   # preallocate vector which will store std of each active bout's deltapx points
-  maxdpa <- rep(NA, length(saof$saf)) # stddpa for standard deviation of delta px of active bouts
+  maxdpa <- rep(NA, length(saof$saf)) # maxdpa for standard deviation of delta px of active bouts
   # ! much better for speed to preallocate all NA rather than have a vector that grows at each iteration
 
   # sapply loops through START frames
@@ -513,7 +513,7 @@ activeboutMax_onefish <- function(ffc,
 
     # check that there are only positive deltapx values
     if(unique(dpa>0) != TRUE)
-      stop('\t \t \t \t >>> Error: there is something else than only positive deltapx values in \n')
+      stop('\t \t \t \t >>> Error: there is something else than only positive deltapx values in deltapx data of an active bout.\n')
 
     # add the minimum deltapx of this active bout to vector mindpa
     maxdpa[a] <<- max(dpa) # ! core is here, maximum of the deltapx values of that active bout
@@ -521,9 +521,9 @@ activeboutMax_onefish <- function(ffc,
 
   # check there is no more NA in mindpa
   if(sum(is.na(maxdpa))!=0)
-    stop('\t \t \t \t >>> Some NA in vector which stores the minimum of each active bout \n')
+    stop('\t \t \t \t >>> Some NA in vector which stores the maximum of each active bout.\n')
 
-  # now return the mean active bout minimum, for that time window and that fish
+  # now return the mean active bout maximum, for that time window and that fish
   return(mean(maxdpa)) # return the mean maximum for this time window/fish
 
 }
