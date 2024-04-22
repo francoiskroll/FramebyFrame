@@ -41,7 +41,7 @@ ggDeltaPx <- function(ffpath,
     stop('\t \t \t \t >>> Please give both zhstart & zhstop, or leave both as NA.\n')
 
   ## import frame-by-frame data
-  ff <- importRAWs(ffpath='~/Dropbox/ZPUL/240318_pulseDetect/240318_00_RAWs.csv')
+  ff <- importRAWs(ffpath=ffpath)
 
   ## keep only data we want to plot
   # if user gave start/stop as zhrs, we need to find the corresponding frame
