@@ -141,7 +141,7 @@ rawToMiddur <- function(ffpath,
   # cat('\t \t \t \t Trimming first ***', round((nrow(ff) %% 1500)/fps,0), '*** seconds of data to make it divisible by 1500 \n')
   # ff <- ff[- (1:(nrow(ff) %% 1500)) ,]
 
-  nrowstoomany <- nrow(ff) %% 1500
+  nrowstoomany <- nrow(ff) %% (fps*60) # fps*60 is number of frames in one minute
 
   # if there are some rows to trim
   if(nrowstoomany!=0) {
@@ -152,7 +152,7 @@ rawToMiddur <- function(ffpath,
 
   # now the number of rows in ff is a multiple of 1500
   # check this
-  if(nrow(ff)%%1500 != 0) stop('\t \t \t \t >>> Error rawtoMiddur: number of rows not a multiple of 1500, even after trimming \n')
+  if(nrow(ff)%%(fps*60) != 0) stop('\t \t \t \t >>> Error rawtoMiddur: number of rows not a multiple of 1500, even after trimming \n')
 
   # how many time columns do we have?
   timecols <- which(grepl("^f+[[:digit:]]", colnames(ff)))[1] - 1
@@ -175,11 +175,11 @@ rawToMiddur <- function(ffpath,
   # place back time columns
   # there are multiple options here
   # I think what makes most sense is to take the timepoint of the latest frame of each minute
-  tsrows <- seq(1500, nrow(ff), 1500) # gives the last row of each minute, so row 1500, 3000, etc. We will use the time of each of these frames
+  tsrows <- seq((fps*60), nrow(ff), (fps*60)) # gives the last row of each minute, so row 1500, 3000, etc. We will use the time of each of these frames
   # we have one timestamp extra, drop it
 
   if(length(tsrows) != nrow(mid))
-    stop('\t \t \t \t >>> Error:', length(tsrows), ' timestamps but', nrow(mid), ' rows after middur conversion, something wrong. \n')
+    stop('\t \t \t \t >>> Error: ', length(tsrows), ' timestamps but ', nrow(mid), ' rows after middur conversion, something wrong. \n')
 
 
   ### v3 was using an older version of RAWs.csv format which only had time in seconds as time column

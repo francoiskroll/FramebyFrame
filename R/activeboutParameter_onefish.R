@@ -52,7 +52,7 @@ transitionsToActiveBoutStartStop <- function(colAI) { # column of active/inactiv
   # make it so the video stops just after this fish finishes its last active bout
   # it is like we are manually stopping the camera just after the end of a swimming bout
   # ! it is possible that the video already stops exactly at the stop of an active bout by chance; if so do not do anything
-  if(colnoNA[length(colnoNA)]!=-1) { # if video does not stops at the stop of an active bout
+  if(colnoNA[length(colnoNA)]!=-1) { # if video does not stop at the stop of an active bout
     colAI[(max(which(colAI==-1))+1) : length(colAI)] <- NA
     # max(which(col==-1)), i.e. index of last '-1' in colAI
     # from that frame up to the end, replace by NA
