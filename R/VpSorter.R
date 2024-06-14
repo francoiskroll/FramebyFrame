@@ -580,14 +580,31 @@ vpSorter <- function(ffDir,
       stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
     }
 
-    # if cannot recognise one of the known formats...
-    } else {
+  } else if (locfirstchar=='L' & locnchar==5) { # OPTION 6 (seen at ICM, Paris)
 
-    stop('\t \t \t \t >>> Error: in the xls files, expecting the location column to be formatted as: C001 or c1 or w001 or LocA01 or C0101.
+    SpeaknRecord('Locations are written Loc01, Loc02, ...')
+
+    # set the locations accordingly
+    if (boxnum==1){
+      SpeaknRecord('Running BOX1 so expecting Loc01, Loc02, ...')
+      locs=sprintf('Loc%0.2d', 1:nwells) # Box1 locations = Loc01 >> Loc96
+    } else if (boxnum==2) {
+      SpeaknRecord('Running BOX2 so expecting C0201, C0202, ...')
+      # note 14/06/2024, I am guessing this, only time I have seen the Loc version of the column it was for a single box and it was Loc01, ..., Loc96
+      # so probably second box would be Loc97 >> Loc192?
+      locs=sprintf('Loc%2d', 97:(97+nwells-1)) # Box2 locations = w097 >> w192
+    } else {
+      stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
+    }
+
+    # if cannot recognise one of the known formats...
+  } else {
+
+    stop('\t \t \t \t >>> Error: in the xls files, expecting the location column to be formatted as: C001 or c1 or w001 or LocA01 or C0101 or Loc01.
          \t \t \t Open one of the xls files, is your location column written differently? Viewpoint always finds new ways to name the wells!
          \t \t \t Send me a sample xls file on francois@kroll.be and I will update the package. \n')
 
-    }
+  }
 
   # note, in comments below will usually assume 96 wells but now locs created above actually represents number of wells
   # i.e. not always 96
