@@ -489,7 +489,9 @@ vpSorter <- function(ffDir,
   # there is no simple way to guess whether we are given data for a single box or two from the raw .xls files alone
   # for example, we could confuse two 48-well plates with a single box with a 96-well plate
   # hence, asked user at the top whether 'twoBoxMode'; if yes, then divide number of unique well IDs by two
-  nwells <- length(sort(unique(readr::parse_number(fi1$location))))
+  nwells <- length(unique(fi1$location))
+  # 16/07/2024: it was first parsing numbers, but can simply count number of unique entries in location column?
+  # issue with parsing number arises with a format like c1-001, where it just finds 1 from c1
 
   if (twoBoxMode) {
     nwells <- nwells/2
@@ -598,12 +600,28 @@ vpSorter <- function(ffDir,
     }
 
     # if cannot recognise one of the known formats...
-  } else {
+  }   else if (locfirstchar=='c' & locnchar==6) { # OPTION 7 (Daphnia guy)
+
+    SpeaknRecord('Locations are written c1-001, c1-002, ...')
+
+    # set the locations accordingly
+    if (boxnum==1){
+      SpeaknRecord('Running BOX1 so expecting c1-001, c1-002, ...')
+      locs=sprintf('c1-%0.3d', 1:nwells) # Box1 locations = c1-001 >> c1-096
+    } else if (boxnum==2) {
+      SpeaknRecord('Running BOX2 so expecting c2-001, c2-002, ...')
+      # note 16/07/2024, I am guessing this, only time I have seen the format was for a single box
+      # so probably second box would be c2-001 >> c2-096?
+      locs=sprintf('c2-%0.3d', 1:nwells) # Box2 locations = c2-001 >> c2-096?
+    } else {
+      stop('\t \t \t \t >>> Error: Box number can only be 1 or 2. Did you write something else? \n')
+    }
+
+    } else {
 
     stop('\t \t \t \t >>> Error: in the xls files, expecting the location column to be formatted as: C001 or c1 or w001 or LocA01 or C0101 or Loc01.
          \t \t \t Open one of the xls files, is your location column written differently? Viewpoint always finds new ways to name the wells!
          \t \t \t Send me a sample xls file on francois@kroll.be and I will update the package. \n')
-
   }
 
   # note, in comments below will usually assume 96 wells but now locs created above actually represents number of wells
