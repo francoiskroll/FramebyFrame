@@ -708,6 +708,11 @@ ggTrace <- function(tc,
   # should we trim the start of the experiment?
   if (trimstart!=0) { # if trimming beginning of the experiment
     # trimstart = 0 means no trimming
+    # check that user did not set trimstart to be after the end of the experiment
+    if(max(sbg$zhrs) < trimstart) stop('\t \t \t \t >>> trimstart was set to ', trimstart,
+                                       ' but last timepoint of the experiment is ', round(max(sbg$zhrs), 2),' hours (since ZT0 on day0)\
+                                       so trimming would remove all data.\
+                                       Use trimstart=0 to keep all data (no trimming) or set it to a value *below* ', round(max(sbg$zhrs), 2), '.\n')
     sbg <- sbg %>%
       filter(zhrs >= trimstart)
   }
@@ -716,6 +721,11 @@ ggTrace <- function(tc,
   if (trimstop!=0) { # if trimming end of the experiment
     # trimstop = 0 means no trimming
     # (I do not think there is any case where the user would actually want to set trimstop to 0 as that would mean not plotting any data)
+    # check that user did not set trimstop to be before the start of the experiment
+    if(min(sbg$zhrs) > trimstop) stop('\t \t \t \t >>> trimstop was set to ', trimstop,
+                                       ' but first timepoint of the experiment is ', round(min(sbg$zhrs), 2),' hours (since ZT0 on day0)
+                                       so trimming would remove all data.\
+                                       Use trimstop=0 to keep all data (no trimming) or set it to a value *after* ', round(min(sbg$zhrs), 2), '.\n')
     sbg <- sbg %>%
       filter(zhrs <= trimstop)
   }
