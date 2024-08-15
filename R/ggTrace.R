@@ -67,6 +67,7 @@ ggActivityTraceGrid <- function (ffpath,
                                  xstop=0,
                                  trimstart=0,
                                  trimstop=0,
+                                 xtick=24,
                                  xmajorOrNo=TRUE,
                                  ymajorOrNo=TRUE,
                                  sunlinesOrNo=FALSE,
@@ -182,6 +183,7 @@ ggActivityTraceGrid <- function (ffpath,
             xstop=xstop,
             trimstart=trimstart,
             trimstop=trimstop,
+            xtick=xtick,
             xmajorOrNo=xmajorOrNo,
             ymajorOrNo=ymajorOrNo,
             sunlinesOrNo=sunlinesOrNo,
@@ -280,6 +282,7 @@ ggActivityTraceByGroup <- function(ffpath,
                                    xstop=0,
                                    trimstart=0,
                                    trimstop=0,
+                                   xtick=24,
                                    xmajorOrNo=TRUE,
                                    ymajorOrNo=TRUE,
                                    nightBgOrNo=FALSE,
@@ -327,6 +330,7 @@ ggActivityTraceByGroup <- function(ffpath,
           xstop=xstop,
           trimstart=trimstart,
           trimstop=trimstop,
+          xtick=xtick,
           xmajorOrNo=xmajorOrNo,
           ymajorOrNo=ymajorOrNo,
           nightBgOrNo=nightBgOrNo,
@@ -412,6 +416,7 @@ ggSleepTraceByGroup <- function(ffpath,
                                 xstop=0,
                                 trimstart=0,
                                 trimstop=0,
+                                xtick=24,
                                 xmajorOrNo=TRUE,
                                 ymajorOrNo=TRUE,
                                 nightBgOrNo=FALSE,
@@ -459,6 +464,7 @@ ggSleepTraceByGroup <- function(ffpath,
           xstop=xstop,
           trimstart=trimstart,
           trimstop=trimstop,
+          xtick=xtick,
           xmajorOrNo=xmajorOrNo,
           ymajorOrNo=ymajorOrNo,
           nightBgOrNo=nightBgOrNo,
@@ -503,6 +509,7 @@ ggSleepTraceByGroup <- function(ffpath,
 #' @param xstop
 #' @param trimstart
 #' @param trimstop
+#' @param xtick
 #' @param xmajorOrNo
 #' @param ymajorOrNo
 #' @param nightBgOrNo
@@ -554,6 +561,7 @@ ggTrace <- function(tc,
                     xstop,
                     trimstart,
                     trimstop,
+                    xtick=xtick,
                     xmajorOrNo,
                     ymajorOrNo,
                     nightBgOrNo,
@@ -860,7 +868,7 @@ ggTrace <- function(tc,
 
     guides(color=guide_legend(keywidth=0.5)) + # reduces the width of the bar in legend
 
-    scale_x_continuous(breaks=seq(0, max(sbg$zhrs), 24)) +
+    scale_x_continuous(breaks=seq(0, max(sbg$zhrs), xtick)) +
 
     {if(!legendOrNo) theme(legend.position='none')} +
 

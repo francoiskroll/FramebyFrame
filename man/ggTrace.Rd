@@ -25,6 +25,7 @@ ggTrace(
   xstop,
   trimstart,
   trimstop,
+  xtick = xtick,
   xmajorOrNo,
   ymajorOrNo,
   nightBgOrNo,

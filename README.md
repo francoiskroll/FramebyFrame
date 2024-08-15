@@ -1032,3 +1032,7 @@ FramebyFrame now supports DanioVision data! Please see function `dvSorter` in [T
 09/04/2024  
 * New function `ggDeltaPx` to plot small plot of Δ pixel timecourse for one well. See [DOCUMENTATION](DOCUMENTATION.md#ggdeltapx)).  
 * (BETA) New function `replacePulses` to replace frames during which a sentinel well moves. Collaboration with Leah Elias, Johns Hopkins University.
+
+### v1.2.0
+15/08/2024  
+* for all timecourse plots (i.e. `ggActivityTraceGrid`, `ggActivityTraceByGroup`, `ggSleepTraceByGroup`): new setting `xtick` to control x axis tick intervals. See [DOCUMENTATION](DOCUMENTATION.md)).

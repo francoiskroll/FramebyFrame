@@ -181,12 +181,13 @@ ggActivityTraceGrid currently does not support making a legend. Accordingly, ple
 
 **xstop**: end of the X axis, in hours since 9 AM of day0. Default is 0, which means plot all the timecourse.  
 
-**trimstart**: whether to trim some of the data at the start, in number of hours since 9 AM of day0. e.g. `trimstart=24` trims all the data before 9 AM night0 >> day1 transition (i.e. 24 hours after 9 AM day 0). It is slightly different than xstart because xstart leaves a little bit of the data before the start (try to see how it looks without trimming). If you want the trace to start at 24 hours (9 AM day1) sharp, use `xstart=24` and `trimstart=24` together. Default is 0, i.e. no trimming.  
+**trimstart**: whether to trim some of the data at the start, in number of hours since 9 AM of day0. e.g. `trimstart=24` trims all the data before 9 AM night0 >> day1 transition (i.e. 24 hours after 9 AM day 0). It is slightly different than xstart because xstart leaves a little bit of the data before the start (try to see how it looks without trimming). If you want the trace to start at 24 hours (9 AM day1) sharp, use `xstart=24` and `trimstart=24` together. Default is 0, which means no trimming.  
 
-**trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. `trimstart=72` trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use xstart=72 and `trimstart=72` together.
+**trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. `trimstart=72` trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use xstart=72 and `trimstart=72` together. Default is 0, which means no trimming.  
 
-Default is 0, i.e. no trimming. Default is 0, which means no trimming.  
 Note, xstart/xstop & trimstart/trimstop are especially useful to align plots from different experiments, as you probably did not start/stop the experiments at exactly the same times.
+
+**xtick**: interval in hours of x axis ticks. Default is 24.  
 
 **xmajorOrNo**: whether or not (TRUE or FALSE) to draw the major vertical grid lines in the background of the plot. Default is TRUE.  
 
@@ -268,6 +269,8 @@ Setting will be ignored if `smoothOrNo=FALSE`. Default is 30\*60 = 1800 seconds 
 **trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. `trimstart=72` trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use `xstart=72` and `trimstart=72` together. Default is 0, i.e. no trimming. Default is 0, which means no trimming.
 
 Note, xstart/xstop & trimstart/trimstop are especially useful to align plots from different experiments, as you probably did not start/stop the experiments at exactly the same times.
+
+**xtick**: interval in hours of x axis ticks. Default is 24.  
 
 **xmajorOrNo**: whether or not (TRUE or FALSE) to draw the major vertical grid lines in the background of the plot. Default is TRUE.
 
@@ -364,13 +367,15 @@ Plots binned & smoothed sleep traces by group.
 
 **xstart**: start of the X axis, in hours since 9 AM of day0. Default is 0.
 
-**xstop**: end of the X axis, in hours since 9 AM of day0. Default is 0, which means plot all the timecourse.
+**xstop**: end of the X axis, in hours since 9 AM of day0. Default is 0, which means plot all the timecourse.  
 
 **trimstart**: whether to trim some of the data at the start, in number of hours since 9 AM of day0. e.g. `trimstart=24` trims all the data before 9 AM night0 >> day1 transition (i.e. 24 hours after 9 AM day 0). It is slightly different than xstart because xstart leaves a little bit of the data before the start (try to see how it looks without trimming). If you want the trace to start at 24 hours (9 AM day1) sharp, use `xstart=24` and `trimstart=24` together. Default is 0, i.e. no trimming.
 
 **trimstop**: whether to trim some of the data at the end, in number of hours since 9 AM of day0. e.g. `trimstart=72` trims all the data after 9AM night2 >> day3 transition. (i.e. 72 hours after 9 AM day 0). It is slightly different than xstop because xstop leaves a little bit of the data after the stop (try to see how it looks without trimming). If you want the trace to stop at 72 hours (9 AM day3) sharp, use xstart=72 and `trimstart=72` together. Default is 0, i.e. no trimming. Default is 0, which means no trimming.
 
-Note, xstart/xstop & trimstart/trimstop are especially useful to align plots from different experiments, as you probably did not start/stop the experiments at exactly the same times.
+Note, xstart/xstop & trimstart/trimstop are especially useful to align plots from different experiments, as you probably did not start/stop the experiments at exactly the same times.  
+
+**xtick**: interval in hours of x axis ticks. Default is 24.  
 
 **xmajorOrNo**: whether or not (TRUE or FALSE) to draw the major vertical grid lines in the background of the plot. Default is TRUE.
 

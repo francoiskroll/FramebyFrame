@@ -29,6 +29,7 @@ ggActivityTraceByGroup(
   xstop = 0,
   trimstart = 0,
   trimstop = 0,
+  xtick = 24,
   xmajorOrNo = TRUE,
   ymajorOrNo = TRUE,
   nightBgOrNo = FALSE,
