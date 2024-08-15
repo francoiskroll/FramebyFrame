@@ -685,6 +685,17 @@ ggTrace <- function(tc,
   # xstop = 0 means plot all of the timecourse
   if (xstop==0) {xstop=max(sbg$zhrs)}
 
+  # check that there is some data in the interval set by xstart & xstop
+  # i.e. some data after xstart & before xstop
+  sbgCheckX <- sbg %>%
+    filter(zhrs >= xstart & zhrs <= xstop)
+  if(nrow(sbgCheckX)==0) stop('\t \t \t >>> Error ggTrace: there is no data in the interval set by xstart & xstop,\
+                              i.e. there is no timepoint that is after xstart and before xstop.\
+                              Note, the first timepoint is ', round(min(sbg$zhrs), 2),' and the last timepoint is ', round(max(sbg$zhrs), 2),'.\
+                              You can also set xstart=0 and xstop=0 to plot all the data.\n')
+  rm(sbgCheckX)
+
+
   # are we plotting every group? depends on what given in grporder
   # additionally, re-order factors of grp column so legend etc. are in the order required
   if ( !is.na(grporder[1]) ) {
@@ -709,7 +720,7 @@ ggTrace <- function(tc,
   if (trimstart!=0) { # if trimming beginning of the experiment
     # trimstart = 0 means no trimming
     # check that user did not set trimstart to be after the end of the experiment
-    if(max(sbg$zhrs) < trimstart) stop('\t \t \t \t >>> trimstart was set to ', trimstart,
+    if(max(sbg$zhrs) < trimstart) stop('\t \t \t >>> Error ggTrace: trimstart was set to ', trimstart,
                                        ' but last timepoint of the experiment is ', round(max(sbg$zhrs), 2),' hours (since ZT0 on day0)\
                                        so trimming would remove all data.\
                                        Use trimstart=0 to keep all data (no trimming) or set it to a value *below* ', round(max(sbg$zhrs), 2), '.\n')
@@ -722,7 +733,7 @@ ggTrace <- function(tc,
     # trimstop = 0 means no trimming
     # (I do not think there is any case where the user would actually want to set trimstop to 0 as that would mean not plotting any data)
     # check that user did not set trimstop to be before the start of the experiment
-    if(min(sbg$zhrs) > trimstop) stop('\t \t \t \t >>> trimstop was set to ', trimstop,
+    if(min(sbg$zhrs) > trimstop) stop('\t \t \t >>> Error ggTrace: trimstop was set to ', trimstop,
                                        ' but first timepoint of the experiment is ', round(min(sbg$zhrs), 2),' hours (since ZT0 on day0)
                                        so trimming would remove all data.\
                                        Use trimstop=0 to keep all data (no trimming) or set it to a value *after* ', round(min(sbg$zhrs), 2), '.\n')
