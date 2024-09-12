@@ -1036,3 +1036,7 @@ FramebyFrame now supports DanioVision data! Please see function `dvSorter` in [T
 ### v1.2.0
 15/08/2024  
 * for all timecourse plots (i.e. `ggActivityTraceGrid`, `ggActivityTraceByGroup`, `ggSleepTraceByGroup`): new setting `xtick` to control x axis tick intervals. See [DOCUMENTATION](DOCUMENTATION.md)).
+
+### v1.2.1
+12/09/2024
+* slightly better support for analysis by windows of interest (woi), `ggParameterGrid` & `ggFingerprint` are usable.

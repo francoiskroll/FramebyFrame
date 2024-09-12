@@ -603,7 +603,7 @@ I usually run two Zebraboxes in parallel with one clutch in each to serve both a
 
 Plots a grid of scatter plots, one per behavioural parameter. Whatever the settings used, one dot represents one larva during one time window.
 
-ggParameterGrid() does not currently support parameters calculated on specific window(s) of interest. Let me know if needed.
+>Are you doing your analysis by window(s) of interest? `ggParameterGrid()` can work but was not tested extensively, let me know if you face any issues.
 
 **paDir**: directory that stores the parameter tables, typically called bhvparams. For example, `paDir=here('bhvparams/')`. You can have as many experiments/parameters as you want in this directory. You can also give multiple bhvparams directories, e.g. `paDir=c(here('220906_exp1/bhvparams/'), here('220906_exp2/bhvparams/'))`. It will import all the parameter tables it finds in these directories.
 
@@ -950,6 +950,8 @@ The process is the same for nights and for each behavioural parameter.
 **skipNight0**: whether or not (TRUE or FALSE) to remove the night0’s datapoints prior to calculating the fingerprint. Mostly applies to the standard Rihel lab experiment night0/day1/night1/day2/night2. Default is FALSE.
 
 **avgDayNight**: whether or not (TRUE or FALSE) to average, for each parameter and each larva, its days datapoints together and its nights datapoints together prior to calculating the fingerprint. This will affect what each unique parameter is in the fingerprint: if TRUE, parameters are e.g. day_sleepHours and night_sleepHours; if FALSE, parameters are e.g. day1_sleepHours, day2_sleepHours, night1_sleepHours, night2_sleepHours. In other words, do you want to keep individual day/night resolution or not?
+
+>Are you doing your analysis by window(s) of interest? Then, the `avgDayNight` parameter controls whether, for each parameter and each larva, we average the datapoints (Z-scores) from the various windows of interest. This will affect what each unique parameter is in the fingerprint: if TRUE, parameters are e.g. woi_sleepHours (all windows of interest were averaged); if FALSE, parameters are e.g. woi1_sleepHours, woi2_sleepHours, etc. (windows of interest are kept separated). In other words, do you want to keep individual windows-of-interest resolution or not?
 
 About **mergeExp1–3** settings: this can be useful if you tracked a single clutch into multiple boxes to boost sample sizes. As we are pooling Z-scores to controls within each box, this should in theory control for technical variability between boxes. A benefit of pooling is to avoid creating “fake replicates”. Indeed, keeping boxes separate can make it look like you had more replicates than in reality (the technical replicates should probably not count).
 
