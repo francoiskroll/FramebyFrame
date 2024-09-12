@@ -527,47 +527,177 @@ ggParameterGrid <- function(paDir,
                          grporder=grporder,
                          skipNight0=skipNight0)
 
+  ### do we work by woi?
+  woiColi <- which(startsWith(colnames(psL[[1]]), 'woi')) # indices of columns that start with 'woi'
+  if(length(woiColi)>0) {
+    bywoi <- TRUE
+    # also obtain now the names of the woi
+    woinms <- colnames(psL[[1]])[which(startsWith(colnames(psL[[1]]), 'woi'))]
+  } else {
+    bywoi <- FALSE
+  }
 
   ### is there only one night or only one day?
-  # take first parameter table as example
-  # first column with actual datapoints is:
-  firstcol <- which(startsWith(colnames(psL[[1]]), 'day') | startsWith(colnames(psL[[1]]), 'night'))[1]
-  # names of the day/night columns:
-  dnnames <- colnames(psL[[1]])[firstcol:ncol(psL[[1]])] # e.g. night0, day1
+  if(!bywoi) {
+    # take first parameter table as example
+    # first column with actual datapoints is:
+    firstcol <- which(startsWith(colnames(psL[[1]]), 'day') | startsWith(colnames(psL[[1]]), 'night'))[1]
+    # names of the day/night columns:
+    dnnames <- colnames(psL[[1]])[firstcol:ncol(psL[[1]])] # e.g. night0, day1
 
-  # if we have only one night, set onlyDayorNight to 'night'
-  if(length(dnnames)==1 & startsWith(dnnames[1], 'night')) {
-    cat('\t \t \t \t >>> Only one full night: setting onlyDayorNight="night" \n')
-    onlyDayorNight <- 'night'
+    # if we have only one night, set onlyDayorNight to 'night'
+    if(length(dnnames)==1 & startsWith(dnnames[1], 'night')) {
+      cat('\t \t \t \t >>> Only one full night: setting onlyDayorNight="night" \n')
+      onlyDayorNight <- 'night'
 
-    # if we have only one day, set onlyDayorNight to 'day'
-  } else if (length(dnnames)==1 & startsWith(dnnames[1], 'day')) {
-    cat('\t \t \t \t >>> Only one full day: setting onlyDayorNight="day" \n')
-    onlyDayorNight <- 'day'
+      # if we have only one day, set onlyDayorNight to 'day'
+    } else if (length(dnnames)==1 & startsWith(dnnames[1], 'day')) {
+      cat('\t \t \t \t >>> Only one full day: setting onlyDayorNight="day" \n')
+      onlyDayorNight <- 'day'
+    }
   }
 
 
   ### plot each parameter ###
 
-  # preallocate list which will store the parameters
-  # one plot per parameter
+  # default case is by day/night, i.e. not by woi
+  if(!bywoi) {
+    # preallocate list which will store the parameter plots
+    # one plot per parameter
 
-  # gpL for ggParameters List
-  gpL <- lapply(psL, function(pa) {
+    # gpL for ggParameters List
+    gpL <- lapply(psL, function(pa) {
 
-    # with each pa
-    # make one DAY plot
-    # make one NIGHT plot
-    # combine them in a small grid (just side by side)
+      # with each pa
+      # make one DAY plot
+      # make one NIGHT plot
+      # combine them in a small grid (just side by side)
 
-    #### DAY ####
+      #### DAY ####
 
-    # ! exceptions: activitySunsetStartle & sleepLatency are not defined for day, so need to skip in that case
-    # we also skip if user asked for onlyDayorNight='night', obviously
-    # i.e. we go ahead if onlyDayorNight is NA or 'day'
-    # AND if parameter is *not* activitySunsetStartle & sleepLatency
-    if ( (is.na(onlyDayorNight) | onlyDayorNight=='day') & ! unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
-      ggday <- ggParameter(pa=pa,
+      # ! exceptions: activitySunsetStartle & sleepLatency are not defined for day, so need to skip in that case
+      # we also skip if user asked for onlyDayorNight='night', obviously
+      # i.e. we go ahead if onlyDayorNight is NA or 'day'
+      # AND if parameter is *not* activitySunsetStartle & sleepLatency
+      if ( (is.na(onlyDayorNight) | onlyDayorNight=='day') & ! unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
+        ggday <- ggParameter(pa=pa,
+                             grporder=grporder,
+                             sameClutch1=sameClutch1,
+                             sameClutch2=sameClutch2,
+                             sameClutch3=sameClutch3,
+                             skipNight0=skipNight0,
+                             poolDayNight=poolDayNight,
+                             onlyExp=onlyExp,
+                             onlyDayorNight='day',
+                             onlyWin=onlyWin,
+                             colours=colours,
+                             fainterExp=fainterExp,
+                             faintMax=faintMax,
+                             ymin=NA,
+                             ymax=NA,
+                             dotSize=dotSize,
+                             connectMean=connectMean,
+                             legendOrNo=legendOrNo,
+                             xtextOrNo=xtextOrNo,
+                             ynameOrNo=ynameOrNo,
+                             yunitOrNo=yunitOrNo,
+                             splitBy=splitBy,
+                             titleOrNo=titleOrNo,
+                             blankTitle=FALSE,
+                             nightBgOrNo=nightBgOrNo,
+                             statsOrNo=statsOrNo,
+                             silent=TRUE) # note here, we do not print summary LME to Console,
+        # otherwise gets printed twice as called again for night
+      }
+
+
+      #### NIGHT ####
+
+      # in general, when any title is present, we want blankTitle ON for the night plot so the plots align
+      if(titleOrNo) {
+        blankTitle <- TRUE
+      } else {
+        blankTitle <- FALSE
+      }
+
+      # ! unless user wants titles AND night plot is only we have (e.g for parameter like sunsetStartle),
+      # then we should put the title now (i.e. so blankTitle OFF)
+      if(titleOrNo & !exists('ggday')) {
+        blankTitle <- FALSE
+      }
+
+      # ! if we already made a day plot for this parameter,
+      # there is no need to repeat the title, Y axis name, etc.
+      # so, if day plot exists, turn off a few settings
+      if(exists('ggday')) {
+        ynameOrNo <- FALSE
+        yunitOrNo <- FALSE
+        titleOrNo <- FALSE
+      }
+
+      # now draw the night plot, except if user explicitly asked for day only
+      # i.e. we can go ahead if onlyDayorNight is NA or is =='night'
+      if(is.na(onlyDayorNight) | onlyDayorNight=='night') {
+        ggnight <- ggParameter(pa=pa,
+                               grporder=grporder,
+                               sameClutch1=sameClutch1,
+                               sameClutch2=sameClutch2,
+                               sameClutch3=sameClutch3,
+                               skipNight0=skipNight0,
+                               poolDayNight=poolDayNight,
+                               onlyExp=onlyExp,
+                               onlyDayorNight='night',
+                               onlyWin=onlyWin,
+                               colours=colours,
+                               fainterExp=fainterExp,
+                               faintMax=faintMax,
+                               ymin=NA,
+                               ymax=NA,
+                               dotSize=dotSize,
+                               connectMean=connectMean,
+                               legendOrNo=legendOrNo,
+                               xtextOrNo=xtextOrNo,
+                               ynameOrNo=ynameOrNo,
+                               yunitOrNo=yunitOrNo,
+                               splitBy=splitBy,
+                               titleOrNo=titleOrNo,
+                               blankTitle=blankTitle,
+                               nightBgOrNo=nightBgOrNo,
+                               statsOrNo=statsOrNo,
+                               silent=FALSE) # note here, we do print the LME summary,
+        # better to do it for night as all parameters have night (incl. sunset startle)
+      }
+
+      cat('\n') # helps make messages in Console clearer
+
+      # for this parameter, return a small grid: day plot next to night plot
+      # ! except if onlyDayorNight='night' or activitySunsetStartle or sleepLatency, then we only have the night plot
+      if( (!is.na(onlyDayorNight) & onlyDayorNight=='night') | unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
+        return(ggpubr::ggarrange(plotlist=list(ggnight), ncol=1, nrow=1))
+      } else if(!is.na(onlyDayorNight) & onlyDayorNight=='day') {
+
+        # ! except if onlyDayorNight='night', then we only have the day plot
+        return(ggpubr::ggarrange(plotlist=list(ggday), ncol=1, nrow=1))
+
+        # standard case: we have both the day and the night plot
+      } else {
+        return(ggpubr::ggarrange(plotlist=list(ggday, ggnight), ncol=2, nrow=1))
+      }
+
+    })
+
+  ### case by woi
+  } else if(bywoi) {
+    # preallocate list which will store the parameter plots
+    # one plot per parameter
+
+    # gpL for ggParameters List
+    gpL <- lapply(psL, function(pa) {
+
+      # for this parameter, loop through woi
+      # and make one plot for each
+
+      ggwoi <- ggParameter(pa=pa,
                            grporder=grporder,
                            sameClutch1=sameClutch1,
                            sameClutch2=sameClutch2,
@@ -575,7 +705,7 @@ ggParameterGrid <- function(paDir,
                            skipNight0=skipNight0,
                            poolDayNight=poolDayNight,
                            onlyExp=onlyExp,
-                           onlyDayorNight='day',
+                           onlyDayorNight=NA,
                            onlyWin=onlyWin,
                            colours=colours,
                            fainterExp=fainterExp,
@@ -595,83 +725,12 @@ ggParameterGrid <- function(paDir,
                            statsOrNo=statsOrNo,
                            silent=TRUE) # note here, we do not print summary LME to Console,
       # otherwise gets printed twice as called again for night
-    }
 
+      # put the plot in a grid like we were doing for day/night plots
+      return(ggpubr::ggarrange(plotlist=list(ggwoi), ncol=1, nrow=1))
 
-    #### NIGHT ####
-
-    # in general, when any title is present, we want blankTitle ON for the night plot so the plots align
-    if(titleOrNo) {
-      blankTitle <- TRUE
-    } else {
-      blankTitle <- FALSE
-    }
-
-    # ! unless user wants titles AND night plot is only we have (e.g for parameter like sunsetStartle),
-    # then we should put the title now (i.e. so blankTitle OFF)
-    if(titleOrNo & !exists('ggday')) {
-      blankTitle <- FALSE
-    }
-
-    # ! if we already made a day plot for this parameter,
-    # there is no need to repeat the title, Y axis name, etc.
-    # so, if day plot exists, turn off a few settings
-    if(exists('ggday')) {
-      ynameOrNo <- FALSE
-      yunitOrNo <- FALSE
-      titleOrNo <- FALSE
-    }
-
-    # now draw the night plot, except if user explicitly asked for day only
-    # i.e. we can go ahead if onlyDayorNight is NA or is =='night'
-    if(is.na(onlyDayorNight) | onlyDayorNight=='night') {
-      ggnight <- ggParameter(pa=pa,
-                             grporder=grporder,
-                             sameClutch1=sameClutch1,
-                             sameClutch2=sameClutch2,
-                             sameClutch3=sameClutch3,
-                             skipNight0=skipNight0,
-                             poolDayNight=poolDayNight,
-                             onlyExp=onlyExp,
-                             onlyDayorNight='night',
-                             onlyWin=onlyWin,
-                             colours=colours,
-                             fainterExp=fainterExp,
-                             faintMax=faintMax,
-                             ymin=NA,
-                             ymax=NA,
-                             dotSize=dotSize,
-                             connectMean=connectMean,
-                             legendOrNo=legendOrNo,
-                             xtextOrNo=xtextOrNo,
-                             ynameOrNo=ynameOrNo,
-                             yunitOrNo=yunitOrNo,
-                             splitBy=splitBy,
-                             titleOrNo=titleOrNo,
-                             blankTitle=blankTitle,
-                             nightBgOrNo=nightBgOrNo,
-                             statsOrNo=statsOrNo,
-                             silent=FALSE) # note here, we do print the LME summary,
-      # better to do it for night as all parameters have night (incl. sunset startle)
-    }
-
-    cat('\n') # helps make messages in Console clearer
-
-    # for this parameter, return a small grid: day plot next to night plot
-    # ! except if onlyDayorNight='night' or activitySunsetStartle or sleepLatency, then we only have the night plot
-    if( (!is.na(onlyDayorNight) & onlyDayorNight=='night') | unique(pa$parameter) %in% c('activitySunsetStartle', 'sleepLatency')) {
-      return(ggpubr::ggarrange(plotlist=list(ggnight), ncol=1, nrow=1))
-    } else if(!is.na(onlyDayorNight) & onlyDayorNight=='day') {
-
-    # ! except if onlyDayorNight='night', then we only have the day plot
-      return(ggpubr::ggarrange(plotlist=list(ggday), ncol=1, nrow=1))
-
-    # standard case: we have both the day and the night plot
-    } else {
-      return(ggpubr::ggarrange(plotlist=list(ggday, ggnight), ncol=2, nrow=1))
-    }
-
-  })
+    })
+  }
 
 
   # arrange in a grid & export ----------------------------------------------
