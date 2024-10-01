@@ -1040,3 +1040,7 @@ FramebyFrame now supports DanioVision data! Please see function `dvSorter` in [T
 ### v1.3.0
 12/09/2024
 * slightly better support for analysis by windows of interest (woi), `ggParameterGrid` & `ggFingerprint` are usable.
+
+### v1.4.0
+01/10/2024
+New setting `dbgorder` for `ggPairwiseHeat`. See [DOCUMENTATION](DOCUMENTATION.md)).

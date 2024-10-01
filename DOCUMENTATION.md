@@ -1020,6 +1020,8 @@ Calculates the similarity between pairwise behavioural fingerprint and represent
 
 * **grporder**: do you have a preferred order for the groups (genotypes)? If yes, mention it here. If no, you can simply not mention this setting or give `grporder=NA`. You can exclude any group (genotype) by simply not mentioning it here. Default is NA, which keeps all groups.  
 
+* **dbgorder**: to manually set the order of the fingerprints in the heatmap. "dbg" stands for date_box_group. For example `dbgorder=c('210907_13_psen2', '210907_12_psen2')` would reverse the default ordering (which would have been 12 then 13, as following alphabetical order). If you omit a date_box_group here, it will exclude that fingerprint from the heatmap. Default is NA, which follows alphabetical order of the date_box_group, after ordering by `grporder` if it was given.  
+
 * **removeControl**: whether (TRUE) or not (FALSE) to remove the controls' fingerprints. I think you should always use TRUE here as the controls' fingerprints are always 0 by definition. Default is TRUE.  
 
 * **controlGrp**: name of control group, e.g. ‘wt’. Does the name of the control group change between experiments? For example it is ‘control’ in one experiment but ‘wt’ in another. That is fine, you can give multiple control groups, for example `controlGrp=c('control', 'wt')`.  

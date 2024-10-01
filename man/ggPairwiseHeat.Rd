@@ -9,6 +9,7 @@ ggPairwiseHeat(
   metric = "mean",
   simScore,
   grporder = NA,
+  dbgorder = NA,
   removeControl = TRUE,
   controlGrp,
   medianMid = FALSE,

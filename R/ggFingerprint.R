@@ -541,6 +541,7 @@ ggPairwiseHeat <- function(fgp,
                            metric='mean',
                            simScore,
                            grporder=NA,
+                           dbgorder=NA,
                            removeControl=TRUE,
                            controlGrp,
                            medianMid=FALSE,
@@ -584,7 +585,6 @@ ggPairwiseHeat <- function(fgp,
     fgp <- read.csv(fgp)
   }
 
-
   ### calculate similarity scores ###
   # using fingerprintSimilarity(...)
   pwm <- fingerprintSimilarity(fgp=fgp,
@@ -596,6 +596,45 @@ ggPairwiseHeat <- function(fgp,
 
   # fingerprintSimilarity will print the similarity matrix to Console
 
+  ### user may have given an exact order of fingerprints
+  if(!is.na(dbgorder[1])) {
+    # now is the time to change the order, it becomes impossible after we NA half of the values
+    # first check what the user gave
+
+    # these are the fingerprints we have:
+    udbgs <- pwm$date_box_grp # unique date_box_grp.s
+
+    # if some fingerprints we have are not given by user, delete them
+    dbgNo <- udbgs[which(!udbgs %in% dbgorder)]
+
+    if(length(dbgNo)!=0) {
+      cat('\t \t \t \t >>> Removing fingerprint(s)', dbgNo, 'from plot as it was omitted from dbgorder.\n')
+      # delete its rows
+      pwm <- pwm[-which(pwm$date_box_grp %in% dbgNo),]
+      # delete its columns
+      pwm <- pwm[,-which(colnames(pwm) %in% dbgNo)]
+    }
+
+    # check that all fingerprints given exist in the data
+    dbgUnknown <- dbgorder[which(!dbgorder %in% udbgs)]
+    if(length(dbgUnknown)!=0)
+      stop('\t \t \t \t >>> Error ggPairwiseHeat: dbgorder mentions date_box_group', dbgUnknown, ' but it does exist in the dataset. In the dataset are the following date_box_group', udbgs, '\n')
+
+    # now that the checks are done,
+    # change the order of the fingerprints
+
+    # reorder rows
+    pwm <- pwm[match(pwm$date_box_grp, dbgorder) , ]
+    # reorder columns
+
+    # new order of columns:
+    colord <- match(colnames(pwm)[2:ncol(pwm)], dbgorder)
+    # but this is not counting first column which is the date_box_grp (rownames)
+    # so add it as first and shift the order +1
+    colord <- c(1, colord+1)
+    # now can rearrange the columns
+    pwm <- pwm[,colord]
+  }
 
   ### only upper or lower triangle, if required ###
 
