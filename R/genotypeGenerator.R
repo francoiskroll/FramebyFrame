@@ -64,9 +64,9 @@ genotypeGenerator <- function(plateMap) {
   #### clean up ####
   # keep only wells
 
-  # in formats, remove all Normal cells
+  # in formats, remove all "Normal" or "Standard" cells
   # actual wells should be genotypeX or empty or excluded
-  frmts <- frmts[-which(frmts=='Normal')]
+  frmts <- frmts[-which(frmts %in% c('Normal', 'Standard'))]
 
   # in contents,
   # remove all NA
