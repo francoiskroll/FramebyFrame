@@ -268,7 +268,9 @@ vpSorter(ffDir="~/.../220531_14_15_rawoutput/",
 * `ffDir`: path to the folder containing your raw .xls/xlsx files.  
 * `zebpath`: path to the Zebralab results file (.xls/xlsx).  
 * `boxGen`: 2 if you are using the newer version of Zebralab (post circa 2020), 1 for previous versions.
-> Note sure which one? Open one of the raw .xls/xlsx files, are the Δ pixel values (typically in column _data1_) mostly 1s or mostly 0s? If mostly 1s: `boxGen=1`; if mostly 0s: `boxGen=2`
+> Not sure which one? Open one of the raw .xls/xlsx files, are the Δ pixel values (typically in column _data1_) mostly 1s or mostly 0s? If mostly 1s: `boxGen=1`; if mostly 0s: `boxGen=2`
+* `twoBoxMode`: `TRUE` if you had two boxes running in parallel, otherwise `FALSE`.  
+* `boxnum`: leave as `boxnum=1`, except if you had two boxes running in parallel, then run `vpSorter` once with `boxnum=1` then a second time with `boxnum=2` to generate one RAWs.csv file per box.  
 * `zt0`: Zeitgeber 0 (ZT0). What is the time of your sunrise?  
 * `dayduration`: how long does the day last in your experiment? By day, we mean lights ON.  
 
