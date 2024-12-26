@@ -97,7 +97,11 @@ genotypeGenerator <- function(plateMap) {
     geno_names <- unique(cnts[!is.na(cnts)])
   }
 
-  if (length(genos) != length(geno_names)) stop('\t \t \t \t >>> Error: Not the same number of genotypes and genotype names \n') # checkpoint
+  if (length(genos) != length(geno_names)) {
+    cat('\t \t \t \t Genotypes:', genos, '\n')
+    cat('\t \t \t \t Genotype names:', geno_names, '\n')
+    stop('\t \t \t \t >>> Error: Not the same number of genotypes and genotype names.')
+  }
 
   # matches genotype number to genotype name
   genonames_matched <- c()
