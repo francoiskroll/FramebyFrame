@@ -37,6 +37,7 @@ whatSlash <- function(path) {
 #' @return
 #'
 #' @examples
+#' @export
 substrEnding <- function(x, n){ # x = string (or vector of strings); n = last n characters
   substr(x, nchar(x)-n+1, nchar(x))
 }
