@@ -109,6 +109,21 @@ summaryActivityCourse <- function(ffpath,
   timecols <- which(grepl("^f+[[:digit:]]", colnames(ff)))[1] - 1
 
 
+  # check smooth/bin settings -----------------------------------------------
+
+  # for short experiments, user may have set smooth_nsecs & bin_nsecs too high
+  # arbitrary threshold: experiment should be at least 10x longer than smooth_nsecs & bin_nsecs
+  # if( smoothOrNo & 10*smooth_nsecs > (nrow(ff)/fps) )
+  #   stop('\t \t \t \t >>> Error summaryActivityCourse: experiment should be at least 10x longer than smooth_nsecs setting.\
+  #        \t \t \t Here, your experiment was ', round(nrow(ff)/fps),' seconds long but you set smooth_nsecs to be ', smooth_nsecs,' seconds.\
+  #        \t \t \t Please reduce smooth_nsecs.\n')
+  #
+  # if( binOrNo & 10*bin_nsecs > (nrow(ff)/fps) )
+  #   stop('\t \t \t \t >>> Error summaryActivityCourse: experiment should be at least 10x longer than bin_nsecs setting.\
+  #        \t \t \t Here, your experiment was ', round(nrow(ff)/fps),' seconds long but you set bin_nsecs to be ', bin_nsecs,' seconds.\
+  #        \t \t \t Please reduce bin_nsecs.\n')
+
+
   # smooth if needed --------------------------------------------------------
 
   if (smoothOrNo) {
