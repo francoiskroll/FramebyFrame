@@ -8,22 +8,22 @@ Already using the Zebrabox? Read below ([Frame-by-frame manifesto](#The-frame-by
 
 Not did your experiment yet? Make sure to read [Experimental design commandments](#Experimental-design-commandments) for some advice.  
 
-[![alt text][1.2]][1] [@francois_kroll](https://twitter.com/francois_kroll)
-
-:email: francois@kroll.be
-
-<!-- icons with padding -->
-[1.1]: http://i.imgur.com/tXSoThF.png (twitter icon with padding)
-
-<!-- icons without padding -->
-[1.2]: http://i.imgur.com/wWzX9uB.png (twitter icon without padding)
-
-<!-- links to your social media accounts -->
-[1]: https://twitter.com/francois_kroll
-
+:email: francois@kroll.be  
+[@francoiskroll.bsky.social](https://bsky.app/profile/francoiskroll.bsky.social)
 
 > — _I do not know anything about R so this package is not for me._    
 I wrote everything with that in mind, I promise! The amount of R (or any coding language) you need to know in order to run a complete analysis is minuscule, and I wrote it all below (see [R basics](#R-basics)).
+
+___
+
+## Citation
+
+Please cite us if you use FramebyFrame in your work.
+
+François Kroll, Joshua Donnelly, Güliz Gürel Özcan, Eirinn Mackay, Jason Rihel  
+_eLife_  
+**Behavioural pharmacology predicts disrupted signalling pathways and candidate therapeutics from zebrafish mutants of Alzheimer’s disease risk genes**  
+https://doi.org/10.7554/eLife.96839.2
 
 ___
 
