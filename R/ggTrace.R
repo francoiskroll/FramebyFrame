@@ -203,7 +203,9 @@ ggActivityTraceGrid <- function (ffpath,
 
   gggrid <- ggpubr::ggarrange(plotlist=ggL, ncol=ncol, nrow=nrow)
 
-  ggplot2::ggsave(exportPath, gggrid, width=width, height=height, units='mm')
+  if(exportOrNo) {
+    ggplot2::ggsave(exportPath, gggrid, width=width, height=height, units='mm')
+  }
 
   # return plot so it displays in RStudio
   return(gggrid)
@@ -883,15 +885,9 @@ ggTrace <- function(tc,
     xlab(xname) + ylab(yname) +
     coord_cartesian(ylim=c(ymin, ymax), xlim=c(xstart, xstop))
 
-
-
-  if (!exportOrNo) {return(tracebygrp)} # if do not export the plot to drive, return the ggplot object instead
-  # Note; if no export, will stop there due to return() being called, so will not see below
-
-  # export plot
-  ggsave(exportPath, width=width, height=height, units='mm', device=cairo_pdf)
-
-  # and return so can see in RStudio
+  # export plot, if needed
+  if (exportOrNo) { ggsave(exportPath, width=width, height=height, units='mm', device=cairo_pdf) }
+  # whether or not we export, return the ggplot object so it displays in RStudio
   return(tracebygrp)
 
 }

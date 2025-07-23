@@ -493,6 +493,12 @@ vpSorter <- function(ffDir,
   # 16/07/2024: it was first parsing numbers, but can simply count number of unique entries in location column?
   # issue with parsing number arises with a format like c1-001, where it just finds 1 from c1
 
+  ### 23/07/2025
+  # add warning here
+  if(!twoBoxMode & nwells==192) {
+    SpeaknRecord('*WARNING*: twoBoxMode was set as FALSE but there are 192 unique wells written in the files; can you check that twoBoxMode should not be TRUE?', warning=TRUE)
+  }
+
   if (twoBoxMode) {
     nwells <- nwells/2
   }
@@ -1240,8 +1246,20 @@ vpSorter <- function(ffDir,
   # i.e. number of hours since first day0 9AM
   startdate <- lubridate::date(bx$fullts[1]) # get startdate of the experiment = date of the first timepoint
 
+  # is ZT0 on the day of the experiment or day before?
+  # startts is when experiment started
+  # when ZT0 is expected to be is:
+  zt0full <- lubridate::ymd_hms(paste(startdate, zt0)) # expected ZT0 on same date of when experiment started
+
+  # ZT0 should always be before the start of the experiment!
+  # otherwise we generate negative zhrs
+  # if it is after (e.g. experiment was started at 1 PM but ZT0 is 11 PM; in the case of reverse LD cycle), go one day earlier
+  if(zt0full > startts) {
+    zt0full <- zt0full - lubridate::days(1)
+  }
+
   bx <- bx %>%
-    add_column(zhrs = as.numeric(difftime(bx$fullts, lubridate::ymd_hms(paste(startdate, zt0)), units='hours')),
+    add_column(zhrs = as.numeric(difftime(bx$fullts, zt0full, units='hours')),
                .before='exsecs')
   # Zeitgeber is time difference in hours since first ZT0
 

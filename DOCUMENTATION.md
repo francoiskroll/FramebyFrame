@@ -1191,3 +1191,7 @@ Try following the instructions above. If that does not help, check how much spac
 > Errors/warnings related to "cairo", such as _failed to load cairo DLL_
 
 Installing `xquartz` on your computer seems to fix this issue. On Mac, if you have Homebrew installed: `brew install --cask xquartz` in Terminal. I found that installing latest release of XQuartz (https://www.xquartz.org/index.html) like you would for any other app works too.  
+
+> `vpSorter`: Error in if (max(fpspw) - min(fpspw) > 1) { : missing value where TRUE/FALSE needed
+
+Please check that setting `twoBoxMode` is correct.
