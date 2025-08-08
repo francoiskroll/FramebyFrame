@@ -41,7 +41,7 @@ appendRAWs <- function(ffpaths,
   ndays <- lubridate::day(ffs[[2]]$fullts[1]) - lubridate::day(ffs[[1]]$fullts[1])
 
   # we simply need to add 24 * ndays to the zhrs of part2
-  ffs[[2]]$zhrs <- ffs[[2]]$zhrs + 24
+  ffs[[2]]$zhrs <- ffs[[2]]$zhrs + 24 * ndays
 
   # does it make sense
   cat('\t \t \t \t >>> Zeitgeber durations: missing', round(min(ffs[[2]]$zhrs) - max(ffs[[1]]$zhrs), 2), 'hours =',
